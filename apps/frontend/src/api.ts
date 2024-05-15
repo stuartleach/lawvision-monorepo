@@ -1,4 +1,4 @@
-import { SupremeCourtCase } from 'shared';
+import { SupremeCourtCase } from '@shared/types';
 
 
 // check if shared was imported correctly
