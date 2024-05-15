@@ -1,15 +1,9 @@
+
 {
+  "extends": "./tsconfig.json", // Inherit from your main tsconfig
   "compilerOptions": {
-    "composite": true,
-    "skipLibCheck": true,
-    "module": "ESNext",
-    "target": "ESNext",
-    "esModuleInterop": true,
-    "moduleResolution": "bundler",
-    "allowSyntheticDefaultImports": true,
-    "strict": true
+    "module": "ESNext", // Force ES modules for Vite config
+    "allowJs": true   // Allow JavaScript output
   },
-  "include": [
-    "vite.config.ts"
-  ]
+  "include": ["vite.config.ts"]
 }

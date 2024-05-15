@@ -1,7 +1,6 @@
 import express from "express";
-// import {PrismaClient} from "@prisma/client";
-import { PrismaClient } from "@shared/prisma"
-// import {SupremeCourtCases} from "@shared/types";
+import {PrismaClient} from "@shared/prisma"
+import {SupremeCourtCase} from "@shared/prisma";
 
 
 const app = express();
@@ -14,15 +13,21 @@ app.get("/", (req, res) => {
 });
 
 app.get("/random-case", async (req, res) => {
-    const randomCases = await prisma.supreme_court_cases.findMany({
-        orderBy: {
-            id: "desc",
-        },
-        take: parseInt(req.query.numCases as string) || 10,
-    });
-    console.log(randomCases[0].name)
-    res.json(randomCases);
 
+    try {
+        const randomCases: SupremeCourtCase[] = await prisma.supreme_court_cases.findMany({
+            orderBy: {
+                id: "desc",
+            },
+            take: parseInt(req.query.numCases as string) || 10,
+
+        });
+            console.log(randomCases[0])
+        res.status(200).json(randomCases);
+    } catch (error) {
+        console.error("Error fetching cases:", error);
+        res.status(500).json({error: "Internal Server Error"}); // Return JSON error
+    }
 });
 
 const PORT = process.env.PORT || 3000;

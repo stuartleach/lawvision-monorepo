@@ -1,12 +1,9 @@
 import {useLoadGraph} from "@react-sigma/core";
 import {useEffect, useState} from "react";
 import * as gr from "graphology";
-// import {generateCourtCases} from "./utils";
 import * as d3 from "d3";
 import {getCases} from "./api";
-import * as pr from '@shared/prisma';  // Import directly from prisma.ts
-
-import * as sh from "@shared"
+import type {SupremeCourtCase} from "@shared/prisma";
 
 interface CustomNode extends d3.SimulationNodeDatum {
     id: string;
@@ -16,23 +13,31 @@ interface CustomNode extends d3.SimulationNodeDatum {
 }
 
 
-export const NetworkGraph =  (props: { numCases: number }) => {
+export const NetworkGraph = (props: { numCases: number }) => {
     const loadGraph = useLoadGraph();
     // const courtCases = generateCourtCases(props.numCases);
 
     const [cases, setCases] = useState<SupremeCourtCase[]>([]);
 
-    // const courtCases = await getCases(props.numCases);
-    useEffect(() => {
-        getCases(props.numCases).then(setCases);
-    }, [props.numCases]);
 
-    const courtCases = cases; // refactor later
+    useEffect( () => {
 
-    useEffect(() => {
-        const graph = new gr.MultiDirectedGraph()
+        // getCases(props.numCases).then(setCases).catch(e => {
+        //     return "no luck" + e
+        // }).then(() => console.log(cases))
+
+        getCases(props.numCases).then(caseI=>setCases(caseI)).then(()=>console.log("got cases"))
+
+        const courtCases = cases; // refactor later
+
+        const graph = new gr.MultiDirectedGraph();
+
+
+
         courtCases.forEach(caseItem => {
-            const children = caseItem.childCases.length
+            // const children = caseItem.childCases.length
+            console.log(caseItem.citations.length)
+            const children = caseItem.citations.length
             const weight = 2 ** children
             graph.addNode(caseItem.caseCitation, {
                 size: weight * 1.5,
@@ -45,7 +50,7 @@ export const NetworkGraph =  (props: { numCases: number }) => {
         });
 
         courtCases.forEach(caseItem => {
-            caseItem.citations.forEach(citation => {
+            caseItem.citations.forEach((citation: unknown) => {
                 if (graph.hasNode(citation)) {
                     graph.addEdge(caseItem.caseCitation, citation, {
                         type: 'arrow',

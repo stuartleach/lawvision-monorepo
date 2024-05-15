@@ -1,15 +1,10 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const express_1 = __importDefault(require("express"));
+import express from "express";
 // import {PrismaClient} from "@prisma/client";
-const prisma_1 = require("@shared/prisma");
+import { PrismaClient } from "@shared/prisma";
 // import {SupremeCourtCases} from "@shared/types";
-const app = (0, express_1.default)();
-const prisma = new prisma_1.PrismaClient();
-app.use(express_1.default.json());
+const app = express();
+const prisma = new PrismaClient();
+app.use(express.json());
 app.get("/", (req, res) => {
     res.send("Hello from Express");
 });

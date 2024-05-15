@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "concurrently \"pnpm --filter ./apps/backend dev\" \"pnpm --filter ./apps/frontend dev\"",
+    "dev": "concurrently \"pnpm --filter ./apps/backend dev\" \"pnpm run --filter ./apps/frontend dev\"",
     "build": "pnpm --filter ./apps/* build",
     "start": "pnpm --filter ./apps/backend start"
   },
