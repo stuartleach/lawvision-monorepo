@@ -6,7 +6,9 @@ import type {supreme_court_cases as SupremeCourtCase} from '@shared/prisma';
 // check if the types are correct
 
 const getCases = async (numCases: number): Promise<SupremeCourtCase[]> => {
-    const response = await fetch(`/random-case?numCases=${numCases}`,
+
+    console.log("numCases: ", numCases)
+    const response = await fetch(`/api/cases?numCases=${numCases}`,
         {
             method: 'GET',
             headers: {

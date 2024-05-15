@@ -3,7 +3,7 @@ import {useEffect, useState} from "react";
 import * as gr from "graphology";
 import * as d3 from "d3";
 import {getCases} from "./api";
-import type {SupremeCourtCase} from "@shared/prisma";
+import {SupremeCourtCase} from "@shared/prisma";
 
 interface CustomNode extends d3.SimulationNodeDatum {
     id: string;
@@ -15,31 +15,32 @@ interface CustomNode extends d3.SimulationNodeDatum {
 
 export const NetworkGraph = (props: { numCases: number }) => {
     const loadGraph = useLoadGraph();
-    // const courtCases = generateCourtCases(props.numCases);
+    const [courtCases, setCourtCases] = useState<SupremeCourtCase[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
 
-    const [cases, setCases] = useState<SupremeCourtCase[]>([]);
+    useEffect(() => {
+        setIsLoading(true); // Start loading
 
+        getCases(props.numCases)
+            .then(setCourtCases)
+            .catch(e => console.error("Error fetching cases:", e))
+            .finally(() => setIsLoading(false)); // Done loading
 
-    useEffect( () => {
+    }, [props.numCases]);
 
-        // getCases(props.numCases).then(setCases).catch(e => {
-        //     return "no luck" + e
-        // }).then(() => console.log(cases))
-
-        getCases(props.numCases).then(caseI=>setCases(caseI)).then(()=>console.log("got cases"))
-
-        const courtCases = cases; // refactor later
+    useEffect(() => {
+        if (isLoading) return; // Don't build the graph if data is still loading
 
         const graph = new gr.MultiDirectedGraph();
 
-
+        console.log(courtCases)
 
         courtCases.forEach(caseItem => {
             // const children = caseItem.childCases.length
-            console.log(caseItem.citations.length)
-            const children = caseItem.citations.length
+            // console.log(caseItem.citations.length)
+            const children = caseItem.name.length
             const weight = 2 ** children
-            graph.addNode(caseItem.caseCitation, {
+            graph.addNode(caseItem.name, {
                 size: weight * 1.5,
                 strength: weight,
                 color: `rgb(142, 11, 119, ${Math.min(1, 0.1 + children / 5)})`,
@@ -96,7 +97,7 @@ export const NetworkGraph = (props: { numCases: number }) => {
         });
 
 
-    }, [loadGraph, props.numCases]);
+    }, [loadGraph, props.numCases, courtCases, isLoading]);
 
     return null;
 };

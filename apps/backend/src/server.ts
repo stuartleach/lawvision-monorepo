@@ -1,36 +1,36 @@
-import express from "express";
-import {PrismaClient} from "@shared/prisma"
-import {SupremeCourtCase} from "@shared/prisma";
+import express, { Express, Request, Response } from 'express';
+import dotenv from 'dotenv';
+import { PrismaClient } from '@shared/prisma';
 
 
-const app = express();
+dotenv.config();
+
+const app: Express = express();
+const port = process.env.PORT;
 const prisma = new PrismaClient();
 
-app.use(express.json());
-
-app.get("/", (req, res) => {
-    res.send("Hello from Express");
+app.get('/', (req: Request, res: Response) => {
+    res.send('Express + TypeScript Server');
 });
 
-app.get("/random-case", async (req, res) => {
-
+app.get('/api/cases', async (req: Request, res: Response) => {
     try {
-        const randomCases: SupremeCourtCase[] = await prisma.supreme_court_cases.findMany({
-            orderBy: {
-                id: "desc",
-            },
-            take: parseInt(req.query.numCases as string) || 10,
-
+        const numCases = parseInt(req.query.numCases as string) || 10; // Default to 10 cases
+        const cases = await prisma.supreme_court_cases.findMany({
+            take: numCases, // Fetch the specified number of cases
+            select: { // Only select these fields
+                cases_citations: true,
+                name: true,
+                citation: true,
+            }
         });
-            console.log(randomCases[0])
-        res.status(200).json(randomCases);
+        res.json(cases);
     } catch (error) {
         console.error("Error fetching cases:", error);
-        res.status(500).json({error: "Internal Server Error"}); // Return JSON error
+        res.status(500).json({ error: "Internal Server Error" });
     }
 });
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
+app.listen(port, () => {
+    console.log(`⚡️[server]: Server is running at http://localhost:${port}`);
 });
