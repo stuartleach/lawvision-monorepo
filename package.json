@@ -10,5 +10,8 @@
   },
   "devDependencies": {
     "concurrently": "^6.4.0"
+  },
+  "dependencies": {
+    "tsx": "^4.10.2"
   }
 }

@@ -71,16 +71,3 @@ function weightedRandomCitationCount(): number {
     }
     return 2; // Default return value (safeguard)
 }
-
-// extract citations from text
-export const extractSupremeCourtCitations =(text: string): string[] => {
-    const citationRegex = /([0-9]+)\s+U\.?\s*S\.?\s*([0-9]+)/g; // Match patterns like "543 U.S. 125"
-    const matches = text.matchAll(citationRegex);
-
-    const citations: string[] = [];
-    for (const match of matches) {
-        citations.push(`${match[1]} U.S. ${match[2]}`); // Standardize format
-    }
-
-    return citations;
-}
