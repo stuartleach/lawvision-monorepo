@@ -4,7 +4,7 @@ import * as gr from "graphology";
 // import {generateCourtCases} from "./utils";
 import * as d3 from "d3";
 import {getCases} from "./api";
-import SupremeCourtCase from "@shared/types";
+import { SupremeCourtCase } from '@shared/prisma';  // Import directly from prisma.ts
 
 interface CustomNode extends d3.SimulationNodeDatum {
     id: string;

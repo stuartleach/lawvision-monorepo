@@ -11,7 +11,7 @@
     "rootDir": "src",
     "baseUrl": ".",
     "paths": {
-      "@lawvision/shared": ["../packages/shared/dist"]
+      "@shared": ["../packages/shared/src"]
     }
   },
   "include": ["src"],
