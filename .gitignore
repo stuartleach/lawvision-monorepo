@@ -1,0 +1,3 @@
+# Project exclude paths
+/apps/frontend/vite.config.d.ts
+/apps/frontend/vite.config.js

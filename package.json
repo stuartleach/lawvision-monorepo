@@ -1,0 +1,13 @@
+{
+  "name": "lawvision-monorepo",
+  "private": true,
+  "version": "0.0.0",
+  "scripts": {
+    "dev": "concurrently \"pnpm --filter ./apps/backend dev\" \"pnpm --filter ./apps/frontend dev\"",
+    "build": "pnpm --filter ./apps/* build",
+    "start": "pnpm --filter ./apps/backend start"
+  },
+  "devDependencies": {
+    "concurrently": "^6.4.0"
+  }
+}
