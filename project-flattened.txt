@@ -1,0 +1,1273 @@
+
+
+// File: /Users/stuartleach/Coding/lawvisionproject/lawvision-monorepo/.idea/lawvision-monorepo.iml
+
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="JAVA_MODULE" version="4">
+  <component name="NewModuleRootManager" inherit-compiler-output="true">
+    <exclude-output />
+    <content url="file://$MODULE_DIR$" />
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+  </component>
+</module>
+
+// File: /Users/stuartleach/Coding/lawvisionproject/lawvision-monorepo/apps/backend/.env
+
+# Environment variables declared in this file are automatically made available to Prisma.
+# See the documentation for more detail: https://pris.ly/d/prisma-schema#accessing-environment-variables-from-the-schema
+
+# Prisma supports the native connection string format for PostgreSQL, MySQL, SQLite, SQL Server, MongoDB and CockroachDB.
+# See the documentation for all the connection string options: https://pris.ly/d/connection-strings
+
+DATABASE_URL="postgresql://postgres:docker@localhost:5434/"
+
+
+// File: /Users/stuartleach/Coding/lawvisionproject/lawvision-monorepo/apps/backend/dist/server.js
+
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = __importDefault(require("express"));
+const client_1 = require("@prisma/client");
+const app = (0, express_1.default)();
+const prisma = new client_1.PrismaClient();
+app.use(express_1.default.json());
+app.get("/", (req, res) => {
+    res.send("Hello from Express");
+});
+app.get("/random-case", async (req, res) => {
+    const randomCases = await prisma.supreme_court_cases.findMany({
+        orderBy: {
+            id: "desc",
+        },
+        take: parseInt(req.query.numCases) || 10,
+    });
+    console.log(randomCases[0].name);
+    res.json(randomCases);
+});
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Server is running on http://localhost:${PORT}`);
+});
+
+
+// File: /Users/stuartleach/Coding/lawvisionproject/lawvision-monorepo/apps/backend/package.json
+
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
+    "build": "tsc",
+    "start": "node dist/server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "shared": "workspace:*",
+    "@prisma/client": "^5.14.0",
+    "express": "^4.19.2"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "prisma": "^5.14.0",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.4.5"
+  }
+}
+
+
+// File: /Users/stuartleach/Coding/lawvisionproject/lawvision-monorepo/apps/backend/prisma/schema.prisma
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["multiSchema"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  schemas  = ["public"]
+}
+
+model cases_by_year {
+  oyez_id       String  @id(map: "cases_by_year_pk")
+  year          Int?
+  docket_number String?
+  uuid          String? @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+
+  @@schema("public")
+}
+
+model cases_citations {
+  id                  String              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  case_uuid           String              @db.Uuid
+  citation            String?
+  created_at          DateTime?           @default(now()) @db.Timestamp(6)
+  updated_at          DateTime?           @default(now()) @db.Timestamp(6)
+  supreme_court_cases supreme_court_cases @relation(fields: [case_uuid], references: [uuid], onDelete: NoAction, onUpdate: NoAction)
+
+  @@schema("public")
+}
+
+model ny_appeals_court_cases {
+  name     String?
+  link     String?
+  citation String?
+  opinion  String?
+  uuid     String? @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id       String  @id(map: "ny_appeals_court_pkey") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+
+  @@schema("public")
+}
+
+model supreme_court_cases {
+  id                        String
+  name                      String?
+  href                      String?
+  view_count                String?
+  docket_number             String?
+  additional_docket_numbers String?
+  manner_of_jurisdiction    String?
+  first_party               String?
+  second_party              String?
+  timeline                  Json?
+  lower_court               Json?
+  facts_of_the_case         String?
+  question                  String?
+  conclusion                String?
+  advocates                 Json?
+  oral_argument_audio       Json?
+  citation                  Json?
+  decisions                 Json?
+  first_party_label         String?
+  second_party_label        String?
+  heard_by                  Json?
+  decided_by                Json?
+  term                      String?
+  location                  Json?
+  opinion_announcement      Json?
+  description               String?
+  written_opinion           String?
+  related_cases             String?
+  justia_url                String?
+  argument2_url             String?
+  uuid                      String            @id(map: "oyez_0_pkey") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  cases_citations           cases_citations[]
+
+  @@schema("public")
+}
+
+
+// File: /Users/stuartleach/Coding/lawvisionproject/lawvision-monorepo/apps/backend/src/server.ts
+
+import express from "express";
+import {PrismaClient} from "@prisma/client";
+import {SupremeCourtCases} from "shared";
+
+const app = express();
+const prisma = new PrismaClient();
+
+app.use(express.json());
+
+app.get("/", (req, res) => {
+    res.send("Hello from Express");
+});
+
+app.get("/random-case", async (req, res) => {
+    const randomCases = await prisma.supreme_court_cases.findMany({
+        orderBy: {
+            id: "desc",
+        },
+        take: parseInt(req.query.numCases as string) || 10,
+    });
+    console.log(randomCases[0].name)
+    res.json(randomCases);
+
+});
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Server is running on http://localhost:${PORT}`);
+});
+
+
+// File: /Users/stuartleach/Coding/lawvisionproject/lawvision-monorepo/apps/backend/tsconfig.json
+
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "CommonJS",
+    "lib": ["ES2020"],
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "outDir": "dist",
+    "rootDir": "src",
+    "baseUrl": ".",
+    "paths": {
+      "@lawvision/shared": ["../packages/shared/dist"]
+    }
+  },
+  "include": ["src"],
+  "exclude": ["node_modules", "dist"]
+}
+
+
+// File: /Users/stuartleach/Coding/lawvisionproject/lawvision-monorepo/apps/frontend/.eslintrc.cjs
+
+module.exports = {
+  root: true,
+  env: { browser: true, es2020: true },
+  extends: [
+    'eslint:recommended',
+    'plugin:@typescript-eslint/recommended',
+    'plugin:react-hooks/recommended',
+  ],
+  ignorePatterns: ['dist', '.eslintrc.cjs'],
+  parser: '@typescript-eslint/parser',
+  plugins: ['react-refresh'],
+  rules: {
+    'react-refresh/only-export-components': [
+      'warn',
+      { allowConstantExport: true },
+    ],
+  },
+}
+
+
+// File: /Users/stuartleach/Coding/lawvisionproject/lawvision-monorepo/apps/frontend/README.md
+
+# React + TypeScript + Vite
+
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+
+Currently, two official plugins are available:
+
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+
+## Expanding the ESLint configuration
+
+If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+
+- Configure the top-level `parserOptions` property like this:
+
+```js
+export default {
+  // other rules...
+  parserOptions: {
+    ecmaVersion: 'latest',
+    sourceType: 'module',
+    project: ['./tsconfig.json', './tsconfig.node.json'],
+    tsconfigRootDir: __dirname,
+  },
+}
+```
+
+- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
+- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
+- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+
+
+// File: /Users/stuartleach/Coding/lawvisionproject/lawvision-monorepo/apps/frontend/archive/src/App.css
+
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+.card {
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #888;
+}
+
+
+// File: /Users/stuartleach/Coding/lawvisionproject/lawvision-monorepo/apps/frontend/archive/src/App.tsx
+
+import { useState } from 'react'
+import reactLogo from './assets/react.svg'
+import viteLogo from '/vite.svg'
+import './App.css'
+
+function App() {
+  const [count, setCount] = useState(0)
+
+  return (
+    <>
+      <div>
+        <a href="https://vitejs.dev" target="_blank">
+          <img src={viteLogo} className="logo" alt="Vite logo" />
+        </a>
+        <a href="https://react.dev" target="_blank">
+          <img src={reactLogo} className="logo react" alt="React logo" />
+        </a>
+      </div>
+      <h1>Vite + React</h1>
+      <div className="card">
+        <button onClick={() => setCount((count) => count + 1)}>
+          count is {count}
+        </button>
+        <p>
+          Edit <code>src/App.tsx</code> and save to test HMR
+        </p>
+      </div>
+      <p className="read-the-docs">
+        Click on the Vite and React logos to learn more
+      </p>
+    </>
+  )
+}
+
+export default App
+
+
+// File: /Users/stuartleach/Coding/lawvisionproject/lawvision-monorepo/apps/frontend/archive/src/index.css
+
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #242424;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  font-weight: 500;
+  color: #646cff;
+  text-decoration: inherit;
+}
+a:hover {
+  color: #535bf2;
+}
+
+body {
+  margin: 0;
+  display: flex;
+  place-items: center;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+h1 {
+  font-size: 3.2em;
+  line-height: 1.1;
+}
+
+button {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: #1a1a1a;
+  cursor: pointer;
+  transition: border-color 0.25s;
+}
+button:hover {
+  border-color: #646cff;
+}
+button:focus,
+button:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    color: #213547;
+    background-color: #ffffff;
+  }
+  a:hover {
+    color: #747bff;
+  }
+  button {
+    background-color: #f9f9f9;
+  }
+}
+
+
+// File: /Users/stuartleach/Coding/lawvisionproject/lawvision-monorepo/apps/frontend/archive/src/main.tsx
+
+import React from 'react'
+import ReactDOM from 'react-dom/client'
+import App from './App.tsx'
+import './index.css'
+
+ReactDOM.createRoot(document.getElementById('root')!).render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>,
+)
+
+
+// File: /Users/stuartleach/Coding/lawvisionproject/lawvision-monorepo/apps/frontend/archive/src/vite-env.d.ts
+
+/// <reference types="vite/client" />
+
+
+// File: /Users/stuartleach/Coding/lawvisionproject/lawvision-monorepo/apps/frontend/index.html
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vite + React + TS</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+
+
+// File: /Users/stuartleach/Coding/lawvisionproject/lawvision-monorepo/apps/frontend/package.json
+
+{
+  "name": "frontend",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "pnpm -F ../packages/shared run build && vite",
+    "build": "pnpm -F ../packages/shared run build && vite build",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@faker-js/faker": "^8.4.1",
+    "@react-sigma/core": "^4.0.2",
+    "@vitejs/plugin-react-swc": "^3.6.0",
+    "d3": "^7.9.0",
+    "graphology": "^0.25.4",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "shared": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/d": "^1.0.4",
+    "@types/d3": "^7.4.3",
+    "@types/react": "^18.2.66",
+    "@types/react-dom": "^18.2.22",
+    "@typescript-eslint/eslint-plugin": "^7.2.0",
+    "@typescript-eslint/parser": "^7.2.0",
+    "@vitejs/plugin-react": "^4.2.1",
+    "eslint": "^8.57.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.4.6",
+    "typescript": "^5.2.2",
+    "vite": "^5.2.0",
+    "vite-tsconfig-paths": "^4.3.2"
+  }
+}
+
+
+// File: /Users/stuartleach/Coding/lawvisionproject/lawvision-monorepo/apps/frontend/public/vite.svg
+
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img" class="iconify iconify--logos" width="31.88" height="32" preserveAspectRatio="xMidYMid meet" viewBox="0 0 256 257"><defs><linearGradient id="IconifyId1813088fe1fbc01fb466" x1="-.828%" x2="57.636%" y1="7.652%" y2="78.411%"><stop offset="0%" stop-color="#41D1FF"></stop><stop offset="100%" stop-color="#BD34FE"></stop></linearGradient><linearGradient id="IconifyId1813088fe1fbc01fb467" x1="43.376%" x2="50.316%" y1="2.242%" y2="89.03%"><stop offset="0%" stop-color="#FFEA83"></stop><stop offset="8.333%" stop-color="#FFDD35"></stop><stop offset="100%" stop-color="#FFA800"></stop></linearGradient></defs><path fill="url(#IconifyId1813088fe1fbc01fb466)" d="M255.153 37.938L134.897 252.976c-2.483 4.44-8.862 4.466-11.382.048L.875 37.958c-2.746-4.814 1.371-10.646 6.827-9.67l120.385 21.517a6.537 6.537 0 0 0 2.322-.004l117.867-21.483c5.438-.991 9.574 4.796 6.877 9.62Z"></path><path fill="url(#IconifyId1813088fe1fbc01fb467)" d="M185.432.063L96.44 17.501a3.268 3.268 0 0 0-2.634 3.014l-5.474 92.456a3.268 3.268 0 0 0 3.997 3.378l24.777-5.718c2.318-.535 4.413 1.507 3.936 3.838l-7.361 36.047c-.495 2.426 1.782 4.5 4.151 3.78l15.304-4.649c2.372-.72 4.652 1.36 4.15 3.788l-11.698 56.621c-.732 3.542 3.979 5.473 5.943 2.437l1.313-2.028l72.516-144.72c1.215-2.423-.88-5.186-3.54-4.672l-25.505 4.922c-2.396.462-4.435-1.77-3.759-4.114l16.646-57.705c.677-2.35-1.37-4.583-3.769-4.113Z"></path></svg>
+
+// File: /Users/stuartleach/Coding/lawvisionproject/lawvision-monorepo/apps/frontend/src/App.css
+
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+.card {
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #888;
+}
+
+
+// File: /Users/stuartleach/Coding/lawvisionproject/lawvision-monorepo/apps/frontend/src/App.tsx
+
+import { SigmaContainer } from "@react-sigma/core";
+import {NetworkGraph} from "./NetworkGraph";
+import {FC} from "react";
+
+
+const App: FC = () => {
+    return (
+        <div>
+            <h1>Graph of U.S. Supreme Court Cases</h1>
+            <SigmaContainer style={{height: "100vh"}}>
+            {/*<div style={{height: 100}}>*/}
+                <NetworkGraph numCases={50}/>
+            {/*</div>*/}
+            </SigmaContainer>
+        </div>
+    );
+};
+
+export default App;
+``
+
+
+// File: /Users/stuartleach/Coding/lawvisionproject/lawvision-monorepo/apps/frontend/src/NetworkGraph.tsx
+
+import {useLoadGraph} from "@react-sigma/core";
+import {useEffect, useState} from "react";
+import * as gr from "graphology";
+// import {generateCourtCases} from "./utils";
+import * as d3 from "d3";
+import {getCases} from "./api";
+import {SupremeCourtCase} from "@shared";
+
+interface CustomNode extends d3.SimulationNodeDatum {
+    id: string;
+    size: number;
+    weight: number;
+    label: string;
+}
+
+
+export const NetworkGraph =  (props: { numCases: number }) => {
+    const loadGraph = useLoadGraph();
+    // const courtCases = generateCourtCases(props.numCases);
+
+    const [cases, setCases] = useState<SupremeCourtCase[]>([]);
+
+    // const courtCases = await getCases(props.numCases);
+    useEffect(() => {
+        getCases(props.numCases).then(setCases);
+    }, [props.numCases]);
+
+    const courtCases = cases; // refactor later
+
+    useEffect(() => {
+        const graph = new gr.MultiDirectedGraph()
+        courtCases.forEach(caseItem => {
+            const children = caseItem.childCases.length
+            const weight = 2 ** children
+            graph.addNode(caseItem.caseCitation, {
+                size: weight * 1.5,
+                strength: weight,
+                color: `rgb(142, 11, 119, ${Math.min(1, 0.1 + children / 5)})`,
+                x: Math.random(),
+                y: Math.random(),
+                label: caseItem.title
+            });
+        });
+
+        courtCases.forEach(caseItem => {
+            caseItem.citations.forEach(citation => {
+                if (graph.hasNode(citation)) {
+                    graph.addEdge(caseItem.caseCitation, citation, {
+                        type: 'arrow',
+                        size: 0.05,
+                        color: `rgb(142, 11, 119, 0.1)`,
+                    });
+                }
+            });
+        });
+
+        loadGraph(graph);
+
+        const nodes: CustomNode[] = graph.nodes().map(node => ({
+            id: node,
+            x: graph.getNodeAttribute(node, 'x'),
+            y: graph.getNodeAttribute(node, 'y'),
+            size: graph.getNodeAttribute(node, 'size'),
+            weight: graph.inDegree(node),
+            label: graph.getNodeAttribute(node, 'label')
+        }));
+
+        /*   const links = graph.edges().map(edge => ({
+               source: graph.source(edge),
+               target: graph.target(edge)
+           }));*/
+
+        const simulation = d3.forceSimulation(nodes)
+            // .force("link", d3.forceLink(links).id(d => (d as CustomNode).id).strength(.9))
+            .force("collide", d3.forceCollide().radius(d => (d as CustomNode).size * -1).strength(0.5))
+            .force("charge", d3.forceManyBody().strength(d => -400 * (d as CustomNode).size))  // Increased repulsion for larger nodes
+            .force("radial", d3.forceRadial(
+                d => 300 - 10 * (d as CustomNode).size,  // Inversely scale radius based on size
+                400, 300).strength(0.8))  // Increased radial force strength
+            .force("center", d3.forceCenter(400, 300));
+
+        simulation.on("tick", () => {
+            nodes.forEach(node => {
+                graph.setNodeAttribute(node.id, 'x', node.x);
+                graph.setNodeAttribute(node.id, 'y', node.y);
+
+            });
+            loadGraph(graph);
+        });
+
+
+    }, [loadGraph, props.numCases]);
+
+    return null;
+};
+
+
+// File: /Users/stuartleach/Coding/lawvisionproject/lawvision-monorepo/apps/frontend/src/api.ts
+
+import { SupremeCourtCase } from 'shared';
+
+
+// check if shared was imported correctly
+// check if the types are correct
+console.log(SupremeCourtCase);
+
+const getCases = async (numCases: number): Promise<SupremeCourtCase[]> => {
+    const response = await fetch(`/random-case?numCases=${numCases}`);
+    return response.json();
+};
+
+export { getCases };
+
+
+// File: /Users/stuartleach/Coding/lawvisionproject/lawvision-monorepo/apps/frontend/src/assets/react.svg
+
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img" class="iconify iconify--logos" width="35.93" height="32" preserveAspectRatio="xMidYMid meet" viewBox="0 0 256 228"><path fill="#00D8FF" d="M210.483 73.824a171.49 171.49 0 0 0-8.24-2.597c.465-1.9.893-3.777 1.273-5.621c6.238-30.281 2.16-54.676-11.769-62.708c-13.355-7.7-35.196.329-57.254 19.526a171.23 171.23 0 0 0-6.375 5.848a155.866 155.866 0 0 0-4.241-3.917C100.759 3.829 77.587-4.822 63.673 3.233C50.33 10.957 46.379 33.89 51.995 62.588a170.974 170.974 0 0 0 1.892 8.48c-3.28.932-6.445 1.924-9.474 2.98C17.309 83.498 0 98.307 0 113.668c0 15.865 18.582 31.778 46.812 41.427a145.52 145.52 0 0 0 6.921 2.165a167.467 167.467 0 0 0-2.01 9.138c-5.354 28.2-1.173 50.591 12.134 58.266c13.744 7.926 36.812-.22 59.273-19.855a145.567 145.567 0 0 0 5.342-4.923a168.064 168.064 0 0 0 6.92 6.314c21.758 18.722 43.246 26.282 56.54 18.586c13.731-7.949 18.194-32.003 12.4-61.268a145.016 145.016 0 0 0-1.535-6.842c1.62-.48 3.21-.974 4.76-1.488c29.348-9.723 48.443-25.443 48.443-41.52c0-15.417-17.868-30.326-45.517-39.844Zm-6.365 70.984c-1.4.463-2.836.91-4.3 1.345c-3.24-10.257-7.612-21.163-12.963-32.432c5.106-11 9.31-21.767 12.459-31.957c2.619.758 5.16 1.557 7.61 2.4c23.69 8.156 38.14 20.213 38.14 29.504c0 9.896-15.606 22.743-40.946 31.14Zm-10.514 20.834c2.562 12.94 2.927 24.64 1.23 33.787c-1.524 8.219-4.59 13.698-8.382 15.893c-8.067 4.67-25.32-1.4-43.927-17.412a156.726 156.726 0 0 1-6.437-5.87c7.214-7.889 14.423-17.06 21.459-27.246c12.376-1.098 24.068-2.894 34.671-5.345a134.17 134.17 0 0 1 1.386 6.193ZM87.276 214.515c-7.882 2.783-14.16 2.863-17.955.675c-8.075-4.657-11.432-22.636-6.853-46.752a156.923 156.923 0 0 1 1.869-8.499c10.486 2.32 22.093 3.988 34.498 4.994c7.084 9.967 14.501 19.128 21.976 27.15a134.668 134.668 0 0 1-4.877 4.492c-9.933 8.682-19.886 14.842-28.658 17.94ZM50.35 144.747c-12.483-4.267-22.792-9.812-29.858-15.863c-6.35-5.437-9.555-10.836-9.555-15.216c0-9.322 13.897-21.212 37.076-29.293c2.813-.98 5.757-1.905 8.812-2.773c3.204 10.42 7.406 21.315 12.477 32.332c-5.137 11.18-9.399 22.249-12.634 32.792a134.718 134.718 0 0 1-6.318-1.979Zm12.378-84.26c-4.811-24.587-1.616-43.134 6.425-47.789c8.564-4.958 27.502 2.111 47.463 19.835a144.318 144.318 0 0 1 3.841 3.545c-7.438 7.987-14.787 17.08-21.808 26.988c-12.04 1.116-23.565 2.908-34.161 5.309a160.342 160.342 0 0 1-1.76-7.887Zm110.427 27.268a347.8 347.8 0 0 0-7.785-12.803c8.168 1.033 15.994 2.404 23.343 4.08c-2.206 7.072-4.956 14.465-8.193 22.045a381.151 381.151 0 0 0-7.365-13.322Zm-45.032-43.861c5.044 5.465 10.096 11.566 15.065 18.186a322.04 322.04 0 0 0-30.257-.006c4.974-6.559 10.069-12.652 15.192-18.18ZM82.802 87.83a323.167 323.167 0 0 0-7.227 13.238c-3.184-7.553-5.909-14.98-8.134-22.152c7.304-1.634 15.093-2.97 23.209-3.984a321.524 321.524 0 0 0-7.848 12.897Zm8.081 65.352c-8.385-.936-16.291-2.203-23.593-3.793c2.26-7.3 5.045-14.885 8.298-22.6a321.187 321.187 0 0 0 7.257 13.246c2.594 4.48 5.28 8.868 8.038 13.147Zm37.542 31.03c-5.184-5.592-10.354-11.779-15.403-18.433c4.902.192 9.899.29 14.978.29c5.218 0 10.376-.117 15.453-.343c-4.985 6.774-10.018 12.97-15.028 18.486Zm52.198-57.817c3.422 7.8 6.306 15.345 8.596 22.52c-7.422 1.694-15.436 3.058-23.88 4.071a382.417 382.417 0 0 0 7.859-13.026a347.403 347.403 0 0 0 7.425-13.565Zm-16.898 8.101a358.557 358.557 0 0 1-12.281 19.815a329.4 329.4 0 0 1-23.444.823c-7.967 0-15.716-.248-23.178-.732a310.202 310.202 0 0 1-12.513-19.846h.001a307.41 307.41 0 0 1-10.923-20.627a310.278 310.278 0 0 1 10.89-20.637l-.001.001a307.318 307.318 0 0 1 12.413-19.761c7.613-.576 15.42-.876 23.31-.876H128c7.926 0 15.743.303 23.354.883a329.357 329.357 0 0 1 12.335 19.695a358.489 358.489 0 0 1 11.036 20.54a329.472 329.472 0 0 1-11 20.722Zm22.56-122.124c8.572 4.944 11.906 24.881 6.52 51.026c-.344 1.668-.73 3.367-1.15 5.09c-10.622-2.452-22.155-4.275-34.23-5.408c-7.034-10.017-14.323-19.124-21.64-27.008a160.789 160.789 0 0 1 5.888-5.4c18.9-16.447 36.564-22.941 44.612-18.3ZM128 90.808c12.625 0 22.86 10.235 22.86 22.86s-10.235 22.86-22.86 22.86s-22.86-10.235-22.86-22.86s10.235-22.86 22.86-22.86Z"></path></svg>
+
+// File: /Users/stuartleach/Coding/lawvisionproject/lawvision-monorepo/apps/frontend/src/index.css
+
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #242424;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  font-weight: 500;
+  color: #646cff;
+  text-decoration: inherit;
+}
+a:hover {
+  color: #535bf2;
+}
+
+body {
+  margin: 0;
+  display: flex;
+  place-items: center;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+h1 {
+  font-size: 3.2em;
+  line-height: 1.1;
+}
+
+button {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: #1a1a1a;
+  cursor: pointer;
+  transition: border-color 0.25s;
+}
+button:hover {
+  border-color: #646cff;
+}
+button:focus,
+button:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    color: #213547;
+    background-color: #ffffff;
+  }
+  a:hover {
+    color: #747bff;
+  }
+  button {
+    background-color: #f9f9f9;
+  }
+}
+
+
+// File: /Users/stuartleach/Coding/lawvisionproject/lawvision-monorepo/apps/frontend/src/main.tsx
+
+import React from 'react';
+import { createRoot } from 'react-dom/client';
+import App from './App';
+import '@react-sigma/core/lib/react-sigma.min.css';
+
+const container = document.getElementById('root');
+const root = createRoot(container!);  // Non-null assertion operator to assert that container is not null
+root.render(
+    <React.StrictMode>
+        <App />
+    </React.StrictMode>
+);
+
+
+// File: /Users/stuartleach/Coding/lawvisionproject/lawvision-monorepo/apps/frontend/src/utils.ts
+
+import {faker} from '@faker-js/faker';
+
+export type CourtCase = {
+    firstParty: string;
+    secondParty: string;
+    title: string;
+    caseCitation: string;
+    court: string;
+    year: number;
+    childCases: string[];
+    citations: string[];
+};
+
+// generate court cases
+export const generateCourtCases = (numCases: number): CourtCase[] => {
+    const cases: CourtCase[] = [];
+    for (let i = 0; i < numCases; i++) {
+        const caseYear = faker.date.past({years: 100}).getFullYear();
+        const firstParty = faker.company.name();
+        const secondParty = faker.person.fullName();
+        const newCase: CourtCase = {
+            firstParty,
+            secondParty,
+            title: `${firstParty} vs. ${secondParty} (${caseYear})`,
+            caseCitation: `${faker.number.int({min: 100, max: 999})} U.S. ${faker.number.int({min: 1, max: 999})} (${caseYear})`,
+            court: "Supreme Court of the United States",
+            year: caseYear,
+            childCases: [],
+            citations: [],
+        };
+        cases.push(newCase);
+    }
+
+    cases.sort((a, b) => a.year - b.year);
+
+    // Ensure every case except the last is cited by at least one following case
+    for (let i = 0; i < cases.length - 1; i++) {
+        let hasCitation = false;
+
+        // Assign a random number of citations
+        const numberOfCitations = weightedRandomCitationCount();
+        for (let j = 1; j <= numberOfCitations && i + j < cases.length; j++) {
+            if (cases[i].year <= cases[i + j].year) {
+                cases[i].citations.push(cases[i + j].caseCitation);
+                cases[i + j].childCases.push(cases[i].caseCitation);
+                hasCitation = true;
+            }
+        }
+
+        // Ensure at least one citation if none has been made
+        if (!hasCitation) {
+            cases[i].citations.push(cases[i + 1].caseCitation);
+            cases[i + 1].childCases.push(cases[i].caseCitation);
+        }
+    }
+
+    return cases;
+};
+
+// Helper function to generate a weighted random count of citations
+function weightedRandomCitationCount(): number {
+    const weights = [3, 1, 1, 1, 1, 1, 1 ]; // Weights for 0 to 8 citations
+    const sum = weights.reduce((acc, el) => acc + el, 0);
+    let rand = Math.random() * sum;
+
+    for (let i = 0; i < weights.length; i++) {
+        if (rand < weights[i]) {
+            return i;
+        }
+        rand -= weights[i];
+    }
+    return 2; // Default return value (safeguard)
+}
+
+// extract citations from text
+export const extractSupremeCourtCitations =(text: string): string[] => {
+    const citationRegex = /([0-9]+)\s+U\.?\s*S\.?\s*([0-9]+)/g; // Match patterns like "543 U.S. 125"
+    const matches = text.matchAll(citationRegex);
+
+    const citations: string[] = [];
+    for (const match of matches) {
+        citations.push(`${match[1]} U.S. ${match[2]}`); // Standardize format
+    }
+
+    return citations;
+}
+
+// File: /Users/stuartleach/Coding/lawvisionproject/lawvision-monorepo/apps/frontend/src/vite-env.d.ts
+
+/// <reference types="vite/client" />
+
+
+// File: /Users/stuartleach/Coding/lawvisionproject/lawvision-monorepo/apps/frontend/tsconfig.json
+
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "useDefineForClassFields": true,
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    "allowJs": false,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
+    "baseUrl": ".",
+    "paths": {
+      "@shared": ["../packages/shared/src"]
+    }
+  },
+  "include": ["src"]
+}
+
+
+// File: /Users/stuartleach/Coding/lawvisionproject/lawvision-monorepo/apps/frontend/tsconfig.node.json
+
+{
+  "compilerOptions": {
+    "composite": true,
+    "skipLibCheck": true,
+    "module": "ESNext",
+    "target": "ESNext",
+    "esModuleInterop": true,
+    "moduleResolution": "bundler",
+    "allowSyntheticDefaultImports": true,
+    "strict": true
+  },
+  "include": [
+    "vite.config.ts"
+  ]
+}
+
+
+// File: /Users/stuartleach/Coding/lawvisionproject/lawvision-monorepo/apps/frontend/vite.config.js
+
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var vite_1 = require("vite");
+var plugin_react_swc_1 = require("@vitejs/plugin-react-swc");
+var vite_tsconfig_paths_1 = require("vite-tsconfig-paths");
+exports.default = (0, vite_1.defineConfig)({
+    plugins: [
+        (0, plugin_react_swc_1.default)(),
+        (0, vite_tsconfig_paths_1.default)({
+            root: '../../', // Adjust if your tsconfig is in a different location
+        }),
+    ],
+    server: {
+        port: 5173,
+        proxy: {
+            "/api": "http://localhost:3000", // Proxy to backend
+        },
+    },
+});
+
+
+// File: /Users/stuartleach/Coding/lawvisionproject/lawvision-monorepo/apps/frontend/vite.config.ts
+
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react-swc";
+import tsconfigPaths from 'vite-tsconfig-paths';
+
+
+export default defineConfig({
+  plugins: [
+    react(),
+    tsconfigPaths({
+      root: '../../', // Adjust if your tsconfig is in a different location
+    }),
+  ],
+  server: {
+    port: 5173,
+    proxy: {
+      "/api": "http://localhost:3000", // Proxy to backend
+    },
+  },
+});
+
+
+// File: /Users/stuartleach/Coding/lawvisionproject/lawvision-monorepo/flatten-project.js
+
+import fs from 'fs';
+import path from 'path';
+import {fileURLToPath} from 'url';
+
+const OUTPUT_FILE = 'project-flattened.txt';
+const EXCLUDE_DIRS = ['node_modules', '.git']; // Add other directories to exclude if needed
+
+// Get the directory name of the current module file
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Function to recursively read directory and concatenate file contents
+function readDirectory(dir, fileContent = '') {
+    const files = fs.readdirSync(dir);
+
+    files.forEach(file => {
+        const filePath = path.join(dir, file);
+        const stats = fs.statSync(filePath);
+
+        if (stats.isDirectory()) {
+            if (!EXCLUDE_DIRS.some(excludeDir => filePath.includes(excludeDir))) {
+                console.log(`Entering directory: ${filePath}`);
+                // Recursively read directory
+                fileContent = readDirectory(filePath, fileContent);
+            } else {
+                console.log(`Excluding directory: ${filePath}`);
+            }
+        } else if (stats.isFile()) {
+            if (filePath.includes('node_modules')
+                || filePath.includes('.git') || filePath.includes('project-flattened.txt')
+                || filePath.includes('package-lock.json') || filePath.includes('xml')
+                || filePath.includes('lock')
+                || filePath.includes(OUTPUT_FILE) || filePath.includes("package-lock.json") || filePath.includes("xml")) {
+                console.log(`Excluding file: ${filePath}`);
+
+            } else {
+                console.log(`Reading file: ${filePath}`);
+                // Read file content
+                const content = fs.readFileSync(filePath, 'utf8');
+                fileContent += `\n\n// File: ${filePath}\n\n${content}`;
+            }
+        }
+    });
+
+    return fileContent;
+}
+
+// Main function to flatten project
+function flattenProject() {
+    const projectDir = __dirname; // Get current script directory
+    let fileContent = '';
+
+    // if file already exists, delete it
+    if (fs.existsSync(OUTPUT_FILE)) {
+        fs.unlinkSync(OUTPUT_FILE);
+    }
+
+    fileContent = readDirectory(projectDir);
+
+    fs.writeFileSync(OUTPUT_FILE, fileContent, 'utf8');
+    console.log(`Project flattened into ${OUTPUT_FILE}`);
+}
+
+// Execute the script
+flattenProject();
+
+
+// File: /Users/stuartleach/Coding/lawvisionproject/lawvision-monorepo/package.json
+
+{
+  "name": "lawvision-monorepo",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "concurrently \"pnpm --filter ./apps/backend dev\" \"pnpm --filter ./apps/frontend dev\"",
+    "build": "pnpm --filter ./apps/* build",
+    "start": "pnpm --filter ./apps/backend start"
+  },
+  "devDependencies": {
+    "concurrently": "^6.4.0"
+  }
+}
+
+
+// File: /Users/stuartleach/Coding/lawvisionproject/lawvision-monorepo/packages/shared/dist/prisma.d.ts
+
+export * from '@prisma/client';
+
+
+// File: /Users/stuartleach/Coding/lawvisionproject/lawvision-monorepo/packages/shared/dist/prisma.js
+
+export * from '@prisma/client';
+
+
+// File: /Users/stuartleach/Coding/lawvisionproject/lawvision-monorepo/packages/shared/dist/types/prisma.d.ts
+
+export * from "@prisma/client";
+
+
+// File: /Users/stuartleach/Coding/lawvisionproject/lawvision-monorepo/packages/shared/package.json
+
+{
+  "name": "shared",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.14.0"
+  },
+  "devDependencies": {
+    "prisma": "^5.14.0"
+  }
+}
+
+
+// File: /Users/stuartleach/Coding/lawvisionproject/lawvision-monorepo/packages/shared/src/prisma.ts
+
+export * from '@prisma/client';
+
+
+// File: /Users/stuartleach/Coding/lawvisionproject/lawvision-monorepo/packages/shared/text.txt
+
+../..
+├── apps
+│   ├── backend
+│   │   ├── dist
+│   │   │   └── server.js
+│   │   ├── node_modules
+│   │   │   ├── @prisma
+│   │   │   │   └── client -> ../../../../node_modules/.pnpm/@prisma+client@5.14.0_prisma@5.14.0/node_modules/@prisma/client
+│   │   │   ├── @types
+│   │   │   │   └── express -> ../../../../node_modules/.pnpm/@types+express@4.17.21/node_modules/@types/express
+│   │   │   ├── express -> ../../../node_modules/.pnpm/express@4.19.2/node_modules/express
+│   │   │   ├── prisma -> ../../../node_modules/.pnpm/prisma@5.14.0/node_modules/prisma
+│   │   │   ├── shared -> ../../../packages/shared
+│   │   │   ├── ts-node-dev -> ../../../node_modules/.pnpm/ts-node-dev@2.0.0_@swc+core@1.5.7_@types+node@20.12.12_typescript@5.4.5/node_modules/ts-node-dev
+│   │   │   └── typescript -> ../../../node_modules/.pnpm/typescript@5.4.5/node_modules/typescript
+│   │   ├── package.json
+│   │   ├── pnpm-lock.yaml
+│   │   ├── prisma
+│   │   │   └── schema.prisma
+│   │   ├── src
+│   │   │   └── server.ts
+│   │   └── tsconfig.json
+│   └── frontend
+│       ├── README.md
+│       ├── archive
+│       │   └── src
+│       │       ├── App.css
+│       │       ├── App.tsx
+│       │       ├── index.css
+│       │       ├── main.tsx
+│       │       └── vite-env.d.ts
+│       ├── index.html
+│       ├── node_modules
+│       │   ├── @eslint
+│       │   │   ├── eslintrc -> ../.pnpm/@eslint+eslintrc@2.1.4/node_modules/@eslint/eslintrc
+│       │   │   └── js -> ../.pnpm/@eslint+js@8.57.0/node_modules/@eslint/js
+│       │   ├── @eslint-community
+│       │   │   ├── eslint-utils -> ../.pnpm/@eslint-community+eslint-utils@4.4.0_eslint@8.57.0/node_modules/@eslint-community/eslint-utils
+│       │   │   └── regexpp -> ../.pnpm/@eslint-community+regexpp@4.10.0/node_modules/@eslint-community/regexpp
+│       │   ├── @faker-js
+│       │   │   └── faker -> ../../../../node_modules/.pnpm/@faker-js+faker@8.4.1/node_modules/@faker-js/faker
+│       │   ├── @react-sigma
+│       │   │   └── core -> ../../../../node_modules/.pnpm/@react-sigma+core@4.0.2_graphology@0.25.4_graphology-types@0.24.7__react@18.3.1_sigma@3.0.0-b_q24twylqxni2jdl7zvfjgtby3y/node_modules/@react-sigma/core
+│       │   ├── @types
+│       │   │   ├── d -> ../../../../node_modules/.pnpm/@types+d@1.0.4/node_modules/@types/d
+│       │   │   ├── d3 -> ../../../../node_modules/.pnpm/@types+d3@7.4.3/node_modules/@types/d3
+│       │   │   ├── react -> ../../../../node_modules/.pnpm/@types+react@18.3.2/node_modules/@types/react
+│       │   │   └── react-dom -> ../../../../node_modules/.pnpm/@types+react-dom@18.3.0/node_modules/@types/react-dom
+│       │   ├── @typescript-eslint
+│       │   │   ├── eslint-plugin -> ../../../../node_modules/.pnpm/@typescript-eslint+eslint-plugin@7.9.0_@typescript-eslint+parser@7.9.0_eslint@8.57.0_typescri_vit2ibr372pwfklcrn5vw2vb7u/node_modules/@typescript-eslint/eslint-plugin
+│       │   │   ├── parser -> ../../../../node_modules/.pnpm/@typescript-eslint+parser@7.9.0_eslint@8.57.0_typescript@5.4.5/node_modules/@typescript-eslint/parser
+│       │   │   ├── scope-manager -> ../.pnpm/@typescript-eslint+scope-manager@7.9.0/node_modules/@typescript-eslint/scope-manager
+│       │   │   ├── type-utils -> ../.pnpm/@typescript-eslint+type-utils@7.9.0_eslint@8.57.0_typescript@5.4.5/node_modules/@typescript-eslint/type-utils
+│       │   │   ├── types -> ../.pnpm/@typescript-eslint+types@7.9.0/node_modules/@typescript-eslint/types
+│       │   │   ├── typescript-estree -> ../.pnpm/@typescript-eslint+typescript-estree@7.9.0_typescript@5.4.5/node_modules/@typescript-eslint/typescript-estree
+│       │   │   ├── utils -> ../.pnpm/@typescript-eslint+utils@7.9.0_eslint@8.57.0_typescript@5.4.5/node_modules/@typescript-eslint/utils
+│       │   │   └── visitor-keys -> ../.pnpm/@typescript-eslint+visitor-keys@7.9.0/node_modules/@typescript-eslint/visitor-keys
+│       │   ├── @vitejs
+│       │   │   ├── plugin-react -> ../../../../node_modules/.pnpm/@vitejs+plugin-react@4.2.1_vite@5.2.11_@types+node@20.12.12_/node_modules/@vitejs/plugin-react
+│       │   │   └── plugin-react-swc -> ../../../../node_modules/.pnpm/@vitejs+plugin-react-swc@3.6.0_vite@5.2.11_@types+node@20.12.12_/node_modules/@vitejs/plugin-react-swc
+│       │   ├── d3 -> ../../../node_modules/.pnpm/d3@7.9.0/node_modules/d3
+│       │   ├── eslint -> ../../../node_modules/.pnpm/eslint@8.57.0/node_modules/eslint
+│       │   ├── eslint-plugin-react-hooks -> ../../../node_modules/.pnpm/eslint-plugin-react-hooks@4.6.2_eslint@8.57.0/node_modules/eslint-plugin-react-hooks
+│       │   ├── eslint-plugin-react-refresh -> ../../../node_modules/.pnpm/eslint-plugin-react-refresh@0.4.7_eslint@8.57.0/node_modules/eslint-plugin-react-refresh
+│       │   ├── eslint-scope -> .pnpm/eslint-scope@7.2.2/node_modules/eslint-scope
+│       │   ├── eslint-visitor-keys -> .pnpm/eslint-visitor-keys@3.4.3/node_modules/eslint-visitor-keys
+│       │   ├── graphology -> ../../../node_modules/.pnpm/graphology@0.25.4_graphology-types@0.24.7/node_modules/graphology
+│       │   ├── plugin-react-swc -> ../@vitejs/plugin-react-swc
+│       │   ├── react -> ../../../node_modules/.pnpm/react@18.3.1/node_modules/react
+│       │   ├── react-dom -> ../../../node_modules/.pnpm/react-dom@18.3.1_react@18.3.1/node_modules/react-dom
+│       │   ├── shared -> ../../../packages/shared
+│       │   ├── typescript -> ../../../node_modules/.pnpm/typescript@5.4.5/node_modules/typescript
+│       │   └── vite -> ../../../node_modules/.pnpm/vite@5.2.11_@types+node@20.12.12/node_modules/vite
+│       ├── package.json
+│       ├── public
+│       │   └── vite.svg
+│       ├── src
+│       │   ├── App.css
+│       │   ├── App.tsx
+│       │   ├── NetworkGraph.tsx
+│       │   ├── api.ts
+│       │   ├── assets
+│       │   │   └── react.svg
+│       │   ├── index.css
+│       │   ├── main.tsx
+│       │   ├── utils.ts
+│       │   └── vite-env.d.ts
+│       ├── tsconfig.json
+│       ├── tsconfig.node.json
+│       ├── vite.config.d.ts
+│       ├── vite.config.js
+│       └── vite.config.ts
+├── node_modules
+│   ├── @eslint
+│   │   ├── eslintrc -> ../.pnpm/@eslint+eslintrc@2.1.4/node_modules/@eslint/eslintrc
+│   │   └── js -> ../.pnpm/@eslint+js@8.57.0/node_modules/@eslint/js
+│   ├── @eslint-community
+│   │   ├── eslint-utils -> ../.pnpm/@eslint-community+eslint-utils@4.4.0_eslint@8.57.0/node_modules/@eslint-community/eslint-utils
+│   │   └── regexpp -> ../.pnpm/@eslint-community+regexpp@4.10.0/node_modules/@eslint-community/regexpp
+│   ├── @typescript-eslint
+│   │   ├── eslint-plugin -> ../.pnpm/@typescript-eslint+eslint-plugin@7.9.0_@typescript-eslint+parser@7.9.0_eslint@8.57.0_typescri_vit2ibr372pwfklcrn5vw2vb7u/node_modules/@typescript-eslint/eslint-plugin
+│   │   ├── parser -> ../.pnpm/@typescript-eslint+parser@7.9.0_eslint@8.57.0_typescript@5.4.5/node_modules/@typescript-eslint/parser
+│   │   ├── scope-manager -> ../.pnpm/@typescript-eslint+scope-manager@7.9.0/node_modules/@typescript-eslint/scope-manager
+│   │   ├── type-utils -> ../.pnpm/@typescript-eslint+type-utils@7.9.0_eslint@8.57.0_typescript@5.4.5/node_modules/@typescript-eslint/type-utils
+│   │   ├── types -> ../.pnpm/@typescript-eslint+types@7.9.0/node_modules/@typescript-eslint/types
+│   │   ├── typescript-estree -> ../.pnpm/@typescript-eslint+typescript-estree@7.9.0_typescript@5.4.5/node_modules/@typescript-eslint/typescript-estree
+│   │   ├── utils -> ../.pnpm/@typescript-eslint+utils@7.9.0_eslint@8.57.0_typescript@5.4.5/node_modules/@typescript-eslint/utils
+│   │   └── visitor-keys -> ../.pnpm/@typescript-eslint+visitor-keys@7.9.0/node_modules/@typescript-eslint/visitor-keys
+│   ├── concurrently -> .pnpm/concurrently@6.5.1/node_modules/concurrently
+│   ├── eslint -> .pnpm/eslint@8.57.0/node_modules/eslint
+│   ├── eslint-plugin-react-hooks -> .pnpm/eslint-plugin-react-hooks@4.6.2_eslint@8.57.0/node_modules/eslint-plugin-react-hooks
+│   ├── eslint-plugin-react-refresh -> .pnpm/eslint-plugin-react-refresh@0.4.7_eslint@8.57.0/node_modules/eslint-plugin-react-refresh
+│   ├── eslint-scope -> .pnpm/eslint-scope@7.2.2/node_modules/eslint-scope
+│   └── eslint-visitor-keys -> .pnpm/eslint-visitor-keys@3.4.3/node_modules/eslint-visitor-keys
+├── package.json
+├── packages
+│   └── shared
+│       ├── dist
+│       │   ├── prisma.js
+│       │   └── types
+│       │       └── prisma.d.ts
+│       ├── node_modules
+│       │   └── @prisma
+│       │       └── client -> ../../../../node_modules/.pnpm/@prisma+client@5.14.0_prisma@5.14.0/node_modules/@prisma/client
+│       ├── package.json
+│       ├── src
+│       │   └── prisma.ts
+│       ├── text.txt
+│       └── tsconfig.json
+├── pnpm-lock.yaml
+└── pnpm-workspace.yaml
+
+92 directories, 39 files
+
+
+// File: /Users/stuartleach/Coding/lawvisionproject/lawvision-monorepo/packages/shared/tsconfig.json
+
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "ESNext",
+    "lib": ["ESNext"],
+    "declaration": true,
+    "declarationDir": "dist",
+    "outDir": "dist",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true
+  },
+  "include": ["src"]
+}
+
+
+// File: /Users/stuartleach/Coding/lawvisionproject/lawvision-monorepo/pnpm-workspace.yaml
+
+packages:
+  - "apps/*"
+  - 'packages/shared'
+  - 'packages/shared/*'

@@ -8,9 +8,12 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "outDir": "dist",
-    "rootDir": "src"
+    "rootDir": "src",
+    "baseUrl": ".",
+    "paths": {
+      "@lawvision/shared": ["../packages/shared/dist"]
+    }
   },
   "include": ["src"],
   "exclude": ["node_modules", "dist"]
 }
-

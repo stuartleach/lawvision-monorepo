@@ -1,6 +1,6 @@
 import express from "express";
 import {PrismaClient} from "@prisma/client";
-
+import {SupremeCourtCases} from "shared";
 
 const app = express();
 const prisma = new PrismaClient();

@@ -4,7 +4,7 @@ import * as gr from "graphology";
 // import {generateCourtCases} from "./utils";
 import * as d3 from "d3";
 import {getCases} from "./api";
-import {SupremeCourtCase} from "shared";
+import {SupremeCourtCase} from "@shared";
 
 interface CustomNode extends d3.SimulationNodeDatum {
     id: string;
@@ -14,7 +14,7 @@ interface CustomNode extends d3.SimulationNodeDatum {
 }
 
 
-export const NetworkGraph = async (props: { numCases: number }) => {
+export const NetworkGraph =  (props: { numCases: number }) => {
     const loadGraph = useLoadGraph();
     // const courtCases = generateCourtCases(props.numCases);
 
