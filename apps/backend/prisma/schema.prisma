@@ -20,11 +20,15 @@ model cases_by_year {
 
 model cases_citations {
   id                  String              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  case_uuid           String              @db.Uuid
-  citation            String?
+  self_id             String              @db.Uuid
+  self_citation       String?
   created_at          DateTime?           @default(now()) @db.Timestamp(6)
   updated_at          DateTime?           @default(now()) @db.Timestamp(6)
-  supreme_court_cases supreme_court_cases @relation(fields: [case_uuid], references: [uuid], onDelete: NoAction, onUpdate: NoAction)
+  name                Int?
+  year                Int?
+  target_citation     String?
+  target_uuid         String?             @db.Uuid
+  supreme_court_cases supreme_court_cases @relation(fields: [self_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "cases_citations_supreme_court_cases_id_fk")
 
   @@schema("public")
 }
@@ -41,7 +45,7 @@ model ny_appeals_court_cases {
 }
 
 model supreme_court_cases {
-  id                        String
+  justia_id                 String
   name                      String?
   href                      String?
   view_count                String?
@@ -71,7 +75,7 @@ model supreme_court_cases {
   related_cases             String?
   justia_url                String?
   argument2_url             String?
-  uuid                      String            @id(map: "oyez_0_pkey") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id                        String            @id(map: "supreme_court_cases_pk") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   cases_citations           cases_citations[]
 
   @@schema("public")
