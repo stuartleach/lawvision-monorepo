@@ -1,7 +1,11 @@
-import express, { Express, Request, Response } from 'express';
+import express, {Express, Request, Response} from 'express';
 import dotenv from 'dotenv';
-import { PrismaClient } from '@shared/prisma';
-
+import {PrismaClient} from '@shared/prisma';
+import {
+    processCase,
+    saveUnresolvedCitations,
+    Context
+} from './services/case-citation-processor';
 
 dotenv.config();
 
@@ -27,7 +31,32 @@ app.get('/api/cases', async (req: Request, res: Response) => {
         res.json(cases);
     } catch (error) {
         console.error("Error fetching cases:", error);
-        res.status(500).json({ error: "Internal Server Error" });
+        res.status(500).json({error: "Internal Server Error"});
+    }
+});
+
+app.get('/api/process-citations', async (req: Request, res: Response) => {
+    const context: Context = {
+        tooManyRequests: true,
+        currentDepth: 0,
+        recursionLimit: 1,  // Adjust this value for your desired recursion limit
+        unresolvedCitations: new Set<string>(),
+        requestDelay: 2000 // 2 seconds delay between requests
+    };
+
+    try {
+        const listOfCases = await prisma.supreme_court_cases.findMany({take: 2});
+        await Promise.all(listOfCases.map(caseItem => processCase(caseItem, context)));
+
+        // Save unresolved citations to a file
+        await saveUnresolvedCitations(context.unresolvedCitations);
+
+        res.status(200).send('Server utils job completed successfully');
+    } catch (error: unknown) {
+        console.error('Error running server utils job:', error);
+        res.status(500).send('Error running server utils job');
+    } finally {
+        await prisma.$disconnect();
     }
 });
 

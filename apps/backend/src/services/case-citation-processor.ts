@@ -1,4 +1,3 @@
-// backend/src/services/server-utils.ts
 import axios from "axios";
 import * as cheerio from "cheerio";
 import { PrismaClient } from '@prisma/client';
@@ -33,11 +32,21 @@ interface CitationObj {
     volume: string;
 }
 
+// --- Context Initialization ---
+const context: Context = {
+    tooManyRequests: true,
+    currentDepth: 0,
+    recursionLimit: 1,  // Adjust this value for your desired recursion limit
+    unresolvedCitations: new Set<string>(),
+    requestDelay: 2000 // 2 seconds delay between requests
+};
+
 // --- Utility Functions ---
 function sleep(ms: number): Promise<void> {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+// --- Data Fetching ---
 async function fetchPage(url: string, ctx: Context, retries = 3): Promise<FetchPageResult | null> {
     for (let attempt = 1; attempt <= retries; attempt++) {
         try {
@@ -60,6 +69,7 @@ async function fetchPage(url: string, ctx: Context, retries = 3): Promise<FetchP
     return null;
 }
 
+// --- Text Extraction & Parsing ---
 function extractTextAndGoogleScholarLink(html: string): ExtractionResult {
     const $ = cheerio.load(html);
     const text = $('.-display-inline-block.text-left').text();
@@ -128,6 +138,16 @@ async function getCaseNameByCitation(citation: CitationObj): Promise<string | nu
     return caseResult?.name || null;
 }
 
+async function createCaseCitation(selfId: string, citation: string, targetUuid: string | null) {
+    await prisma.cases_citations.create({
+        data: {
+            self_id: selfId,
+            self_citation: citation,
+            target_uuid: targetUuid
+        }
+    });
+}
+
 async function processCase(caseItem: any, ctx: Context) {
     if (ctx.currentDepth > ctx.recursionLimit) {
         console.debug('Recursion limit reached');
@@ -187,6 +207,7 @@ async function processCase(caseItem: any, ctx: Context) {
     for (const detail of citationDetails) {
         if (detail) {
             console.log(`${caseItem.name} cites ${detail.citation} - ${detail.caseName}\nGoogle Scholar Link: ${detail.googleScholarLink}\n`);
+            await createCaseCitation(caseItem.id, detail.citation, caseItem.id);
             const newContext = { ...ctx, currentDepth: ctx.currentDepth + 1 };
             await processCitationsRecursively(detail.citation, newContext);
         }
