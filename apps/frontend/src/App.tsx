@@ -1,50 +1,20 @@
 import { useState, FC } from "react";
-import { SigmaContainer } from "@react-sigma/core";
-import { RadialNetworkGraph } from "./components/graphs/RadialNetworkGraph";
+import Header from "./components/Header";
+import { Slider } from "./components/Slider";
 import { SpringGraph } from "./components/graphs/SpringGraph";
-import { HierarchicalGraph } from "./components/graphs/HierarchicalGraph";
-
-enum GraphType {
-    Spring,
-    Hierarchical
-    // Radial,
-}
 
 const App: FC = () => {
-    const [graphType, setGraphType] = useState<GraphType>(GraphType.Hierarchical);
+    const [numCases, setNumCases] = useState<number>(100);
 
     return (
-        <div className="flex flex-col items-center justify-center h-screen w-screen">
-            <div className="mb-4">
-                <button
-                    className="px-4 py-2 m-2 bg-green-500 text-white rounded"
-                    onClick={() => setGraphType(GraphType.Spring)}
-                >
-                    Spring Graph
-                </button>
-                <button
-                    className="px-4 py-2 m-2 bg-blue-500 text-white rounded"
-                    onClick={() => setGraphType(GraphType.Hierarchical)}
-                >
-                    Hierarchical Graph
-                </button>
-
-                {/*<button*/}
-                {/*    className="px-4 py-2 m-2 bg-red-500 text-white rounded"*/}
-                {/*    onClick={() => setGraphType(GraphType.Radial)}*/}
-                {/*>*/}
-                {/*    Radial Network Graph*/}
-                {/*</button>*/}
+        <div className="flex h-screen">
+            <div className="w-1/5 p-10 bg-gray-900 bg-opacity-25 text-white rounded-2xl fixed z-10 mt-16 ml-16">
+                <Header />
+                <Slider numCases={numCases} setNumCases={setNumCases} />
             </div>
-            {graphType === GraphType.Spring && <SpringGraph numCases={1000}/>}
-            {/*{graphType === GraphType.Hierarchical && <HierarchicalGraph numCases={100} />}*/}
-            {/*{graphType === GraphType.Radial && (*/}
-            {/*    <SigmaContainer style={{ height: "100vh", width: "100vw" }}>*/}
-            {/*        <RadialNetworkGraph numCases={100} />*/}
-            {/*    </SigmaContainer>*/}
-            {/*)}*/}
-            {/* Optionally, include ListOfCases or other components */}
-            {/* <ListOfCases /> */}
+            <div className="ml-1/3 w-full">
+                <SpringGraph numCases={numCases} />
+            </div>
         </div>
     );
 };

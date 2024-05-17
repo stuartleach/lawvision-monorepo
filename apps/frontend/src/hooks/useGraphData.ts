@@ -1,19 +1,19 @@
 import { useEffect, useState } from "react";
-import { getCases } from "../api";
-import { GraphData } from './shared/types';
+import { getCases } from "../api"; // Adjust the path as necessary
+import { GraphData } from "../shared/types"; // Adjust the path as necessary
 
 export const useGraphData = (numCases: number) => {
     const [graphData, setGraphData] = useState<GraphData>({ nodes: [], edges: [] });
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        setIsLoading(true); // Start loading
-
+        setIsLoading(true);
         getCases(numCases)
-            .then(setGraphData)
+            .then((data: GraphData) => {
+                setGraphData(data);
+            })
             .catch(e => console.error("Error fetching cases:", e))
-            .finally(() => setIsLoading(false)); // Done loading
-
+            .finally(() => setIsLoading(false));
     }, [numCases]);
 
     return { graphData, isLoading };
