@@ -4,13 +4,14 @@ import {PrismaClient} from '@shared/prisma';
 import {
     processCase,
     saveUnresolvedCitations,
-    Context
-} from './services/case-citation-processor';
+    context
+} from './services/case-processing';
 
 dotenv.config();
 
 const app: Express = express();
 const port = process.env.PORT;
+
 const prisma = new PrismaClient();
 
 app.get('/', (req: Request, res: Response) => {
@@ -35,21 +36,16 @@ app.get('/api/cases', async (req: Request, res: Response) => {
     }
 });
 
+
 app.get('/api/process-citations', async (req: Request, res: Response) => {
-    const context: Context = {
-        tooManyRequests: true,
-        currentDepth: 0,
-        recursionLimit: 1,  // Adjust this value for your desired recursion limit
-        unresolvedCitations: new Set<string>(),
-        requestDelay: 2000 // 2 seconds delay between requests
-    };
+    const ctx = {...context};
 
     try {
-        const listOfCases = await prisma.supreme_court_cases.findMany({take: 2});
-        await Promise.all(listOfCases.map(caseItem => processCase(caseItem, context)));
+        const listOfCases = await prisma.supreme_court_cases.findMany({take: 5});
+        await Promise.all(listOfCases.map(caseItem => processCase(caseItem, ctx)));
 
         // Save unresolved citations to a file
-        await saveUnresolvedCitations(context.unresolvedCitations);
+        await saveUnresolvedCitations(ctx.unresolvedCitations);
 
         res.status(200).send('Server utils job completed successfully');
     } catch (error: unknown) {

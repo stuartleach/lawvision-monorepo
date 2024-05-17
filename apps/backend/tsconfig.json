@@ -4,16 +4,20 @@
     "target": "ESNext",
     "lib": ["ESNext"],
     "strict": true,
+    "allowJs": false,
+    "allowSyntheticDefaultImports": true,
+    "noEmit": true,
+    "useDefineForClassFields": true,
     "esModuleInterop": true,
     "moduleResolution": "Node",
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "baseUrl": ".",
+    "rootDir": "./src",
     "paths": {
-      "@shared/*": ["../../packages/shared/src/*"]
+      "@shared/*": ["../../packages/shared/*"]
     }
   },
   "include": ["src"],
-  "exclude": ["node_modules", "dist"]
 }

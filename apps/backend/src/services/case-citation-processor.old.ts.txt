@@ -1,8 +1,13 @@
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
 import axios from "axios";
 import * as cheerio from "cheerio";
 import { PrismaClient } from '@prisma/client';
 import * as fs from 'fs/promises';
 import * as path from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const prisma = new PrismaClient();
 
@@ -112,7 +117,7 @@ async function getGoogleScholarCaseLink(link: string, ctx: Context): Promise<{ l
     return { link: scholarLink, ctx };
 }
 
-async function getCaseNameByCitation(citation: CitationObj): Promise<string | null> {
+async function getCaseNameByCitation(citation: CitationObj): Promise<{ name: string | null, id: string | null }> {
     const caseResult = await prisma.supreme_court_cases.findFirst({
         where: {
             AND: [
@@ -131,19 +136,23 @@ async function getCaseNameByCitation(citation: CitationObj): Promise<string | nu
             ]
         },
         select: {
-            name: true
+            name: true,
+            id: true
         }
     });
 
-    return caseResult?.name || null;
+    return { name: caseResult?.name || null, id: caseResult?.id || null };
 }
 
-async function createCaseCitation(selfId: string, citation: string, targetUuid: string | null) {
+async function createCaseCitation(selfId: string, citation: CitationObj, targetId: string | null) {
     await prisma.cases_citations.create({
         data: {
             self_id: selfId,
-            self_citation: citation,
-            target_uuid: targetUuid
+            self_citation: `${citation.volume} U.S. ${citation.page}`,
+            name: citation.volume ? parseInt(citation.volume) : null,
+            year: citation.year ? parseInt(citation.year) : null,
+            target_citation: citation.href,
+            target_uuid: targetId
         }
     });
 }
@@ -191,14 +200,15 @@ async function processCase(caseItem: any, ctx: Context) {
                 year: '',
                 volume: volume
             };
-            const caseName = await getCaseNameByCitation(citationObj);
-            if (!caseName) {
+            const { name, id } = await getCaseNameByCitation(citationObj);
+            if (!name) {
                 ctx.unresolvedCitations.add(citation);
                 return null;
             }
             return {
-                citation,
-                caseName,
+                citation: citationObj,
+                caseName: name,
+                caseId: id,
                 googleScholarLink: updatedGoogleScholarLink.link
             };
         })
@@ -206,8 +216,8 @@ async function processCase(caseItem: any, ctx: Context) {
 
     for (const detail of citationDetails) {
         if (detail) {
-            console.log(`${caseItem.name} cites ${detail.citation} - ${detail.caseName}\nGoogle Scholar Link: ${detail.googleScholarLink}\n`);
-            await createCaseCitation(caseItem.id, detail.citation, caseItem.id);
+            console.log(`${caseItem.name} cites ${detail.citation.volume} U.S. ${detail.citation.page} - ${detail.caseName}\nGoogle Scholar Link: ${detail.googleScholarLink}\n`);
+            await createCaseCitation(caseItem.id, detail.citation, detail.caseId);
             const newContext = { ...ctx, currentDepth: ctx.currentDepth + 1 };
             await processCitationsRecursively(detail.citation, newContext);
         }
@@ -216,23 +226,16 @@ async function processCase(caseItem: any, ctx: Context) {
     // Your logic to add citations to the database
 }
 
-async function processCitationsRecursively(citation: string, ctx: Context) {
+async function processCitationsRecursively(citation: CitationObj, ctx: Context) {
     if (ctx.currentDepth > ctx.recursionLimit) {
         console.debug('Recursion limit reached');
         return;
     }
 
-    const [volume, , page] = citation.split(' ');
-    const citationObj: CitationObj = {
-        href: '',
-        page: page,
-        year: '',
-        volume: volume
-    };
-    const caseName = await getCaseNameByCitation(citationObj);
+    const { name, id } = await getCaseNameByCitation(citation);
 
-    if (!caseName) {
-        ctx.unresolvedCitations.add(citation);
+    if (!name) {
+        ctx.unresolvedCitations.add(`${citation.volume} U.S. ${citation.page}`);
         return;
     }
 
@@ -242,13 +245,13 @@ async function processCitationsRecursively(citation: string, ctx: Context) {
                 {
                     citation: {
                         path: ['volume'],
-                        equals: citationObj.volume
+                        equals: citation.volume
                     }
                 },
                 {
                     citation: {
                         path: ['page'],
-                        equals: citationObj.page
+                        equals: citation.page
                     }
                 }
             ]
