@@ -7,7 +7,6 @@ interface CustomNode extends d3.SimulationNodeDatum {
     id: string;
     size: number;
     weight: number;
-    label: string;
 }
 
 interface CustomEdge extends d3.SimulationLinkDatum<CustomNode> {
@@ -28,22 +27,23 @@ export const SpringGraph: React.FC<SpringGraphProps> = ({ numCases, width = 800,
     useEffect(() => {
         if (isLoading) return; // Don't build the graph if data is still loading
 
-        // Define your D3 graph logic here
-        // This can be a different type of graph or layout
-
         const svg = d3.select("#spring-graph")
-            .attr("width", width)
-            .attr("height", height);
+            .attr("viewBox", `0 0 ${width} ${height}`)
+            .attr("preserveAspectRatio", "xMidYMid meet") // Ensure SVG scales properly
+            .style("border", "1px solid black"); // Add border for debugging
 
         // Clear previous graph
         svg.selectAll("*").remove();
+
+        const g = svg.append("g"); // Group for zooming and panning
 
         // Define nodes and edges
         const nodes: CustomNode[] = graphData.nodes.map(node => ({
             id: node.id,
             size: node.weight * 2,
             weight: node.weight,
-            label: `${node.name} (${node.term})`
+            x: width / 2, // Start nodes in the center
+            y: height / 2 // Start nodes in the center
         }));
 
         const edges: CustomEdge[] = graphData.edges.map(edge => ({
@@ -54,12 +54,21 @@ export const SpringGraph: React.FC<SpringGraphProps> = ({ numCases, width = 800,
 
         // Define force simulation
         const simulation = d3.forceSimulation(nodes)
-            .force("charge", d3.forceManyBody().strength(-50))
+            .force("link", d3.forceLink(edges).id((d: CustomNode) => d.id).distance(50).strength(1))
+            .force("charge", d3.forceManyBody().strength(-200)) // Adjust repulsion to keep nodes within bounds
             .force("center", d3.forceCenter(width / 2, height / 2)) // Center the graph
-            .force("link", d3.forceLink(edges).id((d: CustomNode) => d.id));
+            .on("tick", () => {
+                node.attr("cx", d => d.x!)
+                    .attr("cy", d => d.y!);
+
+                link.attr("x1", d => (d.source as CustomNode).x!)
+                    .attr("y1", d => (d.source as CustomNode).y!)
+                    .attr("x2", d => (d.target as CustomNode).x!)
+                    .attr("y2", d => (d.target as CustomNode).y!);
+            });
 
         // Add links
-        const link = svg.append("g")
+        const link = g.append("g")
             .selectAll("line")
             .data(edges)
             .enter()
@@ -68,7 +77,7 @@ export const SpringGraph: React.FC<SpringGraphProps> = ({ numCases, width = 800,
             .attr("stroke", "#999");
 
         // Add nodes
-        const node = svg.append("g")
+        const node = g.append("g")
             .selectAll("circle")
             .data(nodes)
             .enter()
@@ -76,32 +85,39 @@ export const SpringGraph: React.FC<SpringGraphProps> = ({ numCases, width = 800,
             .attr("r", d => d.size)
             .attr("fill", "blue");
 
-        // Add labels
-        const label = svg.append("g")
-            .selectAll("text")
-            .data(nodes)
-            .enter()
-            .append("text")
-            .attr("dy", -10)
-            .text(d => d.label);
+        // Define zoom behavior
+        const zoom = d3.zoom()
+            .scaleExtent([0.1, 10]) // Set zoom limits
+            .on("zoom", ({ transform }) => {
+                g.attr("transform", transform);
+            });
 
-        simulation.on("tick", () => {
-            node.attr("cx", d => d.x!)
-                .attr("cy", d => d.y!);
+        svg.call(zoom);
 
-            link.attr("x1", d => (d.source as CustomNode).x!)
-                .attr("y1", d => (d.source as CustomNode).y!)
-                .attr("x2", d => (d.target as CustomNode).x!)
-                .attr("y2", d => (d.target as CustomNode).y!);
+        // Calculate the bounding box of the graph
+        simulation.on("end", () => {
+            const bounds = svg.node().getBBox();
+            const fullWidth = bounds.width;
+            const fullHeight = bounds.height;
 
-            label.attr("x", d => d.x!)
-                .attr("y", d => d.y!);
+            const midX = bounds.x + fullWidth / 2;
+            const midY = bounds.y + fullHeight / 2;
+
+            const scale = 0.9 / Math.max(fullWidth / width, fullHeight / height);
+            const transform = d3.zoomIdentity
+                .translate(width / 2, height / 2)
+                .scale(scale)
+                .translate(-midX, -midY);
+
+            svg.transition()
+                .duration(750)
+                .call(zoom.transform, transform);
         });
 
     }, [graphData, isLoading, numCases, width, height]);
 
     return (
-        <div className="flex justify-center items-center h-screen bg-gray-100">
+        <div className="flex justify-center items-center h-screen w-screen">
             <svg id="spring-graph" className="w-full h-full"></svg>
         </div>
     );
