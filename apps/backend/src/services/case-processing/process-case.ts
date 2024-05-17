@@ -1,8 +1,22 @@
-// process-case.ts
-import { Context } from './context';
-import { fetchPage } from './fetch-page';
-import { extractTextAndGoogleScholarLink } from './extract';
-import { extractCitations, extractOwnCitation, getGoogleScholarCaseLink, getCaseDetailsByCitation, createCaseCitation, CitationObj } from './citation';
+import {
+    fetchPage,
+    sleep
+} from './fetch-utils';
+import {
+    extractTextAndGoogleScholarLink,
+    extractCitations,
+    extractOwnCitation
+} from './extraction-utils';
+import {
+    getGoogleScholarCaseLink,
+    getCaseNameByCitation
+} from './citation-utils';
+import {
+    Context,
+    CitationObj
+} from './context';
+import * as fs from 'fs/promises';
+import * as path from 'path';
 import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
@@ -43,14 +57,21 @@ export async function processCase(caseItem: any, ctx: Context) {
 
     const citationDetails = await Promise.all(
         citations.map(async (citation) => {
-            const caseDetails = await getCaseDetailsByCitation(citation);
-            if (!caseDetails.name) {
+            const [volume, , page] = citation.split(' ');
+            const citationObj: CitationObj = {
+                href: '',
+                page: page,
+                year: '',
+                volume: volume
+            };
+            const caseName = await getCaseNameByCitation(citationObj);
+            if (!caseName) {
                 ctx.unresolvedCitations.add(citation);
                 return null;
             }
             return {
-                citation: citation,
-                caseDetails: caseDetails,
+                citation,
+                caseName,
                 googleScholarLink: updatedGoogleScholarLink.link
             };
         })
@@ -58,41 +79,59 @@ export async function processCase(caseItem: any, ctx: Context) {
 
     for (const detail of citationDetails) {
         if (detail) {
-            console.log(`${caseItem.name} cites ${detail.citation} - ${detail.caseDetails.name}\nGoogle Scholar Link: ${detail.googleScholarLink}\n`);
-            const [volume, , page] = detail.citation.split(' ');
-            const citationObj: CitationObj = {
-                href: '',
-                page: page,
-                year: '', // Populate this as needed
-                volume: volume
-            };
-            await createCaseCitation(caseItem.id, citationObj, detail.caseDetails);
+            console.log(`${caseItem.name} cites ${detail.citation} - ${detail.caseName}\nGoogle Scholar Link: ${detail.googleScholarLink}\n`);
             const newContext = { ...ctx, currentDepth: ctx.currentDepth + 1 };
-            await processCitationsRecursively(citationObj, newContext);
+            await processCitationsRecursively(detail.citation, newContext);
         }
     }
 }
 
-export async function processCitationsRecursively(citation: CitationObj, ctx: Context) {
+export async function processCitationsRecursively(citation: string, ctx: Context) {
     if (ctx.currentDepth > ctx.recursionLimit) {
         console.debug('Recursion limit reached');
         return;
     }
 
-    const caseDetails = await getCaseDetailsByCitation(`${citation.volume} U.S. ${citation.page}`);
+    const [volume, , page] = citation.split(' ');
+    const citationObj: CitationObj = {
+        href: '',
+        page: page,
+        year: '',
+        volume: volume
+    };
+    const caseName = await getCaseNameByCitation(citationObj);
 
-    if (!caseDetails.name) {
-        ctx.unresolvedCitations.add(`${citation.volume} U.S. ${citation.page}`);
+    if (!caseName) {
+        ctx.unresolvedCitations.add(citation);
         return;
     }
 
     const caseItem = await prisma.supreme_court_cases.findFirst({
         where: {
-            citation_id: `${citation.volume} U.S. ${citation.page}`
+            AND: [
+                {
+                    citation: {
+                        path: ['volume'],
+                        equals: citationObj.volume
+                    }
+                },
+                {
+                    citation: {
+                        path: ['page'],
+                        equals: citationObj.page
+                    }
+                }
+            ]
         }
     });
 
     if (caseItem) {
         await processCase(caseItem, ctx);
     }
+}
+
+export async function saveUnresolvedCitations(unresolvedCitations: Set<string>) {
+    const filePath = path.join(__dirname, 'unresolved_citations.json');
+    await fs.writeFile(filePath, JSON.stringify(Array.from(unresolvedCitations), null, 2));
+    console.log(`Unresolved citations saved to ${filePath}`);
 }

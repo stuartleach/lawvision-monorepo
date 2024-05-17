@@ -1,6 +1,7 @@
 import { SigmaContainer } from "@react-sigma/core";
 import {NetworkGraph} from "./NetworkGraph";
 import {FC} from "react";
+import ListOfCases from "./ListOfCases";
 
 
 const App: FC = () => {
@@ -8,10 +9,9 @@ const App: FC = () => {
         <div>
             <h1>Graph of U.S. Supreme Court Cases</h1>
             <SigmaContainer style={{height: "100vh"}}>
-            {/*<div style={{height: 100}}>*/}
                 <NetworkGraph numCases={5}/>
-            {/*</div>*/}
             </SigmaContainer>
+            <ListOfCases />
         </div>
     );
 };

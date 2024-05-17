@@ -3,6 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "esModuleInterop": true,
   "scripts": {
     "dev": "concurrently \"pnpm --filter ./apps/backend dev\" \"pnpm run --filter ./apps/frontend dev\"",
     "build": "pnpm --filter ./apps/* build",

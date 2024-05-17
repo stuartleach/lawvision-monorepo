@@ -1,7 +1,7 @@
 // index.ts
 export * from './context';
-export * from './fetch-page';
-export * from './extract';
-export * from './citation';
+export * from './fetch-utils';
+export * from './extraction-utils';
+export * from './citation-utils';
 export * from './process-case';
-export * from './save-unresolved';
+

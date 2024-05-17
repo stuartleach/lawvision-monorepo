@@ -1,4 +1,13 @@
-// context.ts
+export interface FetchPageResult {
+    data: string;
+    status: number;
+}
+
+export interface ExtractionResult {
+    text: string;
+    googleScholarLink: string;
+}
+
 export interface Context {
     tooManyRequests: boolean;
     currentDepth: number;
@@ -7,10 +16,9 @@ export interface Context {
     requestDelay: number; // Delay in milliseconds between requests
 }
 
-export const context: Context = {
-    tooManyRequests: true,
-    currentDepth: 0,
-    recursionLimit: 5,  // Adjust this value for your desired recursion limit
-    unresolvedCitations: new Set<string>(),
-    requestDelay: 2000 // 2 seconds delay between requests
-};
+export interface CitationObj {
+    href: string;
+    page: string;
+    year: string;
+    volume: string;
+}

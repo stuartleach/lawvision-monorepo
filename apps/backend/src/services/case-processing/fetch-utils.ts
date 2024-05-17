@@ -1,11 +1,5 @@
-// fetch-page.ts
 import axios from "axios";
-import { Context } from './context';
-
-export interface FetchPageResult {
-    data: string;
-    status: number;
-}
+import { Context, FetchPageResult } from "./context";
 
 export function sleep(ms: number): Promise<void> {
     return new Promise(resolve => setTimeout(resolve, ms));
