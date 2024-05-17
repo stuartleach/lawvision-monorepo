@@ -75,6 +75,7 @@ export const SpringGraph: React.FC<SpringGraphProps> = ({ numCases, width = 800,
             .data(edges)
             .enter()
             .append("line")
+            .attr("class", "link")
             .attr("stroke-width", 1)
             .attr("stroke", "#999");
 
@@ -83,6 +84,7 @@ export const SpringGraph: React.FC<SpringGraphProps> = ({ numCases, width = 800,
             .data(nodes)
             .enter()
             .append("circle")
+            .attr("class", "node")
             .attr("r", d => d.size)
             .attr("fill", d => d3.interpolateBlues(d.weight / 100))
             .attr("stroke", "#000")
@@ -103,25 +105,31 @@ export const SpringGraph: React.FC<SpringGraphProps> = ({ numCases, width = 800,
                     d.fy = null;
                 }))
             .on("click", (event, clickedNode) => {
-                // Reset all nodes and edges to their original color
-                node.attr("fill", d => d3.interpolateBlues(d.weight / 100));
-                link.attr("stroke", "#999");
+                // Reset all nodes and edges to their original state
+                d3.selectAll(".node").attr("opacity", 1).attr("fill", d => d3.interpolateBlues(d.weight / 100));
+                d3.selectAll(".link").attr("opacity", 1).attr("stroke", "#999");
+
+                // Dim all nodes and edges
+                d3.selectAll(".node").attr("opacity", 0.5);
+                d3.selectAll(".link").attr("opacity", 0.5);
 
                 // Highlight the clicked node
-                d3.select(event.currentTarget).attr("fill", "orange");
+                d3.select(event.currentTarget).attr("opacity", 1).attr("fill", "orange");
 
                 // Highlight connected edges and nodes
                 const connectedEdges = edges.filter(edge => edge.source === clickedNode.id || edge.target === clickedNode.id);
                 connectedEdges.forEach(edge => {
-                    d3.selectAll("line")
+                    d3.selectAll(".link")
                         .filter(d => d === edge)
+                        .attr("opacity", 1)
                         .attr("stroke", "orange");
 
                     // Highlight connected nodes
                     const sourceNode = nodes.find(node => node.id === edge.source);
                     const targetNode = nodes.find(node => node.id === edge.target);
-                    d3.selectAll("circle")
+                    d3.selectAll(".node")
                         .filter(d => d === sourceNode || d === targetNode)
+                        .attr("opacity", 1)
                         .attr("fill", "orange");
                 });
             });
