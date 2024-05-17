@@ -1,7 +1,7 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import * as d3 from "d3";
 import { useGraphData } from "../../hooks/useGraphData"; // Adjust path if necessary
-import { GraphData } from '../../shared/types'; // Import shared types
+import { GraphData } from '../shared/types'; // Import shared types
 
 interface CustomNode extends d3.SimulationNodeDatum {
     id: string;
@@ -10,6 +10,10 @@ interface CustomNode extends d3.SimulationNodeDatum {
     name: string;
     year: string;
     citations: string[];
+    fx?: number | null; // Fixed x-position
+    fy?: number | null; // Fixed y-position
+    x?: number; // Current x-position
+    y?: number; // Current y-position
 }
 
 interface CustomEdge extends d3.SimulationLinkDatum<CustomNode> {
@@ -26,6 +30,7 @@ interface SpringGraphProps {
 
 export const SpringGraph: React.FC<SpringGraphProps> = ({ numCases, width = 800, height = 600 }) => {
     const { graphData, isLoading } = useGraphData(numCases);
+    const [highlightedNode, setHighlightedNode] = useState<CustomNode | null>(null);
 
     useEffect(() => {
         if (isLoading) return; // Don't build the graph if data is still loading
@@ -59,8 +64,8 @@ export const SpringGraph: React.FC<SpringGraphProps> = ({ numCases, width = 800,
         }));
 
         // Define force simulation
-        const simulation = d3.forceSimulation(nodes)
-            .force("link", d3.forceLink(edges).id((d: CustomNode) => d.id).distance(50).strength(1))
+        const simulation = d3.forceSimulation<CustomNode>(nodes)
+            .force("link", d3.forceLink<CustomNode, CustomEdge>(edges).id(d => d.id).distance(50).strength(1))
             .force("charge", d3.forceManyBody().strength(-200)) // Adjust repulsion to keep nodes within bounds
             .force("center", d3.forceCenter(width / 2, height / 2)) // Center the graph
             .on("tick", () => {
@@ -94,7 +99,10 @@ export const SpringGraph: React.FC<SpringGraphProps> = ({ numCases, width = 800,
             .attr("fill", d => d3.interpolateBlues(d.weight / 100)) // Use color scale for nodes
             .attr("stroke", "#000")
             .attr("stroke-width", 0.5)
-            .call(d3.drag() // Add drag behavior
+            .on("click", (event, d) => {
+                setHighlightedNode(d);
+            })
+            .call(d3.drag<SVGCircleElement, CustomNode>() // Add drag behavior
                 .on("start", (event, d) => {
                     if (!event.active) simulation.alphaTarget(0.3).restart();
                     d.fx = d.x;
@@ -125,6 +133,12 @@ export const SpringGraph: React.FC<SpringGraphProps> = ({ numCases, width = 800,
 
         const adjustZoom = () => {
             const bounds = g.node()!.getBBox(); // Use getBBox on the group
+
+            if (!bounds.width || !bounds.height) {
+                console.warn('Invalid bounds:', bounds);
+                return;
+            }
+
             const fullWidth = bounds.width;
             const fullHeight = bounds.height;
 
@@ -140,8 +154,78 @@ export const SpringGraph: React.FC<SpringGraphProps> = ({ numCases, width = 800,
             svg.transition().duration(750).call(zoom.transform, transform);
         };
 
-
     }, [graphData, isLoading, numCases, width, height]);
+
+    useEffect(() => {
+        const svg = d3.select("#spring-graph");
+        const g = svg.select("g");
+        const node = g.selectAll("circle");
+        const link = g.selectAll("line");
+
+        // Update node and link colors based on highlighted node
+        if (highlightedNode) {
+            const connectedNodes = new Set<string>();
+            const connectedEdges = new Set<string>();
+
+            // Collect connected nodes and edges
+            link.each(d => {
+                if (d.source === highlightedNode.id) {
+                    connectedNodes.add(d.target as string);
+                    connectedEdges.add(`${d.source}-${d.target}`);
+                } else if (d.target === highlightedNode.id) {
+                    connectedNodes.add(d.source as string);
+                    connectedEdges.add(`${d.source}-${d.target}`);
+                }
+            });
+
+            node.attr("fill", d => {
+                if (d.id === highlightedNode.id) return "red";
+                if (connectedNodes.has(d.id)) return "orange";
+                return d3.interpolateBlues(d.weight / 100);
+            })
+                .attr("stroke", d => (d.id === highlightedNode.id || connectedNodes.has(d.id)) ? "yellow" : "#000")
+                .attr("stroke-width", d => (d.id === highlightedNode.id || connectedNodes.has(d.id)) ? 2 : 0.5);
+
+            link.attr("stroke", d => {
+                if (connectedEdges.has(`${d.source}-${d.target}`)) return "red";
+                return "#999";
+            })
+                .attr("stroke-width", d => (connectedEdges.has(`${d.source}-${d.target}`)) ? 2 : 1);
+
+            // Remove existing text labels
+            g.selectAll("text").remove();
+
+            // Add text label for highlighted node
+            g.append("text")
+                .attr("x", highlightedNode.x! + 10)
+                .attr("y", highlightedNode.y!)
+                .text(highlightedNode.name)
+                .attr("fill", "black")
+                .attr("font-size", "12px")
+                .attr("font-weight", "bold");
+
+            // Add text labels for connected nodes
+            node.filter(d => connectedNodes.has(d.id))
+                .each(d => {
+                    g.append("text")
+                        .attr("x", d.x! + 10)
+                        .attr("y", d.y!)
+                        .text(d.name)
+                        .attr("fill", "black")
+                        .attr("font-size", "12px")
+                        .attr("font-weight", "bold");
+                });
+        } else {
+            node.attr("fill", d => d3.interpolateBlues(d.weight / 100))
+                .attr("stroke", "#000")
+                .attr("stroke-width", 0.5);
+
+            link.attr("stroke", "#999")
+                .attr("stroke-width", 1);
+
+            g.selectAll("text").remove(); // Remove text labels
+        }
+    }, [highlightedNode]);
 
     return (
         <div className="flex justify-center items-center h-screen w-screen">
