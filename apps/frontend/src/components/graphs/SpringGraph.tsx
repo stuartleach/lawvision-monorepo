@@ -1,12 +1,15 @@
 import { useEffect } from "react";
 import * as d3 from "d3";
-import { useGraphData } from "../hooks/useGraphData"; // Adjust path if necessary
-import { GraphData } from '../shared/types'; // Import shared types
+import { useGraphData } from "../../hooks/useGraphData"; // Adjust path if necessary
+import { GraphData } from '../../shared/types'; // Import shared types
 
 interface CustomNode extends d3.SimulationNodeDatum {
     id: string;
     size: number;
     weight: number;
+    name: string;
+    year: string;
+    citations: string[];
 }
 
 interface CustomEdge extends d3.SimulationLinkDatum<CustomNode> {
@@ -40,8 +43,11 @@ export const SpringGraph: React.FC<SpringGraphProps> = ({ numCases, width = 800,
         // Define nodes and edges
         const nodes: CustomNode[] = graphData.nodes.map(node => ({
             id: node.id,
-            size: node.weight * 2,
+            size: node.weight * 1.1,
             weight: node.weight,
+            name: node.name,
+            year: node.term,
+            citations: graphData.edges.filter(edge => edge.source === node.id).map(edge => edge.citation),
             x: width / 2, // Start nodes in the center
             y: height / 2 // Start nodes in the center
         }));
@@ -65,6 +71,8 @@ export const SpringGraph: React.FC<SpringGraphProps> = ({ numCases, width = 800,
                     .attr("y1", d => (d.source as CustomNode).y!)
                     .attr("x2", d => (d.target as CustomNode).x!)
                     .attr("y2", d => (d.target as CustomNode).y!);
+
+                adjustZoom();
             });
 
         // Add links
@@ -83,7 +91,28 @@ export const SpringGraph: React.FC<SpringGraphProps> = ({ numCases, width = 800,
             .enter()
             .append("circle")
             .attr("r", d => d.size)
-            .attr("fill", "blue");
+            .attr("fill", d => d3.interpolateBlues(d.weight / 100)) // Use color scale for nodes
+            .attr("stroke", "#000")
+            .attr("stroke-width", 0.5)
+            .call(d3.drag() // Add drag behavior
+                .on("start", (event, d) => {
+                    if (!event.active) simulation.alphaTarget(0.3).restart();
+                    d.fx = d.x;
+                    d.fy = d.y;
+                })
+                .on("drag", (event, d) => {
+                    d.fx = event.x;
+                    d.fy = event.y;
+                })
+                .on("end", (event, d) => {
+                    if (!event.active) simulation.alphaTarget(0);
+                    d.fx = null;
+                    d.fy = null;
+                }));
+
+        // Add tooltips
+        node.append("title")
+            .text(d => `Case: ${d.name} (${d.year})\nCited by: ${d.weight} cases\nCites: ${d.citations.length} cases\n`);
 
         // Define zoom behavior
         const zoom = d3.zoom()
@@ -94,9 +123,8 @@ export const SpringGraph: React.FC<SpringGraphProps> = ({ numCases, width = 800,
 
         svg.call(zoom);
 
-        // Calculate the bounding box of the graph
-        simulation.on("end", () => {
-            const bounds = svg.node().getBBox();
+        const adjustZoom = () => {
+            const bounds = g.node()!.getBBox(); // Use getBBox on the group
             const fullWidth = bounds.width;
             const fullHeight = bounds.height;
 
@@ -109,10 +137,9 @@ export const SpringGraph: React.FC<SpringGraphProps> = ({ numCases, width = 800,
                 .scale(scale)
                 .translate(-midX, -midY);
 
-            svg.transition()
-                .duration(750)
-                .call(zoom.transform, transform);
-        });
+            svg.transition().duration(750).call(zoom.transform, transform);
+        };
+
 
     }, [graphData, isLoading, numCases, width, height]);
 

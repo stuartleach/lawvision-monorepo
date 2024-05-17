@@ -2,8 +2,8 @@ import {useLoadGraph} from "@react-sigma/core";
 import {useEffect} from "react";
 import * as gr from "graphology";
 import * as d3 from "d3";
-import {useGraphData} from "../hooks/useGraphData"; // Adjust path if necessary
-import {GraphData} from '../shared/types'; // Import shared types
+import {useGraphData} from "../../hooks/useGraphData"; // Adjust path if necessary
+import {GraphData} from '../../shared/types'; // Import shared types
 
 interface CustomNode extends d3.SimulationNodeDatum {
     id: string;
