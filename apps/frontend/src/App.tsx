@@ -9,9 +9,9 @@ const App: FC = () => {
         <div>
             <h1>Graph of U.S. Supreme Court Cases</h1>
             <SigmaContainer style={{height: "100vh"}}>
-                <NetworkGraph numCases={5}/>
+                <NetworkGraph numCases={100}/>
             </SigmaContainer>
-            <ListOfCases />
+            {/*<ListOfCases />*/}
         </div>
     );
 };
