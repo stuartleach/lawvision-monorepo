@@ -1,31 +1,34 @@
-import { useEffect, useState } from "react";
+import React, {useEffect} from "react";
 import * as d3 from "d3";
-import { useGraphData } from "../../hooks/useGraphData";
-import { GraphData } from "../../shared/types";
+import {useGraphData} from "../../hooks/useGraphData";
+import {CitationAndID} from "../../types/types";
 
-interface CustomNode extends d3.SimulationNodeDatum {
+export interface CustomNode extends d3.SimulationNodeDatum {
     id: string;
     size: number;
     weight: number;
     name: string;
     year: string;
-    citations: string[];
+    citations: CitationAndID[];
 }
 
 interface CustomEdge extends d3.SimulationLinkDatum<CustomNode> {
     source: CustomNode | string;
     target: CustomNode | string;
-    citation: string;
+    citation: CitationAndID;
 }
 
 interface SpringGraphProps {
     numCases: number;
     width?: number;
     height?: number;
+    clickedNode?: CustomNode | null;
+    setClickedNode: (node: CustomNode | null) => void;
 }
 
-export const SpringGraph: React.FC<SpringGraphProps> = ({ numCases, width = 800, height = 600 }) => {
-    const { graphData, isLoading } = useGraphData(numCases);
+export const SpringGraph: React.FC<SpringGraphProps> = ({numCases, width = 800, height = 600, setClickedNode}) => {
+    const {graphData, isLoading} = useGraphData(numCases);
+
 
     useEffect(() => {
         if (isLoading) return;
@@ -39,21 +42,31 @@ export const SpringGraph: React.FC<SpringGraphProps> = ({ numCases, width = 800,
 
         const g = svg.append("g");
 
-        const nodes: CustomNode[] = graphData.nodes.map(node => ({
-            id: node.id,
-            size: node.weight * 1.1,
-            weight: node.weight,
-            name: node.name,
-            year: node.term,
-            citations: graphData.edges.filter(edge => edge.source === node.id).map(edge => edge.citation),
-            x: width / 2,
-            y: height / 2
-        }));
+        const nodes: CustomNode[] = graphData.nodes.map(node => {
+            const nodeCitations = graphData.edges.filter(edge => edge.source === node.id).map(edge => ({
+                citation: edge.citation.citation || "",
+                id: edge.target as string
+            }));
+
+            return {
+                id: node.id,
+                size: node.weight * 1.1,
+                weight: node.weight,
+                name: node.name,
+                year: node.term,
+                citations: nodeCitations,
+                x: width / 2,
+                y: height / 2
+            };
+        });
 
         const edges: CustomEdge[] = graphData.edges.map(edge => ({
             source: edge.source,
             target: edge.target,
-            citation: edge.citation
+            citation: {
+                citation: edge.citation.citation || "",
+                id: edge.citation.id
+            }
         }));
 
         const simulation = d3.forceSimulation(nodes)
@@ -61,13 +74,13 @@ export const SpringGraph: React.FC<SpringGraphProps> = ({ numCases, width = 800,
             .force("charge", d3.forceManyBody().strength(-200))
             .force("center", d3.forceCenter(width / 2, height / 2))
             .on("tick", () => {
-                node.attr("cx", d => d.x!)
-                    .attr("cy", d => d.y!);
+                node.attr("cx", d => (d as CustomNode).x!)
+                    .attr("cy", d => (d as CustomNode).y!);
 
-                link.attr("x1", d => (d.source as CustomNode).x!)
-                    .attr("y1", d => (d.source as CustomNode).y!)
-                    .attr("x2", d => (d.target as CustomNode).x!)
-                    .attr("y2", d => (d.target as CustomNode).y!);
+                link.attr("x1", d => ((d.source as CustomNode).x!))
+                    .attr("y1", d => ((d.source as CustomNode).y!))
+                    .attr("x2", d => ((d.target as CustomNode).x!))
+                    .attr("y2", d => ((d.target as CustomNode).y!));
             });
 
         const link = g.append("g")
@@ -85,11 +98,11 @@ export const SpringGraph: React.FC<SpringGraphProps> = ({ numCases, width = 800,
             .enter()
             .append("circle")
             .attr("class", "node")
-            .attr("r", d => d.size)
-            .attr("fill", d => d3.interpolateBlues(d.weight / 100))
+            .attr("r", d => (d as CustomNode).size)
+            .attr("fill", d => d3.interpolateBlues((d as CustomNode).weight / 100))
             .attr("stroke", "#000")
             .attr("stroke-width", 0.5)
-            .call(d3.drag()
+            .call(d3.drag<SVGCircleElement, CustomNode>()
                 .on("start", (event, d) => {
                     if (!event.active) simulation.alphaTarget(0.3).restart();
                     d.fx = d.x;
@@ -105,41 +118,57 @@ export const SpringGraph: React.FC<SpringGraphProps> = ({ numCases, width = 800,
                     d.fy = null;
                 }))
             .on("click", (event, clickedNode) => {
-                // Reset all nodes and edges to their original state
-                d3.selectAll(".node").attr("opacity", 1).attr("fill", d => d3.interpolateBlues(d.weight / 100));
-                d3.selectAll(".link").attr("opacity", 1).attr("stroke", "#999");
+                console.log("Clicked node:", clickedNode);
+                setClickedNode(clickedNode);
 
-                // Dim all nodes and edges
-                d3.selectAll(".node").attr("opacity", 0.5);
-                d3.selectAll(".link").attr("opacity", 0.5);
+                // Reset all nodes and edges to their original state
+                node.attr("opacity", 0.2).attr("fill", d => d3.interpolateBlues((d as CustomNode).weight / 100));
+                link.attr("opacity", 0.2).attr("stroke", "#999");
 
                 // Highlight the clicked node
                 d3.select(event.currentTarget).attr("opacity", 1).attr("fill", "orange");
 
                 // Highlight connected edges and nodes
-                const connectedEdges = edges.filter(edge => edge.source === clickedNode.id || edge.target === clickedNode.id);
-                connectedEdges.forEach(edge => {
-                    d3.selectAll(".link")
-                        .filter(d => d === edge)
-                        .attr("opacity", 1)
-                        .attr("stroke", "orange");
+                const connectedNodeIds = new Set<string>();
 
-                    // Highlight connected nodes
-                    const sourceNode = nodes.find(node => node.id === edge.source);
-                    const targetNode = nodes.find(node => node.id === edge.target);
-                    d3.selectAll(".node")
-                        .filter(d => d === sourceNode || d === targetNode)
+                // console.log("Nodes: ", nodes.filter(node => node.id === clickedNode));
+
+                // console.log("Edges: ", edges.filter(edge => edge.source === clickedNode.id || edge.target === clickedNode.id));
+                console.log("Edges: ", edges.filter(edge => clickedNode.name === edge.source.name || clickedNode.name === edge.target.name));
+                // console.log("Clicked node ID: ", clickedNode.id);
+
+                edges.forEach(edge => {
+                    if (edge.source.name === clickedNode.name || edge.target.name === clickedNode.name) {
+                        // console.log("Connected edge:", edge);
+                        d3.selectAll<SVGLineElement, CustomEdge>(".link")
+                            .filter(d => (d.source === edge.source && d.target === edge.target) || (d.source === edge.target && d.target === edge.source))
+                            .attr("opacity", 1)
+                            .attr("stroke", "orange");
+                        d3.select(event.currentTarget).attr("opacity", 1).attr("fill", "orange");
+                        d3.selectAll(".node").filter(d => (d.name === (edge.source.name || d.name === edge.target.name)) && (d.name !== clickedNode.name)).attr("opacity", .8).attr("fill", "orange")
+
+
+                        connectedNodeIds.add(edge.source as string);
+                        connectedNodeIds.add(edge.target as string);
+                    }
+                });
+                console.log("Connected nodes: ", connectedNodeIds);
+
+
+                connectedNodeIds.forEach(nodeId => {
+                    d3.selectAll<SVGCircleElement, CustomNode>(".node")
+                        .filter(d => (d as CustomNode).id === nodeId)
                         .attr("opacity", 1)
                         .attr("fill", "orange");
                 });
             });
 
         node.append("title")
-            .text(d => `Case: ${d.name} (${d.year})\nCited by: ${d.weight} cases\nCites: ${d.citations.length} cases\n`);
+            .text(d => `Case: ${d.name} (${d.year})\nCited by: ${(d as CustomNode).weight} cases\nCites: ${(d as CustomNode).citations.length} cases\n`);
 
         const zoom = d3.zoom()
             .scaleExtent([0.1, 10])
-            .on("zoom", ({ transform }) => {
+            .on("zoom", ({transform}) => {
                 g.attr("transform", transform);
             });
 
@@ -148,7 +177,7 @@ export const SpringGraph: React.FC<SpringGraphProps> = ({ numCases, width = 800,
     }, [graphData, isLoading, numCases, width, height]);
 
     return (
-        <div className="flex justify-center items-center h-screen w-screen">
+        <div className="justify-center items-center w-full h-full">
             <svg id="spring-graph" className="w-full h-full"></svg>
         </div>
     );

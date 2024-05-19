@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { getCases, runServerUtils } from './api';
-import type { supreme_court_cases as SupremeCourtCase } from '@shared/prisma';
+import React, {useState, useEffect} from 'react';
+import {getCases, runServerUtils} from './api';
+import type {supreme_court_cases as SupremeCourtCase} from '@shared/prisma';
 
 const App = () => {
     const [cases, setCases] = useState<SupremeCourtCase[]>([]);
@@ -14,11 +14,11 @@ const App = () => {
         }
     }, [cases]);
 
-    const fetchCases = async () => {
+    const fetchCases = () => {
         try {
             setLoading(true);
             setError(null);
-            const result = await getCases(10); // Fetch 10 cases
+            const result = getCases(10); // Fetch 10 cases
             if (Array.isArray(result)) {
                 setCases(result);
             } else {
@@ -31,11 +31,11 @@ const App = () => {
         }
     };
 
-    const handleRunServerUtils = async () => {
+    const handleRunServerUtils = () => {
         try {
             setLoading(true);
             setError(null);
-            await runServerUtils();
+            runServerUtils();
             alert('Server utils job completed successfully');
         } catch (err) {
             setError('Failed to run server utils job');
@@ -54,7 +54,7 @@ const App = () => {
                 Run Server Utils Job
             </button>
             {loading && <p>Loading...</p>}
-            {error && <p style={{ color: 'red' }}>{error}</p>}
+            {error && <p style={{color: 'red'}}>{error}</p>}
             <ul>
                 {cases.map((c) => (
                     <li key={c.id}>{c.name} ({c.term})</li>

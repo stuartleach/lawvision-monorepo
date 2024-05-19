@@ -1,7 +1,7 @@
-import express, { Express, Request, Response } from 'express';
+import express, {Express, Request, Response} from 'express';
 import dotenv from 'dotenv';
-import { PrismaClient } from '@shared/prisma';
-import { Node, Edge, GraphData } from './shared/types'; // Import shared types
+import {PrismaClient} from '@shared/prisma';
+import {Node, Edge, GraphData} from '../../frontend/src/types/types'; // Import shared types
 
 dotenv.config();
 
@@ -55,7 +55,7 @@ app.get('/api/cases', async (req: Request, res: Response) => {
         // Fetch the details of the combined cases
         const uniqueCases = await prisma.supreme_court_cases.findMany({
             where: {
-                id: { in: combinedCaseIds },
+                id: {in: combinedCaseIds},
             },
             select: {
                 id: true,
@@ -71,8 +71,8 @@ app.get('/api/cases', async (req: Request, res: Response) => {
         const caseCitations = await prisma.cases_citations.findMany({
             where: {
                 OR: [
-                    { self_id: { in: combinedCaseIds } },
-                    { target_uuid: { in: combinedCaseIds } },
+                    {self_id: {in: combinedCaseIds}},
+                    {target_uuid: {in: combinedCaseIds}},
                 ],
             },
             select: {
@@ -106,14 +106,14 @@ app.get('/api/cases', async (req: Request, res: Response) => {
             source: c.self_id!,
             target: c.target_uuid!,
             citation: c.target_citation || 'Unknown Citation',
-        }));
+        })) as unknown as Edge[];
 
-        const graphData: GraphData = { nodes, edges };
+        const graphData: GraphData = {nodes, edges};
 
         res.json(graphData);
     } catch (error) {
         console.error("Error fetching cases:", error);
-        res.status(500).json({ error: "Internal Server Error" });
+        res.status(500).json({error: "Internal Server Error"});
     }
 });
 

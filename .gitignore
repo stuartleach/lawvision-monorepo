@@ -5,3 +5,7 @@
 /node_modules
 **/node_modules
 node_modules
+/_DATA
+**/_DATA
+/data
+**/data

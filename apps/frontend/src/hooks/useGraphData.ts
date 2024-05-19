@@ -10,6 +10,7 @@ export const useGraphData = (numCases: number) => {
         setIsLoading(true);
         getCases(numCases)
             .then((data: GraphData) => {
+                // console.log("data: ", data);
                 setGraphData(data);
             })
             .catch(e => console.error("Error fetching cases:", e))

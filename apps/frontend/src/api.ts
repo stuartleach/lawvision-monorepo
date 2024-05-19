@@ -1,31 +1,16 @@
-import type { supreme_court_cases as SupremeCourtCase } from '@shared/prisma';
-
-interface Node {
-    id: string;
-    name: string;
-    term: string;
-}
-
-interface Edge {
-    source: string;
-    target: string | null;
-    citation: string;
-}
-
-interface GraphData {
-    nodes: Node[];
-    edges: Edge[];
-}
+import {GraphData} from './types/types'
 
 const getCases = async (numCases: number): Promise<GraphData> => {
-    console.log("numCases: ", numCases)
+    // console.log("numCases: ", numCases);
     const response = await fetch(`/api/cases?numCases=${numCases}`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
         },
     });
-    return response.json();
+
+    const data = await response.json();
+    return data;
 };
 
 const runServerUtils = async (): Promise<void> => {
@@ -41,4 +26,4 @@ const runServerUtils = async (): Promise<void> => {
     }
 };
 
-export { getCases, runServerUtils };
+export {getCases, runServerUtils};
