@@ -5,11 +5,5 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc"
-  },
-  "dependencies": {
-    "@prisma/client": "^5.14.0"
-  },
-  "devDependencies": {
-    "prisma": "^5.14.0"
   }
 }

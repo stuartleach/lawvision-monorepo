@@ -7,7 +7,7 @@ export default defineConfig({
   plugins: [
     react(),
     tsconfigPaths({
-      root: '../../', // Adjust if your tsconfig is in a different location
+      root: './', // Adjust if your tsconfig is in a different location
     }),
   ],
   server: {
