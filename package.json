@@ -5,14 +5,16 @@
   "type": "module",
   "esModuleInterop": true,
   "scripts": {
-    "dev": "concurrently \"pnpm --filter ./apps/backend dev\" \"pnpm run --filter ./apps/frontend dev\"",
-    "build": "pnpm --filter ./apps/* build",
-    "start": "pnpm --filter ./apps/backend start"
+    "dev": "concurrently \"pnpm run --dir ./backend dev\" \"pnpm run --dir ./frontend dev\"",
+    "build": "pnpm --filter ./* build",
+    "start": "pnpm --filter ./backend start"
   },
   "devDependencies": {
-    "concurrently": "^6.4.0"
+    "concurrently": "^6.4.0",
+    "tsconfig-paths": "^4.2.0"
   },
   "dependencies": {
-    "tsx": "^4.10.2"
+    "tsx": "^4.10.2",
+    "tsconfig-paths": "^4.2.0"
   }
 }

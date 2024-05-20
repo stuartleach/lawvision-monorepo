@@ -15,9 +15,7 @@
     "forceConsistentCasingInFileNames": true,
     "baseUrl": ".",
     "rootDir": "./src",
-    "paths": {
-      "@shared/*": ["../../shared/*"]
-    }
+    "outDir": "./dist",
   },
   "include": ["src"],
 }
