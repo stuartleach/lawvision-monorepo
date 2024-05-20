@@ -33,6 +33,9 @@ export const Slider: React.FC<SliderProps> = ({ numCases, setNumCases }) => {
                 onChange={handleChange}
                 className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
             />
+            <p className="font-mono text-orange-500 text-sm font-bold">{sliderValue}<br/><br/>
+            <span className={"text-red-500"}>Careful, this will crash your browser if the number goes too high.</span>
+            </p>
         </div>
     );
 }

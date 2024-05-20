@@ -178,7 +178,7 @@ export const SpringGraph: React.FC<SpringGraphProps> = ({numCases, width = 800, 
 
     return (
         <div className="justify-center items-center w-full h-full">
-            <svg id="spring-graph" className="w-full h-full"></svg>
+            <svg id="spring-graph" className="w-full h-full border-amber-300 border-8"></svg>
         </div>
     );
 };

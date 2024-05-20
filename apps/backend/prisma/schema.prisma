@@ -82,3 +82,35 @@ model supreme_court_cases {
 
   @@schema("public")
 }
+
+model scraped_sc_cases {
+  id            String   @id(map: "scraped_sc_cases_pk") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name          String?
+  opinion       String?
+  self_citation String?
+  citations     String[]
+  year          Int?
+  topics        String[]
+
+  @@schema("public")
+}
+
+model Case {
+  id        String     @id @default(cuid())
+  title     String
+  year      Int
+  volume    Int
+  page      Int
+  citations Citation[]
+
+  @@schema("public")
+}
+
+model Citation {
+  id       String @id @default(cuid())
+  caseId   String
+  citation String
+  Case     Case   @relation(fields: [caseId], references: [id])
+
+  @@schema("public")
+}

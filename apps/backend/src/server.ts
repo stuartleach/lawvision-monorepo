@@ -1,6 +1,6 @@
 import express, {Express, Request, Response} from 'express';
 import dotenv from 'dotenv';
-import {PrismaClient} from '@shared/prisma';
+import {PrismaClient} from '@prisma/client';
 import {Node, Edge, GraphData} from '../../frontend/src/types/types'; // Import shared types
 
 dotenv.config();
