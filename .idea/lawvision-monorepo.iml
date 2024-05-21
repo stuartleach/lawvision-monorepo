@@ -6,6 +6,7 @@
       <sourceFolder url="file://$MODULE_DIR$/data_analysis/src" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/data_analysis/target" />
       <excludeFolder url="file://$MODULE_DIR$/data_analysis/data" />
+      <excludeFolder url="file://$MODULE_DIR$/.idea/dataSources" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

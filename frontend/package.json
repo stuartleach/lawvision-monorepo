@@ -11,12 +11,16 @@
   "dependencies": {
     "@faker-js/faker": "^8.4.1",
     "@react-sigma/core": "^4.0.2",
+    "@react-three/cannon": "^6.6.0",
+    "@react-three/drei": "^9.105.6",
     "@react-three/fiber": "^8.16.6",
     "@vitejs/plugin-react-swc": "^3.6.0",
+    "cannon-es": "^0.20.0",
     "d3": "^7.9.0",
     "graphology": "^0.25.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "shared": "workspace:*",
     "three": "^0.164.1"
   },
   "devDependencies": {

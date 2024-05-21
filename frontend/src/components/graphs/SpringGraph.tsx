@@ -1,7 +1,8 @@
-import React, {useEffect} from "react";
+import * as React from "react";
+import {useEffect} from "react";
 import * as d3 from "d3";
 import {useGraphData} from "../../hooks/useGraphData";
-import {CitationAndID} from "../../types/types";
+import {CitationAndID} from "shared/src/types";
 
 export interface CustomNode extends d3.SimulationNodeDatum {
     id: string;

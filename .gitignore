@@ -8,4 +8,5 @@ node_modules
 /_DATA
 **/_DATA
 /data
-**/data
+**/data/
+lawvision-data

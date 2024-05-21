@@ -4,7 +4,9 @@ import { Slider } from "./components/Slider";
 import { SpringGraph } from "./components/graphs/SpringGraph";
 import type { CustomNode } from "./components/graphs/SpringGraph";
 import "./App.css";
-import {ThreeCanvas} from "./components/3d/Box"; // Import CSS for styling
+import Molecule from "./components/3d/Box"; // Import CSS for styling;
+import * as THREE from "three";
+
 
 interface InfoProps {
     clickedNode: CustomNode | null;
@@ -50,10 +52,11 @@ const App: FC = () => {
                     <Header />
                     <Slider numCases={numCases} setNumCases={setNumCases} />
                 </div>
-                <ThreeCanvas />
+
                 <TopBar />
             </div>
             <div className="main-content">
+                {/*<Molecule />*/}
                 <SpringGraph
                     clickedNode={clickedNode}
                     setClickedNode={setClickedNode}

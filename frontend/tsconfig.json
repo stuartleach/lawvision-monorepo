@@ -22,11 +22,6 @@
     "jsx": "react-jsx",
     "rootDir": "./src",
     "baseUrl": ".",
-    "paths": {
-      "@shared/*": [
-        "../../packages/shared/src/*"
-      ]
-    }
   },
   "include": [
     "src/**/*.ts",

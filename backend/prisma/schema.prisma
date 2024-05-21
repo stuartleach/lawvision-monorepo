@@ -6,7 +6,7 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
-  schemas  = ["public"]
+  schemas  = ["case_law", "pretrial"]
 }
 
 model cases_by_year {
@@ -15,7 +15,7 @@ model cases_by_year {
   docket_number String?
   uuid          String? @default(dbgenerated("gen_random_uuid()")) @db.Uuid
 
-  @@schema("public")
+  @@schema("case_law")
 }
 
 model cases_citations {
@@ -31,7 +31,7 @@ model cases_citations {
   target_name         String?
   supreme_court_cases supreme_court_cases @relation(fields: [self_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "cases_citations_supreme_court_cases_id_fk")
 
-  @@schema("public")
+  @@schema("case_law")
 }
 
 model ny_appeals_court_cases {
@@ -42,7 +42,7 @@ model ny_appeals_court_cases {
   uuid     String? @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   id       String  @id(map: "ny_appeals_court_pkey") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
 
-  @@schema("public")
+  @@schema("case_law")
 }
 
 model supreme_court_cases {
@@ -80,7 +80,7 @@ model supreme_court_cases {
   citation_id               String?           @unique(map: "supreme_court_cases_pk_2")
   cases_citations           cases_citations[]
 
-  @@schema("public")
+  @@schema("case_law")
 }
 
 model scraped_sc_cases {
@@ -92,7 +92,7 @@ model scraped_sc_cases {
   year          Int?
   topics        String[]
 
-  @@schema("public")
+  @@schema("case_law")
 }
 
 model Case {
@@ -103,7 +103,7 @@ model Case {
   page      Int
   citations Citation[]
 
-  @@schema("public")
+  @@schema("case_law")
 }
 
 model Citation {
@@ -112,5 +112,5 @@ model Citation {
   citation String
   Case     Case   @relation(fields: [caseId], references: [id])
 
-  @@schema("public")
+  @@schema("case_law")
 }

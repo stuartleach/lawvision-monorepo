@@ -1,4 +1,4 @@
-import {GraphData} from './types/types'
+import {GraphData} from 'shared/src/types'
 
 const getCases = async (numCases: number): Promise<GraphData> => {
     // console.log("numCases: ", numCases);
@@ -9,8 +9,7 @@ const getCases = async (numCases: number): Promise<GraphData> => {
         },
     });
 
-    const data = await response.json();
-    return data;
+    return await response.json();
 };
 
 const runServerUtils = async (): Promise<void> => {
