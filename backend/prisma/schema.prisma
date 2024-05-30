@@ -244,12 +244,16 @@ model cases {
 }
 
 model counties {
-  county_uuid         String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  county_name         String      @unique
-  average_bail_amount Decimal?    @db.Decimal
-  number_of_cases     Int?
-  cases               cases[]
-  districts           districts[]
+  county_uuid                               String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  county_name                               String      @unique
+  average_bail_amount                       Decimal?    @db.Decimal
+  number_of_cases                           Int?
+  median_income                             Int?
+  median_id                                 String?     @db.Uuid
+  cases                                     cases[]
+  ny_income_counties_county_nameTony_income ny_income   @relation("counties_county_nameTony_income", fields: [county_name], references: [county], onDelete: NoAction, onUpdate: NoAction, map: "counties_ny_income_county_fk")
+  ny_income_counties_median_idTony_income   ny_income?  @relation("counties_median_idTony_income", fields: [median_id], references: [income_uuid], onDelete: NoAction, onUpdate: NoAction, map: "counties_ny_income_income_uuid_fk")
+  districts                                 districts[]
 
   @@schema("pretrial")
 }
@@ -342,6 +346,118 @@ model representation {
   ror_percentage                 Decimal? @db.Decimal
   nonmonetary_release_percentage Decimal? @db.Decimal
   cases                          cases[]
+
+  @@schema("pretrial")
+}
+
+model laws {
+  law_ordinal                 Float?
+  attempted_class             String?
+  attempted_vf_indicator      String?
+  attempted_nys_law_category  String?
+  bus_driver_charge_code      Float?
+  sex_offender_registry_code  Float?
+  ncic_code                   Float?
+  ucr_code                    Float?
+  safis_crime_cateory_code    String?
+  offense_category            String?
+  jo_indicator                Float?
+  jd_indicator                Float?
+  ibr_code                    String?
+  maxi_law_description        String?
+  law_description             String?
+  mini_law_description        String?
+  title                       String?
+  section                     String?
+  section13                   String?
+  sub_section                 String?
+  sub_section13               String?
+  degree                      Int?
+  effective_date              Float?
+  repeal_date                 Float?
+  fp_offense                  String?
+  unconst_date                String?
+  weapon_charge               Float?
+  armed_vfo_charge            String?
+  minors_charge               Float?
+  career_criminal_charge      String?
+  ins_charge                  String?
+  non_seal_charge             String? @map("non-seal_charge")
+  sub_convict_charge          String?
+  jail_charge                 String?
+  post_convict_charge         String?
+  auto_strip_charge           String?
+  full_law_description        String?
+  nys_law_category            String?
+  vf_indicator                String?
+  class                       String?
+  dna_indicator               Int?
+  attempted_dna_indicator     String?
+  escape_charge               String?
+  hate_crime                  Float?
+  date_invalidated            Float?
+  terrorism_indicator         String?
+  dmv_vtcode                  String?
+  ao_indicator                String?
+  rta_fp_offense              String?
+  modified_date               Float?
+  civil_confinement_indicator Int?
+  attempted_cci               Int?
+  expanded_law_literal        String?
+  sexually_motivated_ind      String?
+  mcdv_charge_indicator       Float?
+  rdlr_indicator              String?
+  spc_code                    String?
+  state_nics_disqualifier     String?
+  law_uuid                    String  @id(map: "laws_pk") @db.Uuid
+
+  @@schema("pretrial")
+}
+
+model ny_income {
+  rank                                     Int?
+  county                                   String?    @unique(map: "ny_income_pk_2")
+  per_capita_income                        Float?
+  median_household_income                  Float?
+  median_family_income                     Float?
+  population                               Float?
+  number_of_households                     Float?
+  median_household_income                  Int?       @map("2018_median_household_income")
+  income_uuid                              String     @id(map: "ny_income_pk") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  counties_counties_county_nameTony_income counties?  @relation("counties_county_nameTony_income")
+  counties_counties_median_idTony_income   counties[] @relation("counties_median_idTony_income")
+
+  @@schema("pretrial")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model results {
+  result_uuid                        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  model_target_type                  String    @db.VarChar(50)
+  model_target                       String    @default("baseline")
+  model_type                         String
+  model_params                       Json?     @db.Json
+  average_bail_amount                Decimal?  @db.Decimal
+  r_squared                          Decimal?  @db.Decimal
+  mean_squared_error                 Decimal?  @db.Decimal
+  gender_importance                  Decimal?  @db.Decimal
+  ethnicity_importance               Decimal?  @db.Decimal
+  race_importance                    Decimal?  @db.Decimal
+  age_at_arrest_importance           Decimal?  @db.Decimal
+  known_days_in_custody_importance   Decimal?  @db.Decimal
+  top_charge_at_arraign_importance   Decimal?  @db.Decimal
+  first_bail_set_cash_importance     Decimal?  @db.Decimal
+  prior_vfo_cnt_importance           Decimal?  @db.Decimal
+  prior_nonvfo_cnt_importance        Decimal?  @db.Decimal
+  prior_misd_cnt_importance          Decimal?  @db.Decimal
+  pend_nonvfo_importance             Decimal?  @db.Decimal
+  pend_misd_importance               Decimal?  @db.Decimal
+  pend_vfo_importance                Decimal?  @db.Decimal
+  county_name_importance             Decimal?  @db.Decimal
+  judge_name_importance              Decimal?  @db.Decimal
+  median_household_income_importance Decimal?  @db.Decimal
+  time_elapsed                       Decimal?  @db.Decimal
+  created_at                         DateTime? @default(dbgenerated("CURRENT_TIME")) @db.Time(6)
 
   @@schema("pretrial")
 }
