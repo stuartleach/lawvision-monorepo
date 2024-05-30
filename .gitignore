@@ -10,3 +10,5 @@ node_modules
 /data
 **/data/
 lawvision-data
+/lawvision-data
+lawvision-data/
