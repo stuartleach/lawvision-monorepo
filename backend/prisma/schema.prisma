@@ -6,113 +6,7 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
-  schemas  = ["case_law", "pretrial"]
-}
-
-model cases_by_year {
-  oyez_id       String  @id(map: "cases_by_year_pk")
-  year          Int?
-  docket_number String?
-  uuid          String? @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-
-  @@schema("case_law")
-}
-
-model cases_citations {
-  id                  String              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  self_id             String              @db.Uuid
-  self_citation       String?
-  created_at          DateTime?           @default(now()) @db.Timestamp(6)
-  updated_at          DateTime?           @default(now()) @db.Timestamp(6)
-  self_name           String?
-  year                Int?
-  target_citation     String?
-  target_uuid         String?             @db.Uuid
-  target_name         String?
-  supreme_court_cases supreme_court_cases @relation(fields: [self_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "cases_citations_supreme_court_cases_id_fk")
-
-  @@schema("case_law")
-}
-
-model ny_appeals_court_cases {
-  name     String?
-  link     String?
-  citation String?
-  opinion  String?
-  uuid     String? @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  id       String  @id(map: "ny_appeals_court_pkey") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-
-  @@schema("case_law")
-}
-
-model supreme_court_cases {
-  justia_id                 String
-  name                      String?
-  href                      String?
-  view_count                String?
-  docket_number             String?
-  additional_docket_numbers String?
-  manner_of_jurisdiction    String?
-  first_party               String?
-  second_party              String?
-  timeline                  Json?
-  lower_court               Json?
-  facts_of_the_case         String?
-  question                  String?
-  conclusion                String?
-  advocates                 Json?
-  oral_argument_audio       Json?
-  citation                  Json?
-  decisions                 Json?
-  first_party_label         String?
-  second_party_label        String?
-  heard_by                  Json?
-  decided_by                Json?
-  term                      String?
-  location                  Json?
-  opinion_announcement      Json?
-  description               String?
-  written_opinion           String?
-  related_cases             String?
-  justia_url                String?
-  argument2_url             String?
-  id                        String            @id(map: "supreme_court_cases_pk") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  citation_id               String?           @unique(map: "supreme_court_cases_pk_2")
-  cases_citations           cases_citations[]
-
-  @@schema("case_law")
-}
-
-model scraped_sc_cases {
-  id            String   @id(map: "scraped_sc_cases_pk") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  name          String?
-  opinion       String?
-  self_citation String?
-  citations     String[]
-  year          Int?
-  topics        String[]
-
-  @@schema("case_law")
-}
-
-model Case {
-  id        String     @id @default(cuid())
-  title     String
-  year      Int
-  volume    Int
-  page      Int
-  citations Citation[]
-
-  @@schema("case_law")
-}
-
-model Citation {
-  id       String @id @default(cuid())
-  caseId   String
-  citation String
-  Case     Case   @relation(fields: [caseId], references: [id])
-
-  @@schema("case_law")
+  schemas  = ["pretrial"]
 }
 
 model cases {
@@ -318,38 +212,6 @@ model judges {
   @@schema("pretrial")
 }
 
-model races {
-  race_uuid                      String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  race                           String   @unique
-  average_bail_amount            Decimal? @db.Decimal
-  number_of_cases                Int?
-  average_known_days_in_custody  Decimal? @db.Decimal
-  remanded_percentage            Decimal? @db.Decimal
-  bail_set_percentage            Decimal? @db.Decimal
-  disposed_at_arraign_percentage Decimal? @db.Decimal
-  ror_percentage                 Decimal? @db.Decimal
-  nonmonetary_release_percentage Decimal? @db.Decimal
-  cases                          cases[]
-
-  @@schema("pretrial")
-}
-
-model representation {
-  representation_uuid            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  representation_type            String   @unique
-  average_bail_amount            Decimal? @db.Decimal
-  number_of_cases                Int?
-  average_known_days_in_custody  Decimal? @db.Decimal
-  remanded_percentage            Decimal? @db.Decimal
-  bail_set_percentage            Decimal? @db.Decimal
-  disposed_at_arraign_percentage Decimal? @db.Decimal
-  ror_percentage                 Decimal? @db.Decimal
-  nonmonetary_release_percentage Decimal? @db.Decimal
-  cases                          cases[]
-
-  @@schema("pretrial")
-}
-
 model laws {
   law_ordinal                 Float?
   attempted_class             String?
@@ -418,14 +280,45 @@ model ny_income {
   rank                                     Int?
   county                                   String?    @unique(map: "ny_income_pk_2")
   per_capita_income                        Float?
-  median_household_income                  Float?
+  median_household_income                  Float?     @map("2018_median_household_income")
   median_family_income                     Float?
   population                               Float?
   number_of_households                     Float?
-  median_household_income                  Int?       @map("2018_median_household_income")
   income_uuid                              String     @id(map: "ny_income_pk") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   counties_counties_county_nameTony_income counties?  @relation("counties_county_nameTony_income")
   counties_counties_median_idTony_income   counties[] @relation("counties_median_idTony_income")
+
+  @@schema("pretrial")
+}
+
+model races {
+  race_uuid                      String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  race                           String   @unique
+  average_bail_amount            Decimal? @db.Decimal
+  number_of_cases                Int?
+  average_known_days_in_custody  Decimal? @db.Decimal
+  remanded_percentage            Decimal? @db.Decimal
+  bail_set_percentage            Decimal? @db.Decimal
+  disposed_at_arraign_percentage Decimal? @db.Decimal
+  ror_percentage                 Decimal? @db.Decimal
+  nonmonetary_release_percentage Decimal? @db.Decimal
+  cases                          cases[]
+
+  @@schema("pretrial")
+}
+
+model representation {
+  representation_uuid            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  representation_type            String   @unique
+  average_bail_amount            Decimal? @db.Decimal
+  number_of_cases                Int?
+  average_known_days_in_custody  Decimal? @db.Decimal
+  remanded_percentage            Decimal? @db.Decimal
+  bail_set_percentage            Decimal? @db.Decimal
+  disposed_at_arraign_percentage Decimal? @db.Decimal
+  ror_percentage                 Decimal? @db.Decimal
+  nonmonetary_release_percentage Decimal? @db.Decimal
+  cases                          cases[]
 
   @@schema("pretrial")
 }
