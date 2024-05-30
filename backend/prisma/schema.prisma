@@ -114,3 +114,234 @@ model Citation {
 
   @@schema("case_law")
 }
+
+model cases {
+  internal_case_id                            String          @unique(map: "internal_case_id_key")
+  gender                                      String?
+  ethnicity                                   String?
+  age_at_crime                                Int?
+  age_at_arrest                               Int?
+  offense_month                               String?
+  offense_year                                String?
+  arrest_month                                String?
+  arrest_year                                 String?
+  arrest_type                                 String?
+  top_arrest_law                              String?
+  top_arrest_article_section                  String?
+  top_arrest_attempt_indicator                String?
+  top_charge_severity_at_arrest               String?
+  top_charge_weight_at_arrest                 String?
+  top_charge_at_arrest_violent_felony_ind     String?
+  case_type                                   String?
+  first_arraign_date                          String?
+  top_arraign_law                             String?
+  top_arraign_article_section                 String?
+  top_arraign_attempt_indicator               String?
+  top_charge_at_arraign                       String?
+  top_severity_at_arraign                     String?
+  top_charge_weight_at_arraign                String?
+  top_charge_at_arraign_violent_felony_ind    String?
+  arraign_charge_category                     String?
+  app_count_arraign_to_dispo_released         String?
+  app_count_arraign_to_dispo_detained         String?
+  app_count_arraign_to_dispo_total            String?
+  def_attended_sched_pretrials                String?
+  remanded_to_jail_at_arraign                 String?
+  ror_at_arraign                              String?
+  bail_set_and_posted_at_arraign              String?
+  bail_set_and_not_posted_at_arraign          String?
+  nmr_at_arraign                              String?
+  release_decision_at_arraign                 String?
+  representation_at_securing_order            String?
+  pretrial_supervision_at_arraign             String?
+  contact_pretrial_service_agency             String?
+  electronic_monitoring                       String?
+  travel_restrictions                         String?
+  passport_surrender                          String?
+  no_firearms_or_weapons                      String?
+  maintain_employment                         String?
+  maintain_housing                            String?
+  maintain_school                             String?
+  placement_in_mandatory_program              String?
+  removal_to_hospital                         String?
+  obey_order_of_protection                    String?
+  obey_court_conditions_family_offense        String?
+  other_nmr                                   String?
+  order_of_protection                         String?
+  first_bail_set_cash                         String?
+  first_bail_set_credit                       String?
+  first_insurance_company_bail_bond           String?
+  first_secured_surety_bond                   String?
+  first_secured_app_bond                      String?
+  first_unsecured_surety_bond                 String?
+  first_unsecured_app_bond                    String?
+  first_partially_secured_surety_bond         String?
+  partially_secured_surety_bond_perc          String?
+  first_partially_secured_app_bond            String?
+  partially_secured_app_bond_perc             String?
+  bail_made_indicator                         String?
+  warrant_ordered_btw_arraign_and_dispo       String?
+  dat_wo_ws_prior_to_arraign                  String?
+  first_bench_warrant_date                    String?
+  non_stayed_wo                               String?
+  num_of_stayed_wo                            String?
+  num_of_row                                  String?
+  docket_status                               String?
+  disposition_type                            String?
+  disposition_detail                          String?
+  dismissal_reason                            String?
+  disposition_date                            String?
+  most_severe_sentence                        String?
+  top_conviction_law                          String?
+  top_conviction_article_section              String?
+  top_conviction_attempt_indicator            String?
+  top_charge_at_conviction                    String?
+  top_charge_severity_at_conviction           String?
+  top_charge_weight_at_conviction             String?
+  top_charge_at_conviction_violent_felony_ind String?
+  days_arraign_remand_first_released          String?
+  known_days_in_custody                       String?
+  days_arraign_bail_set_to_first_posted       String?
+  days_arraign_bail_set_to_first_release      String?
+  days_arraign_to_dispo                       String?
+  ucmslivedate                                String?
+  prior_vfo_cnt                               String?
+  prior_nonvfo_cnt                            String?
+  prior_misd_cnt                              String?
+  pend_vfo                                    String?
+  pend_nonvfo                                 String?
+  pend_misd                                   String?
+  supervision                                 String?
+  rearrest                                    String?
+  rearrest_date                               String?
+  rearrest_firearm                            String?
+  rearrest_date_firearm                       String?
+  arr_cycle_id                                String?
+  race_id                                     String?         @db.Uuid
+  court_id                                    String?         @db.Uuid
+  county_id                                   String?         @db.Uuid
+  top_charge_id                               String?         @db.Uuid
+  representation_id                           String?         @db.Uuid
+  judge_id                                    String?         @db.Uuid
+  case_uuid                                   String          @id(map: "cases_pk") @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  district_id                                 String?         @db.Uuid
+  counties                                    counties?       @relation(fields: [county_id], references: [county_uuid], onDelete: NoAction, onUpdate: NoAction, map: "fk_county_id")
+  courts                                      courts?         @relation(fields: [court_id], references: [court_uuid], onDelete: NoAction, onUpdate: NoAction, map: "fk_court_id")
+  districts                                   districts?      @relation(fields: [district_id], references: [district_uuid], onDelete: NoAction, onUpdate: NoAction, map: "fk_district_id")
+  judges                                      judges?         @relation(fields: [judge_id], references: [judge_uuid], onDelete: NoAction, onUpdate: NoAction, map: "fk_judge_id")
+  races                                       races?          @relation(fields: [race_id], references: [race_uuid], onDelete: NoAction, onUpdate: NoAction, map: "fk_race_id")
+  representation                              representation? @relation(fields: [representation_id], references: [representation_uuid], onDelete: NoAction, onUpdate: NoAction, map: "fk_representation_id")
+  crimes                                      crimes?         @relation(fields: [top_charge_id], references: [crime_uuid], onDelete: NoAction, onUpdate: NoAction, map: "fk_top_charge_id")
+
+  @@index([county_id], map: "idx_cases_county_id")
+  @@index([court_id], map: "idx_cases_court_id")
+  @@index([district_id], map: "idx_cases_district_id")
+  @@index([judge_id], map: "idx_cases_judge_id")
+  @@index([race_id], map: "idx_cases_race_id")
+  @@index([representation_id], map: "idx_cases_representation_id")
+  @@index([top_charge_id], map: "idx_cases_top_charge_id")
+  @@schema("pretrial")
+}
+
+model counties {
+  county_uuid         String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  county_name         String      @unique
+  average_bail_amount Decimal?    @db.Decimal
+  number_of_cases     Int?
+  cases               cases[]
+  districts           districts[]
+
+  @@schema("pretrial")
+}
+
+model courts {
+  court_uuid          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  court_name          String   @unique
+  court_ori           String?
+  district            String?
+  region              String?
+  court_type          String?
+  average_bail_amount Decimal? @db.Decimal
+  number_of_cases     Int?
+  cases               cases[]
+
+  @@schema("pretrial")
+}
+
+model crimes {
+  crime_uuid           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  top_charge_at_arrest String   @unique
+  average_bail_amount  Decimal? @db.Decimal
+  number_of_cases      Int?
+  cases                cases[]
+
+  @@schema("pretrial")
+}
+
+model districts {
+  district_uuid String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  district_name String
+  region        String?
+  county_id     String?   @db.Uuid
+  cases         cases[]
+  counties      counties? @relation(fields: [county_id], references: [county_uuid], onDelete: NoAction, onUpdate: NoAction, map: "fk_county_id")
+
+  @@unique([district_name, region, county_id])
+  @@schema("pretrial")
+}
+
+model judges {
+  judge_name                    String   @id(map: "judge_uuid_pkey")
+  judge_uuid                    String   @unique(map: "judges_uuid_key") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  average_bail_set              Decimal? @db.Decimal
+  unique_districts              String[]
+  case_count                    Int?
+  counties                      String[]
+  court_names                   String[]
+  representation_types          String[]
+  top_charges_at_arraign        String[]
+  disposition_types             String[]
+  remand_to_jail_count          Int?
+  ror_count                     Int?
+  bail_set_and_posted_count     Int?
+  bail_set_and_not_posted_count Int?
+  supervision_conditions        String[]
+  average_sentence_severity     Decimal? @db.Decimal
+  offense_types                 String[]
+  rearrest_rate                 Decimal? @db.Decimal
+  cases                         cases[]
+
+  @@schema("pretrial")
+}
+
+model races {
+  race_uuid                      String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  race                           String   @unique
+  average_bail_amount            Decimal? @db.Decimal
+  number_of_cases                Int?
+  average_known_days_in_custody  Decimal? @db.Decimal
+  remanded_percentage            Decimal? @db.Decimal
+  bail_set_percentage            Decimal? @db.Decimal
+  disposed_at_arraign_percentage Decimal? @db.Decimal
+  ror_percentage                 Decimal? @db.Decimal
+  nonmonetary_release_percentage Decimal? @db.Decimal
+  cases                          cases[]
+
+  @@schema("pretrial")
+}
+
+model representation {
+  representation_uuid            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  representation_type            String   @unique
+  average_bail_amount            Decimal? @db.Decimal
+  number_of_cases                Int?
+  average_known_days_in_custody  Decimal? @db.Decimal
+  remanded_percentage            Decimal? @db.Decimal
+  bail_set_percentage            Decimal? @db.Decimal
+  disposed_at_arraign_percentage Decimal? @db.Decimal
+  ror_percentage                 Decimal? @db.Decimal
+  nonmonetary_release_percentage Decimal? @db.Decimal
+  cases                          cases[]
+
+  @@schema("pretrial")
+}

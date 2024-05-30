@@ -3,6 +3,7 @@ import {useEffect} from "react";
 import * as d3 from "d3";
 import {useGraphData} from "../../hooks/useGraphData";
 import {CitationAndID} from "shared/src/types";
+import {targetData} from "../../api";
 
 export interface CustomNode extends d3.SimulationNodeDatum {
     id: string;
@@ -20,15 +21,20 @@ interface CustomEdge extends d3.SimulationLinkDatum<CustomNode> {
 }
 
 interface SpringGraphProps {
-    numCases: number;
+    targetNumber: number;
     width?: number;
     height?: number;
     clickedNode?: CustomNode | null;
     setClickedNode: (node: CustomNode | null) => void;
 }
 
-export const SpringGraph: React.FC<SpringGraphProps> = ({numCases, width = 800, height = 600, setClickedNode}) => {
-    const {graphData, isLoading} = useGraphData(numCases);
+export const CaseSpringGraph: React.FC<SpringGraphProps> = ({
+                                                                targetNumber,
+                                                                width = 800,
+                                                                height = 600,
+                                                                setClickedNode
+                                                            }) => {
+    const {graphData, isLoading} = useGraphData(targetData.cases, targetNumber);
 
 
     useEffect(() => {
@@ -175,7 +181,7 @@ export const SpringGraph: React.FC<SpringGraphProps> = ({numCases, width = 800, 
 
         svg.call(zoom);
 
-    }, [graphData, isLoading, numCases, width, height]);
+    }, [graphData, isLoading, targetNumber, width, height]);
 
     return (
         <div className="justify-center items-center w-full h-full">

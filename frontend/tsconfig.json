@@ -25,6 +25,10 @@
   },
   "include": [
     "src/**/*.ts",
+    "src/**/*.d.ts",
+    "src/**/*.tsx",
+    "src/**/*.js",
+    "src/**/**/*.tsx",
     "src/*.ts",
     "vite.config.ts"
     // Make sure to include this line or have it included in some way!

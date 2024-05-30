@@ -28,3 +28,11 @@ export interface GraphData {
     nodes: Node[];
     edges: Edge[];
 }
+
+export interface Judge {
+    id: string;
+    name: string;
+    average_bail_set: string;
+    ror_count: number;
+    case_count: number;
+}

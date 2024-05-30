@@ -1,7 +1,8 @@
 import express, {Express, Request, Response} from 'express';
 import dotenv from 'dotenv';
 import {PrismaClient} from '@prisma/client';
-import {Node, Edge, GraphData} from 'shared/src/types'; // Import shared types
+import {Node, Edge, GraphData} from 'shared/src/types';
+import {Decimal} from "@prisma/client/runtime/library"; // Import shared types
 
 dotenv.config();
 
@@ -15,7 +16,7 @@ app.get('/', (req: Request, res: Response) => {
 
 app.get('/api/cases', async (req: Request, res: Response) => {
     try {
-        const numCases = parseInt(req.query.numCases as string) || 10; // Default to 10 cases
+        const numCases = parseInt(req.query.num as string) || 10; // Default to 10 cases
 
         // Fetch the most cited cases
         const mostCitedCases = await prisma.cases_citations.groupBy({
@@ -116,6 +117,39 @@ app.get('/api/cases', async (req: Request, res: Response) => {
         res.status(500).json({error: "Internal Server Error"});
     }
 });
+
+
+app.get('/api/judges', async (req: Request, res: Response) => {
+
+    const numJudges = parseInt(req.query.num as string) || 10; // Default to 10 cases
+
+    try {
+            const judges = await prisma.judges.findMany({
+                select: {
+                    judge_uuid: true,
+                    judge_name: true,
+                    average_bail_set: true,
+                    case_count: true,
+                }, where: {
+                    average_bail_set: {
+                        gt: 1
+                    },
+                }, orderBy: {
+                    average_bail_set: 'desc'
+                }, take: numJudges
+            })
+
+
+            res.json(judges);
+        } catch
+            (error) {
+            console.error("Error fetching judges:", error);
+            res.status(500).json({error: "Internal Server Error"});
+        }
+
+    }
+)
+
 
 app.listen(port, () => {
     console.log(`⚡️[server]: Server is running at http://localhost:${port}`);

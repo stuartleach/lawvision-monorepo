@@ -1,16 +1,22 @@
-import {GraphData} from 'shared/src/types'
+enum targetData {
+    "cases",
+    "judges"
+}
 
-const getCases = async (numCases: number): Promise<GraphData> => {
+const getData = async (endpoint: string, numToFetch: number): Promise<never> => {
     // console.log("numCases: ", numCases);
-    const response = await fetch(`/api/cases?numCases=${numCases}`, {
+    const response = await fetch(`/api/${endpoint}?num=${numToFetch}`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
         },
     });
 
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
     return await response.json();
 };
+
 
 const runServerUtils = async (): Promise<void> => {
     const response = await fetch('/api/run-server-utils', {
@@ -25,4 +31,4 @@ const runServerUtils = async (): Promise<void> => {
     }
 };
 
-export {getCases, runServerUtils};
+export {getData, runServerUtils, targetData};

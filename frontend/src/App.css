@@ -41,6 +41,22 @@
 /*.read-the-docs {*/
 /*  color: #888;*/
 /*}*/
+
+
+.tooltip {
+    position: absolute;
+    padding: 8px;
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    pointer-events: none;
+    z-index: 1000;
+    /*visibility: hidden;  */
+}
+
+
+
+
 .app-container {
     display: flex;
     flex-direction: row;
