@@ -1,10 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
 import * as d3 from 'd3';
 import { Feature, Geometry } from 'geojson';
+import { getData } from "../../api";
 
 interface CountyProperties {
     geoid: string;
     name: string;
+    raceImportance: number; // Default race importance is 0
 }
 
 interface CountyFeature extends Feature<Geometry> {
@@ -16,11 +18,41 @@ const MapProps = {
     height: 600
 };
 
+type ModelResults = {
+    result_uuid: string;
+    model_target_type: string;
+    model_target: string;
+    model_type: string;
+    model_params?: object;
+    average_bail_amount?: number;
+    r_squared?: number;
+    mean_squared_error?: number;
+    gender_importance?: number;
+    ethnicity_importance?: number;
+    race_importance?: number;
+    age_at_arrest_importance?: number;
+    known_days_in_custody_importance?: number;
+    top_charge_at_arraign_importance?: number;
+    first_bail_set_cash_importance?: number;
+    prior_vfo_cnt_importance?: number;
+    prior_nonvfo_cnt_importance?: number;
+    prior_misd_cnt_importance?: number;
+    pend_nonvfo_importance?: number;
+    pend_misd_importance?: number;
+    pend_vfo_importance?: number;
+    county_name_importance?: number;
+    judge_name_importance?: number;
+    median_household_income_importance?: number;
+    time_elapsed?: number;
+    created_at?: Date;
+};
+
 const NewYorkCountiesMap: React.FC<typeof MapProps> = ({ width, height }) => {
     const ref = useRef<SVGSVGElement>(null);
     const gRef = useRef<SVGGElement>(null);
     const tooltipRef = useRef<HTMLDivElement>(null);
     const [counties, setCounties] = useState<CountyFeature[]>([]);
+    const [updatedCounties, setUpdatedCounties] = useState<CountyFeature[]>([]);
 
     useEffect(() => {
         fetch('/ny-counties.geojson')
@@ -30,12 +62,41 @@ const NewYorkCountiesMap: React.FC<typeof MapProps> = ({ width, height }) => {
     }, []);
 
     useEffect(() => {
-        if (counties.length > 0 && ref.current && gRef.current) {
+        const fetchModelResults = async () => {
+            try {
+                const countyResponse: ModelResults[] = await getData('counties') as ModelResults[];
+                const updatedData = counties.map(county => {
+                    const matchingResult = countyResponse.find(cos => cos.model_target === county.properties.name);
+                    return {
+                        ...county,
+                        properties: {
+                            ...county.properties,
+                            raceImportance: matchingResult?.race_importance ?? 0
+                        }
+                    };
+                });
+                setUpdatedCounties(updatedData);
+            } catch (error) {
+                console.error("Error fetching or updating counties:", error);
+            }
+        };
+
+        if (counties.length > 0) {
+            fetchModelResults();
+        }
+    }, [counties]);
+
+    useEffect(() => {
+        if (updatedCounties.length > 0 && ref.current && gRef.current) {
             const svg = d3.select<SVGSVGElement, unknown>(ref.current);
             const g = d3.select<SVGGElement, unknown>(gRef.current);
 
+            const colorScale = d3.scaleLinear<string>()
+                .domain([0, 0.02, 0.1])
+                .range(['blue', "purple",  'red']);
+
             const projection = d3.geoMercator()
-                .fitSize([width, height], { type: "FeatureCollection", features: counties });
+                .fitSize([width, height], { type: "FeatureCollection", features: updatedCounties });
             const pathGenerator = d3.geoPath().projection(projection);
 
             const zoom = d3.zoom<SVGSVGElement, unknown>()
@@ -47,11 +108,11 @@ const NewYorkCountiesMap: React.FC<typeof MapProps> = ({ width, height }) => {
             svg.call(zoom);
 
             g.selectAll('path')
-                .data(counties)
+                .data(updatedCounties)
                 .join('path')
                 .attr('class', 'county')
                 .attr('d', pathGenerator)
-                .attr('fill', '#ccc')
+                .attr('fill', d => colorScale(d.properties.raceImportance))
                 .attr('stroke', 'rgba(55, 65, 81, 0.75)')
                 .on('mouseover', (event, d) => {
                     d3.select(event.currentTarget)
@@ -72,11 +133,11 @@ const NewYorkCountiesMap: React.FC<typeof MapProps> = ({ width, height }) => {
                     d3.select(tooltipRef.current).style('visibility', 'hidden');
                 });
         }
-    }, [counties, width, height]);
+    }, [updatedCounties, width, height]);
 
     return (
         <>
-            <svg ref={ref} width={width} height={height} style={{border: 'solid 1px white'}}>
+            <svg ref={ref} width={width} height={height} style={{ border: 'solid 1px white' }}>
                 <g ref={gRef}></g>
             </svg>
             <div ref={tooltipRef} className="tooltip"></div>

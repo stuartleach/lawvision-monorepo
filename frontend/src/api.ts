@@ -3,9 +3,9 @@ enum targetData {
     "judges"
 }
 
-const getData = async (endpoint: string, numToFetch: number): Promise<never> => {
+const getData = async (endpoint: string, numToFetch?: number): Promise<never> => {
     // console.log("numCases: ", numCases);
-    const response = await fetch(`/api/${endpoint}?num=${numToFetch}`, {
+    const response = await fetch(`/api/${endpoint}?limit=${numToFetch}`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',

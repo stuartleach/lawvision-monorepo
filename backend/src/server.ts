@@ -1,8 +1,6 @@
 import express, {Express, Request, Response} from 'express';
 import dotenv from 'dotenv';
 import {PrismaClient} from '@prisma/client';
-import {Node, Edge, GraphData} from 'shared/src/types';
-import {Decimal} from "@prisma/client/runtime/library"; // Import shared types
 
 dotenv.config();
 
@@ -26,13 +24,10 @@ app.get('/api/judges', async (req: Request, res: Response) => {
                     },
                     model_target_type: 'judge_name'
                 }, orderBy: {
-                    average_bail_amount: 'desc'
+                    // average_bail_amount: 'desc'
+                    race_importance: 'desc'
                 }, take: numJudges
             })
-
-            console.log(results)
-
-
             res.json(results);
         } catch
             (error) {
@@ -56,7 +51,7 @@ app.get('/api/counties', async (req: Request, res: Response) => {
                     },
                     model_target_type: 'county_name'
                 }, orderBy: {
-                    average_bail_amount: 'desc'
+                    race_importance: 'desc'
                 }, take: numCounties
             })
 
