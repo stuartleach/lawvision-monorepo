@@ -1,12 +1,19 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import * as d3 from 'd3';
-import { Feature, Geometry } from 'geojson';
-import { getData } from "../../api";
+import {Feature, Geometry} from 'geojson';
+import {getData} from "../../api";
 
 interface CountyProperties {
+
+    countyName: string;
+    countyUuid: string;
+    numberOfCases: number;
+    medianIncome: number;
+    averageBailAmount: number;
     geoid: string;
     name: string;
     raceImportance: number; // Default race importance is 0
+
 }
 
 interface CountyFeature extends Feature<Geometry> {
@@ -47,12 +54,13 @@ type ModelResults = {
     created_at?: Date;
 };
 
-const NewYorkCountiesMap: React.FC<typeof MapProps> = ({ width, height }) => {
+const NewYorkCountiesMap: React.FC<typeof MapProps> = ({width, height}) => {
     const ref = useRef<SVGSVGElement>(null);
     const gRef = useRef<SVGGElement>(null);
     const tooltipRef = useRef<HTMLDivElement>(null);
     const [counties, setCounties] = useState<CountyFeature[]>([]);
     const [updatedCounties, setUpdatedCounties] = useState<CountyFeature[]>([]);
+    const [bailMinMax, setBailMinMax] = useState<number[]>([0, 10000000]);
 
     useEffect(() => {
         fetch('/ny-counties.geojson')
@@ -71,7 +79,7 @@ const NewYorkCountiesMap: React.FC<typeof MapProps> = ({ width, height }) => {
                         ...county,
                         properties: {
                             ...county.properties,
-                            raceImportance: matchingResult?.race_importance ?? 0
+                            averageBailAmount: matchingResult?.average_bail_amount ?? 0
                         }
                     };
                 });
@@ -80,6 +88,11 @@ const NewYorkCountiesMap: React.FC<typeof MapProps> = ({ width, height }) => {
                 console.error("Error fetching or updating counties:", error);
             }
         };
+
+        const maxBailAmount = Math.max(...counties.map(c => c.properties.averageBailAmount));
+        const minBailAmount = Math.min(...counties.map(c => c.properties.averageBailAmount));
+
+        setBailMinMax([minBailAmount, maxBailAmount]);
 
         if (counties.length > 0) {
             fetchModelResults();
@@ -92,11 +105,11 @@ const NewYorkCountiesMap: React.FC<typeof MapProps> = ({ width, height }) => {
             const g = d3.select<SVGGElement, unknown>(gRef.current);
 
             const colorScale = d3.scaleLinear<string>()
-                .domain([0, 0.02, 0.1])
-                .range(['blue', "purple",  'red']);
+                .domain(bailMinMax)
+                .range(['blue', 'red']);
 
             const projection = d3.geoMercator()
-                .fitSize([width, height], { type: "FeatureCollection", features: updatedCounties });
+                .fitSize([width, height], {type: "FeatureCollection", features: updatedCounties});
             const pathGenerator = d3.geoPath().projection(projection);
 
             const zoom = d3.zoom<SVGSVGElement, unknown>()
@@ -112,7 +125,7 @@ const NewYorkCountiesMap: React.FC<typeof MapProps> = ({ width, height }) => {
                 .join('path')
                 .attr('class', 'county')
                 .attr('d', pathGenerator)
-                .attr('fill', d => colorScale(d.properties.raceImportance))
+                .attr('fill', d => colorScale(d.properties.averageBailAmount))
                 .attr('stroke', 'rgba(55, 65, 81, 0.75)')
                 .on('mouseover', (event, d) => {
                     d3.select(event.currentTarget)
@@ -137,7 +150,7 @@ const NewYorkCountiesMap: React.FC<typeof MapProps> = ({ width, height }) => {
 
     return (
         <>
-            <svg ref={ref} width={width} height={height} style={{ border: 'solid 1px white' }}>
+            <svg ref={ref} width={width} height={height} style={{border: 'solid 1px white'}}>
                 <g ref={gRef}></g>
             </svg>
             <div ref={tooltipRef} className="tooltip"></div>

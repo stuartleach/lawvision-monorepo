@@ -13,9 +13,7 @@ app.get('/', (req: Request, res: Response) => {
 });
 
 app.get('/api/judges', async (req: Request, res: Response) => {
-
         const numJudges = parseInt(req.query.limit as string) || 10000; // Default to 10 cases
-
         try {
             const results = await prisma.results.findMany({
                 where: {
@@ -34,30 +32,18 @@ app.get('/api/judges', async (req: Request, res: Response) => {
             console.error("Error fetching judges:", error);
             res.status(500).json({error: "Internal Server Error"});
         }
-
     }
 )
 
 
 app.get('/api/counties', async (req: Request, res: Response) => {
-
         const numCounties = parseInt(req.query.limit as string) || 10000; // Default to 10 cases
-
         try {
-            const results = await prisma.results.findMany({
-                where: {
-                    average_bail_amount: {
-                        gt: 1
-                    },
-                    model_target_type: 'county_name'
-                }, orderBy: {
-                    race_importance: 'desc'
+            const results = await prisma.counties.findMany({
+                orderBy: {
+                    average_bail_amount: 'desc'
                 }, take: numCounties
             })
-
-
-            console.log(results)
-
             res.json(results);
         } catch
             (error) {

@@ -5,7 +5,7 @@ interface SliderProps {
     setNumCases: React.Dispatch<React.SetStateAction<number>>;
 }
 
-export const Slider: React.FC<SliderProps> = ({ numCases, setNumCases }) => {
+export const Slider: React.FC<SliderProps> = ({numCases, setNumCases}) => {
     const [sliderValue, setSliderValue] = React.useState(numCases);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -23,7 +23,8 @@ export const Slider: React.FC<SliderProps> = ({ numCases, setNumCases }) => {
 
     return (
         <div>
-            <label htmlFor="num-cases-slider" className="font-mono text-orange-500 block mb-2 text-sm font-bold">Number of Cases to Fetch</label>
+            <label htmlFor="num-cases-slider" className="font-mono text-orange-500 block mb-2 text-sm font-bold">Number
+                of Cases to Fetch</label>
             <input
                 id="num-cases-slider"
                 type="range"
@@ -34,7 +35,8 @@ export const Slider: React.FC<SliderProps> = ({ numCases, setNumCases }) => {
                 className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
             />
             <p className="font-mono text-orange-500 text-sm font-bold">{sliderValue}<br/><br/>
-            <span className={"text-red-500"}>Careful, this will crash your browser if the number goes too high.</span>
+                <span
+                    className={"text-red-500"}>Careful, this will crash your browser if the number goes too high.</span>
             </p>
         </div>
     );
