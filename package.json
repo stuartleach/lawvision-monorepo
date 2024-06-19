@@ -5,7 +5,7 @@
   "type": "module",
   "esModuleInterop": true,
   "scripts": {
-    "dev": "concurrently \"pnpm run --dir ./backend dev\" \"pnpm run --dir ./frontend dev\"",
+    "dev": "concurrently \\\"pnpm run --dir ./backend dev\\\" \\\"pnpm run --dir frontend-react dev\\\"",
     "build": "pnpm --filter ./* build",
     "start": "pnpm --filter ./backend start"
   },
