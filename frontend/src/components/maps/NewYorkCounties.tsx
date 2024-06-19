@@ -1,19 +1,17 @@
 import React, {useEffect, useRef, useState} from 'react';
 import * as d3 from 'd3';
 import {Feature, Geometry} from 'geojson';
-import {getData} from "../../api";
+import {getData} from '../../api';
 
 interface CountyProperties {
-
-    countyName: string;
+    county_name: string;
     countyUuid: string;
-    numberOfCases: number;
-    medianIncome: number;
-    averageBailAmount: number;
+    number_of_cases: number;
+    median_income: number;
+    average_bail_amount: number;
     geoid: string;
     name: string;
     raceImportance: number; // Default race importance is 0
-
 }
 
 interface CountyFeature extends Feature<Geometry> {
@@ -22,94 +20,85 @@ interface CountyFeature extends Feature<Geometry> {
 
 const MapProps = {
     width: 960,
-    height: 600
+    height: 600,
 };
 
-type ModelResults = {
-    result_uuid: string;
-    model_target_type: string;
-    model_target: string;
-    model_type: string;
-    model_params?: object;
-    average_bail_amount?: number;
-    r_squared?: number;
-    mean_squared_error?: number;
-    gender_importance?: number;
-    ethnicity_importance?: number;
-    race_importance?: number;
-    age_at_arrest_importance?: number;
-    known_days_in_custody_importance?: number;
-    top_charge_at_arraign_importance?: number;
-    first_bail_set_cash_importance?: number;
-    prior_vfo_cnt_importance?: number;
-    prior_nonvfo_cnt_importance?: number;
-    prior_misd_cnt_importance?: number;
-    pend_nonvfo_importance?: number;
-    pend_misd_importance?: number;
-    pend_vfo_importance?: number;
-    county_name_importance?: number;
-    judge_name_importance?: number;
-    median_household_income_importance?: number;
-    time_elapsed?: number;
-    created_at?: Date;
-};
+const formatMoney = (amount: number) => {
+    console.log('amount: ', amount)
+    amount = parseFloat(String(amount))
+    return `$${amount.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}`;
+}
+
+const formatNumber = (amount: number) => {
+    return amount.toString(10).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+}
 
 const NewYorkCountiesMap: React.FC<typeof MapProps> = ({width, height}) => {
     const ref = useRef<SVGSVGElement>(null);
     const gRef = useRef<SVGGElement>(null);
     const tooltipRef = useRef<HTMLDivElement>(null);
-    const [counties, setCounties] = useState<CountyFeature[]>([]);
     const [updatedCounties, setUpdatedCounties] = useState<CountyFeature[]>([]);
-    const [bailMinMax, setBailMinMax] = useState<number[]>([0, 10000000]);
+    const [bailMinMax, setBailMinMax] = useState<number[]>([0, 0]);
 
     useEffect(() => {
         fetch('/ny-counties.geojson')
-            .then(response => response.json())
-            .then(data => setCounties(data.features))
+            .then((response) => response.json())
+            .then((data) => setUpdatedCounties(data.features))
             .catch(console.error);
     }, []);
 
     useEffect(() => {
-        const fetchModelResults = async () => {
-            try {
-                const countyResponse: ModelResults[] = await getData('counties') as ModelResults[];
-                const updatedData = counties.map(county => {
-                    const matchingResult = countyResponse.find(cos => cos.model_target === county.properties.name);
+        console.log('updatedCounties: ', updatedCounties.map((c) => c))
+    }, [updatedCounties]);
+
+    useEffect(() => {
+        const fetchGeoJSON = fetch('/ny-counties.geojson').then((res) => res.json());
+        const fetchModelResults = getData('counties').then((res) => res as CountyProperties[]);
+
+        Promise.all([fetchGeoJSON, fetchModelResults])
+            .then(([geojsonData, countyResponse]) => {
+                const updatedData = geojsonData.features.map((county: { properties: { name: string } }) => {
+                    const matchingResult = countyResponse.find((cos) => cos.county_name === county.properties.name);
                     return {
                         ...county,
                         properties: {
                             ...county.properties,
-                            averageBailAmount: matchingResult?.average_bail_amount ?? 0
-                        }
+                            number_of_cases: matchingResult?.number_of_cases || 0,
+                            average_bail_amount: matchingResult?.average_bail_amount || 0,
+                        },
                     };
                 });
+
                 setUpdatedCounties(updatedData);
-            } catch (error) {
-                console.error("Error fetching or updating counties:", error);
-            }
-        };
 
-        const maxBailAmount = Math.max(...counties.map(c => c.properties.averageBailAmount));
-        const minBailAmount = Math.min(...counties.map(c => c.properties.averageBailAmount));
+                // Calculate bailMinMax here (after data is fully updated)
+                const bailAmounts = updatedData.map((c: {
+                    properties: { average_bail_amount: number }
+                }) => c.properties.average_bail_amount);
 
-        setBailMinMax([minBailAmount, maxBailAmount]);
-
-        if (counties.length > 0) {
-            fetchModelResults();
-        }
-    }, [counties]);
+                // Check for empty or invalid bailAmounts
+                if (bailAmounts.length > 0 && bailAmounts.some((amount: number) => !isNaN(amount))) {
+                    setBailMinMax([Math.min(...bailAmounts), Math.max(...bailAmounts)]);
+                } else {
+                    console.warn('Bail amounts are invalid or empty. Using default range.');
+                    setBailMinMax([0, 0]); // Or some other reasonable default
+                }
+            })
+            .catch((error) => console.error('Error fetching data:', error));
+    }, []);
 
     useEffect(() => {
         if (updatedCounties.length > 0 && ref.current && gRef.current) {
             const svg = d3.select<SVGSVGElement, unknown>(ref.current);
             const g = d3.select<SVGGElement, unknown>(gRef.current);
 
-            const colorScale = d3.scaleLinear<string>()
-                .domain(bailMinMax)
-                .range(['blue', 'red']);
+            // Define color scale AFTER bailMinMax is calculated
+            const colorScale = d3.scaleLinear<string>().domain(bailMinMax).range(['blue', 'red']); // Or your desired color range
 
-            const projection = d3.geoMercator()
-                .fitSize([width, height], {type: "FeatureCollection", features: updatedCounties});
+            const projection = d3.geoMercator().fitSize([width, height], {
+                type: 'FeatureCollection',
+                features: updatedCounties
+            });
             const pathGenerator = d3.geoPath().projection(projection);
 
             const zoom = d3.zoom<SVGSVGElement, unknown>()
@@ -121,11 +110,11 @@ const NewYorkCountiesMap: React.FC<typeof MapProps> = ({width, height}) => {
             svg.call(zoom);
 
             g.selectAll('path')
-                .data(updatedCounties)
+                .data(updatedCounties, (d) => (d as CountyFeature).properties.geoid)
                 .join('path')
                 .attr('class', 'county')
                 .attr('d', pathGenerator)
-                .attr('fill', d => colorScale(d.properties.averageBailAmount))
+                .attr('fill', (d) => colorScale((d as CountyFeature).properties.average_bail_amount))
                 .attr('stroke', 'rgba(55, 65, 81, 0.75)')
                 .on('mouseover', (event, d) => {
                     d3.select(event.currentTarget)
@@ -133,20 +122,33 @@ const NewYorkCountiesMap: React.FC<typeof MapProps> = ({width, height}) => {
                         .raise();
 
                     const tooltip = d3.select(tooltipRef.current);
-                    tooltip.style('left', `${event.pageX + 10}px`)
+                    tooltip.style('left',
+                        `${event.pageX + 10}px`)
                         .style('top', `${event.pageY + 10}px`)
                         .style('visibility', 'visible')
-                        .style('background-color', 'rgba(55, 65, 81, 0.75)')
-                        .html(`${d.properties.name} County`);
+                        .style('background-color', colorScale((d as CountyFeature).properties.average_bail_amount))
+                        .html(`
+                         <div class="card fill-amber-600">
+                            <h3 class="font-bold fill-amber-200">${(d as CountyFeature).properties.name} County</h3>
+                            <p class="text-zinc-400">Average bail amount: 
+                            <span class="font-bold text-white">
+                              ${formatMoney((d as CountyFeature).properties.average_bail_amount as number)}
+                              </span>
+                             </p>
+                            <p class="text-zinc-400">Number of cases: 
+                                                        <span class="font-bold text-white">
+${formatNumber((d as CountyFeature).properties.number_of_cases)}</span>
+</p>
+                        </div>
+                            `);
                 })
                 .on('mouseout', (event) => {
-                    d3.select(event.currentTarget)
-                        .attr('stroke', 'rgba(55, 65, 81, 0.75)');
+                    d3.select(event.currentTarget).attr('stroke', 'rgba(55, 65, 81, 0.75)');
 
                     d3.select(tooltipRef.current).style('visibility', 'hidden');
                 });
         }
-    }, [updatedCounties, width, height]);
+    }, [width, height, bailMinMax, updatedCounties]);
 
     return (
         <>
