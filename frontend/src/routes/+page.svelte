@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { onDestroy, onMount } from 'svelte';
 	import type { CountyFeature, CountyProperties, JudgeProperties } from '$lib/types';
 	import {
 		bailMinMaxStore,
@@ -7,7 +6,7 @@
 		topJudgesStore,
 		allCountiesStore,
 		loadingStore,
-		selectedCountyStore
+		selectedCountyStore, selectedJudgeStore
 	} from '$lib/stores/data';
 	import Map from '$lib/components/Map.svelte';
 	import CountyDetails from '$lib/components/CountyDetails.svelte';
@@ -15,6 +14,7 @@
 	import Title from '$lib/components/Title.svelte';
 	import Footer from '$lib/components/Footer.svelte';
 	import { getJudgesByCounty } from '$lib/api';
+	import PieChart from '$lib/components/PieChart.svelte';
 
 	let loading: boolean;
 	let selectedCountyInfo: CountyProperties | null = {
@@ -24,7 +24,12 @@
 		median_income: 0,
 		average_bail_amount: 0,
 		name: '',
-		geoid: ''
+		geoid: '',
+		cases_set_bail: 0,
+		cases_ror: 0,
+		cases_remand: 0,
+		cases_unknown: 0
+
 	};
 	let allCounties: CountyFeature[] = [];
 	let bailMinMaxArray: [number, number] = [0, 0]; // Variable to hold the [min, max] array
@@ -43,9 +48,7 @@
 	const fetchTopJudges = async (countyName: string) => {
 		if (countyName) {
 			try {
-				console.log('Fetching judges for county:', countyName);
 				const judges = await getJudgesByCounty(fetch, countyName, 10);
-				console.log('Judges:', judges);
 				topJudgesStore.set(judges);
 			} catch (error) {
 				console.error('Error fetching judges:', error);
@@ -67,19 +70,33 @@
 		</Title>
 	</section>
 	<div class="inner-container">
-		<section class="map-container">
-			<Map />
-		</section>
-		<section class="details-container">
-			<CountyDetails />
-			<JudgeDetails />
-		</section>
+		<div class="middle-container">
+			<section class="map-container">
+				<Map />
+			</section>
+
+			{#if $selectedCountyStore}
+				<section class="details-container transition">
+					<CountyDetails />
+				</section>
+			{/if}
+
+			{#if $selectedJudgeStore}
+				<section class="details-container transition">
+					<JudgeDetails />
+				</section>
+			{/if}
+			<div class="chart-container">
+				<PieChart />
+			</div>
+		</div>
+		<div class="footer-container ">
+			<Footer>
+				© 2024 LawVision. All rights reserved.
+			</Footer>
+		</div>
 	</div>
-	<div class="footer-container">
-		<Footer>
-			© 2024 LawVision. All rights reserved.
-		</Footer>
-	</div>
+
 {/if}
 
 <style>

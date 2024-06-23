@@ -23,8 +23,6 @@ const getJudgesByCounty = async (fetch: (input: RequestInfo, init?: RequestInit)
 		}
 	});
 
-	console.log('response', response);
-
 	if (!response.ok) {
 		throw new Error(`Error fetching judges: ${response.statusText}`);
 	}

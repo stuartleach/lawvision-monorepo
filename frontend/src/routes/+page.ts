@@ -21,7 +21,11 @@ export async function load({ fetch, params }) {
 				properties: {
 					...county.properties,
 					number_of_cases: matchingResult?.number_of_cases ?? 0,
-					average_bail_amount: matchingResult?.average_bail_amount ?? 0
+					average_bail_amount: matchingResult?.average_bail_amount ?? 0,
+					cases_set_bail: matchingResult?.cases_set_bail ?? 0,
+					cases_ror: matchingResult?.cases_ror ?? 0,
+					cases_remand: matchingResult?.cases_remand ?? 0,
+					cases_unknown: matchingResult?.cases_unknown ?? 0,
 				}
 			};
 		}));

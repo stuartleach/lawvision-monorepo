@@ -30,12 +30,10 @@
 		</div>
 
 	</nav>
-	<div class="flex justify-center max-h-screen min-h-[90vh]">
-		<main class="main-container">
+	<div class="flex justify-center flex-row">
 			<div class="outer-container">
 				<slot></slot>
 			</div>
-		</main>
 	</div>
 </div>
 

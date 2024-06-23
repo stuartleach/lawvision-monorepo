@@ -28,6 +28,7 @@
     "eslint": "^9.0.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-svelte": "^2.36.0",
+    "framework7-svelte": "^8.3.3",
     "globals": "^15.0.0",
     "postcss": "^8.4.38",
     "prettier": "^3.1.1",
@@ -45,10 +46,14 @@
   },
   "type": "module",
   "dependencies": {
+    "chart.js": "^4.4.3",
     "d3": "^7.9.0",
+    "flowbite-svelte": "^0.46.5",
+    "flowbite-svelte-icons": "^1.6.1",
     "geojson": "^0.5.0",
     "prisma": "^5.14.0",
     "svelte-accordion": "0.0.0-development",
+    "svelte-chartjs": "^3.1.5",
     "svelte-collapsible": "^0.3.0"
   }
 }

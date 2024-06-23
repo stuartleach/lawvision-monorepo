@@ -10,32 +10,35 @@
     --color-primary: #ff0000;
     --color-secondary: #00ff00;
     /*background-color: var(--color-primary);*/
-    @apply bg-zinc-700 w-screen;
-    /*@apply h-screen;*/
+    /*@apply bg-zinc-800 w-screen;*/
+    background-color: rgb(49, 49, 52, 1);
+    /*@apply h-full flex flex-col;*/
 }
 
 html {
-    @apply bg-gray-100;
-    /*@apply h-screen;*/
+    height: 100%;
+    width: 100%;
 }
 
 body {
     margin: 0;
-    font-family: 'Inter', sans-serif; /* Updated font */
-    @apply h-full;
+    font-family: 'Inter', sans-serif;
+    /*@apply h-full bg-blue-500 flex;*/
+
 }
 
 .main-container {
-    @apply flex flex-col;
-    @apply  justify-center flex;
+    @apply w-full;
 }
 
 .outer-container {
-    @apply flex rounded-xl bg-zinc-800 border-x border-neutral-900 p-6 w-screen sm:w-screen lg:w-screen justify-between;
-    padding: 1rem;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
+    @apply flex flex-col  p-6;
+    /*@apply bg-zinc-800;*/
+    /*@apply border-x border-neutral-700;*/
+    background-color: rgba(39, 39, 42, 0.1);
+    @apply w-screen sm:w-screen lg:w-screen;
+    @apply h-full justify-between;
+    /* Ensure it can scroll if content is too large */
 }
 
 @media (min-width: 2000px) {
@@ -48,15 +51,16 @@ body {
 /* SUB-CONTAINERS */
 /******************/
 .sub-container {
-    @apply rounded-xl shadow-lg outline outline-neutral-900 w-full bg-zinc-900 ;
+    /*@apply rounded-xl shadow-lg outline outline-neutral-900 bg-zinc-900;*/
     display: flex;
     flex-direction: column;
+    @apply w-full;
 }
 
 .details-container {
-    @apply sub-container flex-col md:flex-row p-2 w-full outline outline-neutral-900;
-    gap: 1rem;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+    @apply sub-container flex-col md:flex-row p-2 flex-[1] h-full;
+    /*gap: 1rem;*/
+    /*box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);*/
 }
 
 .footer-container {
@@ -66,17 +70,26 @@ body {
 }
 
 .map-container {
-    @apply sub-container;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+    @apply sub-container flex-[2];
+    /*box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);*/
     /*@apply translate-x-5;*/
-
 }
 
+.chart-container {
+    @apply flex sub-container flex-col h-full m-2;
+    @apply w-full flex-[0.5] rounded-lg p-4 md:p-6 bg-zinc-800 hover:outline outline-zinc-700 shadow-lg flex-col flex;
+}
 
 .inner-container {
-    @apply flex gap-3 flex-row md:flex-row;
-    @apply h-[60vh];
+    @apply flex flex-col;
+    @apply drop-shadow-lg;
+    /*@apply h-[60vh];*/
     /*@apply h-full;*/
+}
+
+.middle-container {
+    @apply flex flex-row justify-evenly;
+    @apply w-full;
 }
 
 
@@ -95,9 +108,13 @@ body {
 }
 
 .judge-stat {
-    transition: transform 0.2s, box-shadow 0.2s, background-color 0.2s, transform 0.2s;
+    transition: transform 0.2s, box-shadow 0.2s, background-color 0.2s;
     @apply flex text-zinc-200 py-2 px-4 bg-zinc-900 rounded-lg hover:bg-zinc-700 transition-all outline-none focus:outline-none cursor-pointer;
     @apply flex-row items-center justify-between py-4;
+}
+
+.judge-stat h3 {
+    @apply text-zinc-300 font-bold text-lg;
 }
 
 .judge-item .case-count {
@@ -112,8 +129,14 @@ body {
     @apply text-zinc-400 mb-2;
 }
 
+.judge-item.selected {
+    background-color: rgba(0, 0, 0, 0.7);
+    @apply transition;
+}
+
 .judge-item:hover {
     transform: translateY(-2px);
+    /*@apply transition;*/
     /*@apply w-[98%];*/
     background-color: rgba(0, 0, 0, 0.7);
 }
@@ -131,9 +154,7 @@ body {
 
 .details-nav .selected {
     @apply bg-zinc-800;
-
 }
-
 
 /*******/
 /* MAP */
@@ -141,6 +162,12 @@ body {
 
 .county-detail, .judge-detail {
     transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.x-button:hover {
+    transition: transform 0.2s, box-shadow 0.2s;
+    @apply cursor-pointer transition;
+    transform: translateY(-1px);
 }
 
 .judge-detail {
@@ -151,6 +178,11 @@ body {
     @apply text-3xl font-semibold tracking-tight text-gray-50 mb-4;
 }
 
+.judge-detail h4 {
+    @apply text-xl font-semibold tracking-tight font-bold text-gray-500 mb-1;
+}
+
+
 .county-detail:hover, .judge-detail:hover {
     transform: translateY(-2px);
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
@@ -160,6 +192,7 @@ body {
     stroke: white;
     stroke-width: 1;
 }
+
 
 .tooltip {
     position: absolute;

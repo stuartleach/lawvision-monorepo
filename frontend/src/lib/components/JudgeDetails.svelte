@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { formatMoney, formatNumber } from '$lib/utils';
 	import type { JudgeProperties } from '$lib/types';
-	import { selectedJudgeStore } from '$lib/stores/data';
+	import { selectedCountyStore, selectedJudgeStore } from '$lib/stores/data';
+	import Close from '$lib/assets/Close.svelte';
 
 	let selectedJudgeInfo: JudgeProperties | null;
 
@@ -12,13 +13,17 @@
 
 <div
 	class="judge-detail">
+	<div class="flex justify-end">
+	<button class="x-button mb-4 -mr-1 -mt-2 w-4" on:click={()=>selectedJudgeStore.set(null)}><Close /></button>
+		</div>
+	<h4>{selectedJudgeInfo?.judge_name ? "The Honorable Judge" : ""}</h4>
 	<h2>{selectedJudgeInfo?.judge_name || "The Honorable Judge X"}</h2>
-	<div class="w-full h-full flex-col gap-5">
+	<div>
 		<ul class="space-y-2">
 			<li
 				class="judge-stat">
 				<div class="left text-left">
-					<h3 class="text-lg text-zinc-300 font-bold">Average bail amount:
+					<h3>Average bail amount:
 					</h3>
 				</div>
 				<div class="right text-right">

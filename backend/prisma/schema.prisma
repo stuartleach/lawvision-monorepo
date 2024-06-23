@@ -144,6 +144,11 @@ model counties {
   number_of_cases                           Int?
   median_income                             Int?
   median_id                                 String?     @db.Uuid
+  cases_set_bail                            Int?
+  cases_remand                              Int?
+  cases_ror                                 Int?
+  cases_unknown                             Int?
+  cases_nmr                                 Int?
   cases                                     cases[]
   ny_income_counties_county_nameTony_income ny_income   @relation("counties_county_nameTony_income", fields: [county_name], references: [county], onDelete: NoAction, onUpdate: NoAction, map: "counties_ny_income_county_fk")
   ny_income_counties_median_idTony_income   ny_income?  @relation("counties_median_idTony_income", fields: [median_id], references: [income_uuid], onDelete: NoAction, onUpdate: NoAction, map: "counties_ny_income_income_uuid_fk")
@@ -204,6 +209,11 @@ model judges {
   supervision_conditions        String[]
   average_sentence_severity     Decimal? @db.Decimal
   rearrest_rate                 Decimal? @db.Decimal
+  cases_remand                  Int?
+  cases_ror                     Int?
+  cases_set_bail                Int?
+  cases_unknown                 Int?
+  cases_nmr                     Int?
   cases                         cases[]
 
   @@schema("pretrial")

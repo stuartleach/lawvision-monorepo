@@ -1,5 +1,5 @@
-<div class="flex outline-white bg-zinc-900 rounded-2xl p-8 shadow-md">
-	<div class="flex outline-white flex-col justify-center h-full w-full">
+<div class="rounded-2xl p-8">
+	<div class="flex flex-col justify-center h-full w-full">
 		<div class="justify-center text-center flex w-full py-4 text-6xl font-bold tracking-tight text-white">
 			<slot name="title" />
 		</div>

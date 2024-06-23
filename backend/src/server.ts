@@ -1,6 +1,8 @@
 import express, { Express, Request, Response } from 'express';
 import dotenv from 'dotenv';
 import { PrismaClient } from '@prisma/client';
+import { GetFindResult } from '@prisma/client/runtime/library';
+import { Prisma } from '@prisma/client/extension';
 
 dotenv.config();
 
@@ -13,6 +15,7 @@ app.get('/', (req: Request, res: Response) => {
 });
 
 app.get('/api/counties', async (req: Request, res: Response) => {
+
 		const numCounties = parseInt(req.query.limit as string) || 10000; // Default to 10 cases
 		try {
 			const results = await prisma.counties.findMany({
@@ -26,6 +29,7 @@ app.get('/api/counties', async (req: Request, res: Response) => {
 			console.error('Error fetching counties:', error);
 			res.status(500).json({ error: 'Internal Server Error' });
 		}
+
 	}
 );
 
@@ -39,8 +43,10 @@ app.get('/api/top_judges_by_county', async (req: Request, res: Response) => {
 		return;
 	}
 
+	let results: any;
+
 	try {
-		const results = await prisma.judges.findMany({
+		results = await prisma.judges.findMany({
 			where: {
 				average_bail_set: {
 					gt: 1
