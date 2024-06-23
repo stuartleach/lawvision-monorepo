@@ -196,8 +196,6 @@ model judges {
   case_count                    Int?
   counties                      String[]
   court_names                   String[]
-  representation_types          String[]
-  top_charges_at_arraign        String[]
   disposition_types             String[]
   remand_to_jail_count          Int?
   ror_count                     Int?
@@ -205,7 +203,6 @@ model judges {
   bail_set_and_not_posted_count Int?
   supervision_conditions        String[]
   average_sentence_severity     Decimal? @db.Decimal
-  offense_types                 String[]
   rearrest_rate                 Decimal? @db.Decimal
   cases                         cases[]
 
@@ -280,10 +277,11 @@ model ny_income {
   rank                                     Int?
   county                                   String?    @unique(map: "ny_income_pk_2")
   per_capita_income                        Float?
-  median_household_income                  Float?     @map("2018_median_household_income")
+  median_household_income                  Float?
   median_family_income                     Float?
   population                               Float?
   number_of_households                     Float?
+  median_household_income_twenty_eighteen  Int?
   income_uuid                              String     @id(map: "ny_income_pk") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   counties_counties_county_nameTony_income counties?  @relation("counties_county_nameTony_income")
   counties_counties_median_idTony_income   counties[] @relation("counties_median_idTony_income")

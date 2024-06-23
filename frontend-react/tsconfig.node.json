@@ -1,9 +1,0 @@
-
-{
-  "extends": "./tsconfig.json", // Inherit from your main tsconfig
-  "compilerOptions": {
-    "module": "ESNext", // Force ES modules for Vite config
-    "allowJs": true   // Allow JavaScript output
-  },
-  "include": ["vite.config.ts"]
-}

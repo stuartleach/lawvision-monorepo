@@ -1,0 +1,214 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/********/
+/* MAIN */
+/********/
+
+:root {
+    --color-primary: #ff0000;
+    --color-secondary: #00ff00;
+    /*background-color: var(--color-primary);*/
+    @apply bg-zinc-700 w-screen;
+    /*@apply h-screen;*/
+}
+
+html {
+    @apply bg-gray-100;
+    /*@apply h-screen;*/
+}
+
+body {
+    margin: 0;
+    font-family: 'Inter', sans-serif; /* Updated font */
+    @apply h-full;
+}
+
+.main-container {
+    @apply flex flex-col;
+    @apply  justify-center flex;
+}
+
+.outer-container {
+    @apply flex rounded-xl bg-zinc-800 border-x border-neutral-900 p-6 w-screen sm:w-screen lg:w-screen justify-between;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+@media (min-width: 2000px) {
+    .outer-container {
+        @apply w-[80vw] transition-all;
+    }
+}
+
+/******************/
+/* SUB-CONTAINERS */
+/******************/
+.sub-container {
+    @apply rounded-xl shadow-lg outline outline-neutral-900 w-full bg-zinc-900 ;
+    display: flex;
+    flex-direction: column;
+}
+
+.details-container {
+    @apply sub-container flex-col md:flex-row p-2 w-full outline outline-neutral-900;
+    gap: 1rem;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+}
+
+.footer-container {
+    @apply sub-container;
+    padding: 1rem;
+    text-align: center;
+}
+
+.map-container {
+    @apply sub-container;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+    /*@apply translate-x-5;*/
+
+}
+
+
+.inner-container {
+    @apply flex gap-3 flex-row md:flex-row;
+    @apply h-[60vh];
+    /*@apply h-full;*/
+}
+
+
+.title-container {
+    @apply sub-container;
+}
+
+/****************/
+/* DETAIL CARDS */
+/****************/
+
+.judge-item {
+    /*transition: transform 0.2s, box-shadow 0.2s, background-color 0.2s, transform 0.2s;*/
+    /*@apply transition;*/
+    @apply text-zinc-200 py-2 px-4 bg-zinc-900 rounded-lg hover:bg-zinc-700 hover:shadow-2xl transition-all outline-none focus:outline-none cursor-pointer;
+}
+
+.judge-stat {
+    transition: transform 0.2s, box-shadow 0.2s, background-color 0.2s, transform 0.2s;
+    @apply flex text-zinc-200 py-2 px-4 bg-zinc-900 rounded-lg hover:bg-zinc-700 transition-all outline-none focus:outline-none cursor-pointer;
+    @apply flex-row items-center justify-between py-4;
+}
+
+.judge-item .case-count {
+    display: none;
+}
+
+.judge-item:hover .case-count {
+    display: inline;
+}
+
+.judge-item button {
+    @apply text-zinc-400 mb-2;
+}
+
+.judge-item:hover {
+    transform: translateY(-2px);
+    /*@apply w-[98%];*/
+    background-color: rgba(0, 0, 0, 0.7);
+}
+
+.county-detail, .judge-detail {
+
+    /*@apply h-full w-full;*/
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.details-nav button {
+    cursor: pointer;
+    @apply hover:bg-zinc-800 rounded px-2 py-0.5 transition-all hover:opacity-70 w-full mx-2;
+}
+
+.details-nav .selected {
+    @apply bg-zinc-800;
+
+}
+
+
+/*******/
+/* MAP */
+/*******/
+
+.county-detail, .judge-detail {
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.judge-detail {
+    @apply flex-1 rounded-lg p-4 md:p-6 bg-zinc-800 hover:outline outline-neutral-700 shadow-lg ;
+}
+
+.judge-detail h2 {
+    @apply text-3xl font-semibold tracking-tight text-gray-50 mb-4;
+}
+
+.county-detail:hover, .judge-detail:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+}
+
+.county.selected {
+    stroke: white;
+    stroke-width: 1;
+}
+
+.tooltip {
+    position: absolute;
+    visibility: hidden;
+    pointer-events: none;
+    background-color: rgba(255, 255, 255, 0.9); /* Slightly more opaque background */
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    padding: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+}
+
+/*************/
+/* UTILITIES */
+/*************/
+
+.loading {
+    text-align: center;
+    padding: 2rem;
+    font-size: 1.5rem;
+}
+
+.super {
+    font-size: 0.75rem;
+    vertical-align: text-top;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+/*****************/
+/* MEDIA QUERIES */
+/*****************/
+
+@media (max-width: 768px) {
+    /*.details-container {*/
+    /*    flex-direction: column;*/
+    /*}*/
+}
+
+@media (min-width: 768px) {
+    /*.county-detail, .judge-detail {*/
+    /*    max-height: 45vh;*/
+    /*}*/
+}
+
+@media (min-width: 1024px) {
+    /*.county-detail, .judge-detail {*/
+    /*    max-height: 60vh;*/
+    /*}*/
+}

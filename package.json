@@ -3,15 +3,13 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "esModuleInterop": true,
   "scripts": {
-    "dev": "concurrently \\\"pnpm run --dir ./backend dev\\\" \\\"pnpm run --dir frontend-react dev\\\"",
-    "build": "pnpm --filter ./* build",
+    "dev": "concurrently \"pnpm run --dir ./backend dev\" \"pnpm run --dir ./frontend dev\"",
+    "build": "pnpm --filter './*' build",
     "start": "pnpm --filter ./backend start"
   },
   "devDependencies": {
-    "concurrently": "^6.4.0",
-    "tsconfig-paths": "^4.2.0"
+    "concurrently": "^6.4.0"
   },
   "dependencies": {
     "tsx": "^4.10.2",
