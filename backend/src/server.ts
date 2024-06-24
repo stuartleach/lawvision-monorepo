@@ -20,7 +20,7 @@ app.get('/api/counties', async (req: Request, res: Response) => {
 		try {
 			const results = await prisma.counties.findMany({
 				orderBy: {
-					average_bail_amount: 'desc'
+					average_bail_set: 'desc'
 				}, take: numCounties
 			});
 			res.json(results);
@@ -48,9 +48,6 @@ app.get('/api/top_judges_by_county', async (req: Request, res: Response) => {
 	try {
 		results = await prisma.judges.findMany({
 			where: {
-				average_bail_set: {
-					gt: 1
-				},
 				judge_name: {
 					notIn: ['Office, Clerk\'s', 'Judge/JHO/Hearing Examiner, Visiting', 'Judge, TBD']
 				},
@@ -58,10 +55,45 @@ app.get('/api/top_judges_by_county', async (req: Request, res: Response) => {
 					has: county
 				}
 			},
-			orderBy: {
-				average_bail_set: 'desc'
+			// orderBy: {
+			// 	average_bail_set: 'desc'
+			// },
+			take: numJudges
+		});
+		// if bail set is null, set it to 0
+		results = results.map((judge: { average_bail_set: number | null; }) => {
+			if (judge.average_bail_set === null) {
+				judge.average_bail_set = 0;
+			}
+			return judge;
+		});
+		res.json(results);
+	} catch (error) {
+		console.error('Error fetching judges:', error);
+		res.status(500).json({ error: 'Internal Server Error' });
+	}
+});
+
+app.get('/api/top_judges', async (req: Request, res: Response) => {
+	const numJudges = parseInt(req.query.limit as string) || 100; // Default to 10 cases
+
+	let results: any;
+
+	try {
+		results = await prisma.judges.findMany({
+			where: {
+				judge_name: {
+					notIn: ['Office, Clerk\'s', 'Judge/JHO/Hearing Examiner, Visiting', 'Judge, TBD']
+				}
 			},
 			take: numJudges
+		});
+		// if bail set is null, set it to 0
+		results = results.map((judge: { average_bail_set: number | null; }) => {
+			if (judge.average_bail_set === null) {
+				judge.average_bail_set = 0;
+			}
+			return judge;
 		});
 		res.json(results);
 	} catch (error) {

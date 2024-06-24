@@ -1,33 +1,37 @@
 <script lang="ts">
 	import { onMount, onDestroy } from 'svelte';
 	import * as d3 from 'd3';
-	import type { CountyProperties, CountyFeature } from '$lib/types';
-	import { createColorScale, formatMoney } from '$lib/utils';
+	import type { CountyProperties, CountyFeature, CountyExpandedProperties } from '$lib/types';
+	import { createColorScale, formatMoney, formatNumber } from '$lib/utils';
 	import {
 		allCountiesStore,
 		bailMinMaxStore,
+		countyRemandMinMaxPctStore,
+		countyReleaseMinMaxPctStore,
 		mapDimensionsStore,
 		selectedCountyStore,
-		selectedMetricStore
+		selectedMetricStore,
+		showCountyJudgesStore
 	} from '$lib/stores/data';
 	import type { Unsubscriber } from 'svelte/store';
 
 	export let allCounties: CountyFeature[] = [];
-	export let selectedCountyInfo: CountyProperties | null = null;
-	let bailMinMaxArray: [number, number] = [0, 0];
+	export let selectedCountyInfo: CountyExpandedProperties | null = null;
+	let minMaxArray: [number, number] = [0, 0];
 
-	let metric: 'bail' | 'remand' | 'ror' = 'bail';
+	let metric: 'bail' | 'remand' | 'release' = 'bail';
 	let svg: SVGSVGElement;
 	let g: SVGGElement;
 	let tooltip: HTMLDivElement;
 	let colorScale: any;
 
-	let [min, max] = bailMinMaxArray;
+	let [min, max] = minMaxArray;
 
 	let { width, height } = { width: 100, height: 800 };
 
-	$: [min, max] = $bailMinMaxStore;
+	$: [min, max] = metric === 'bail' ? $bailMinMaxStore : metric === 'remand' ? $countyRemandMinMaxPctStore : $countyReleaseMinMaxPctStore;
 	$: selectedCountyInfo = $selectedCountyStore;
+	$: selectedCountyInfo && showCountyJudgesStore.set(true);
 	$: allCounties = $allCountiesStore;
 	$: metric = $selectedMetricStore;
 	$: metric && updateMap();
@@ -37,8 +41,8 @@
 
 	const updateMap = () => {
 		if (!allCounties.length || !svg || !g) return;
-		let colorScale = createColorScale(min, max, metric);
-		const colorScaleToolTip = createColorScale(min, max, 'bail');
+		colorScale = createColorScale(min, max, metric);
+		const colorScaleToolTip = createColorScale(min, max, metric);
 
 		const projection = d3.geoMercator().fitSize([width, height], {
 			type: 'FeatureCollection',
@@ -49,7 +53,7 @@
 		d3.select(svg)
 			.select('g')
 			.selectAll('path')
-			.data(allCounties, (d) => (d as CountyFeature).properties.geoid)
+			.data(allCounties, (d) => (d as CountyFeature)?.properties?.geoid)
 			.join(
 				(enter) => enter.append('path')
 					.attr('class', 'county')
@@ -58,11 +62,14 @@
 				(exit) => exit.remove()
 			)
 			.attr('fill', (d) => {
-				return colorScale((d as CountyFeature).properties.average_bail_amount);
+				const value = metric === 'bail' ? d?.properties?.countyProps?.average_bail_set :
+					metric === 'remand' ? d?.properties?.cases_remand_pct :
+						d?.properties?.cases_nmr_pct + d?.properties?.cases_ror_pct;
+				return colorScale(value);
 			})
 			.attr('stroke', 'rgba(55, 65, 81, 0.15)')
 			.on('click', (event, d: CountyFeature) => {
-				selectedCountyStore.set(d.properties as CountyProperties);
+				selectedCountyStore.set(d.properties as CountyExpandedProperties);
 			})
 			.on('mouseover', (event, d: CountyFeature) => {
 				d3.select(event.currentTarget)
@@ -70,22 +77,26 @@
 					.attr('stroke-width', 1)
 					.attr('stroke-linejoin', 'round')
 					.attr('style', 'cursor:pointer')
-					.attr('classes','hover:outline hover:scale-150 outline-zinc-700 shadow-lg');
-				const countyName = (d as CountyFeature).properties.name;
+					.attr('classes', 'hover:outline hover:scale-150 outline-zinc-700 shadow-lg');
+				const countyName = (d as CountyFeature)?.properties.name;
 				const [pageX, pageY] = [event.pageX, event.pageY];
+				const value = metric === 'bail' ? d?.properties?.countyProps?.average_bail_set :
+					metric === 'remand' ? d?.properties?.cases_remand_pct :
+						d?.properties?.cases_nmr_pct + d?.properties?.cases_ror_pct;
+				const tooltipValue = metric === 'bail' ? formatMoney(value) : formatNumber(value);
+				const metricLabel = metric.charAt(0).toUpperCase() + metric.slice(1) + (metric === 'bail' ? ' amount' : ' rate');
+
 				d3.select(tooltip)
 					.style('left', `${pageX as number}px`)
 					.style('top', `${pageY as number - 400}px`)
 					.style('visibility', 'visible')
-					.style('background-color', colorScaleToolTip(d.properties.average_bail_amount))
+					.style('background-color', colorScaleToolTip(value))
 					.html(`
                         <div class="text-white flex-col">
                             <h3 class="font-bold text-white">${countyName} County</h3>
-                            <p class="text-xs">Average bail amount:</p>
+                            <p class="text-xs">${metricLabel}:</p>
                             <div class="font-mono">
-                                <span class="text-green-600">$</span>
-                                <span class="font-bold">${formatMoney(d.properties.average_bail_amount).split('.')[0]}</span>
-                                <span class="text-gray-400 tracking-tighter text-xs align-text-top hidden">.${formatMoney(d.properties.average_bail_amount).split('.')[1]}</span>
+                            ${metric === 'bail' ? '$' : ''}${metric === 'bail' ? tooltipValue : (Number(tooltipValue) * 100).toFixed()}${metric === 'bail' ? '' : '%'}
                             </div>
                         </div>
                     `);
@@ -96,8 +107,8 @@
 			});
 	};
 
-	$: if (bailMinMaxArray[0] && bailMinMaxArray[1]) {
-		colorScale = createColorScale(bailMinMaxArray[0], bailMinMaxArray[1], metric);
+	$: if (minMaxArray[0] && minMaxArray[1]) {
+		colorScale = createColorScale(minMaxArray[0], minMaxArray[1], metric);
 	}
 
 	let mapContainer: HTMLDivElement;

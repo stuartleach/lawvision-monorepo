@@ -140,11 +140,11 @@ model cases {
 model counties {
   county_uuid                               String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   county_name                               String      @unique
-  average_bail_amount                       Decimal?    @db.Decimal
+  average_bail_set                          Decimal?    @db.Decimal
   number_of_cases                           Int?
   median_income                             Int?
   median_id                                 String?     @db.Uuid
-  cases_set_bail                            Int?
+  cases_bail_set                            Int?
   cases_remand                              Int?
   cases_ror                                 Int?
   cases_unknown                             Int?
@@ -211,7 +211,7 @@ model judges {
   rearrest_rate                 Decimal? @db.Decimal
   cases_remand                  Int?
   cases_ror                     Int?
-  cases_set_bail                Int?
+  cases_bail_set                Int?
   cases_unknown                 Int?
   cases_nmr                     Int?
   cases                         cases[]

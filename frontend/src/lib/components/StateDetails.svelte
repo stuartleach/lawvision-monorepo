@@ -1,7 +1,13 @@
 <script lang="ts">
 	import { formatMoney, formatNumber } from '$lib/utils';
 	import type { CountyProperties, JudgeProperties, CountyExpandedProperties } from '$lib/types';
-	import { selectedCountyStore, selectedJudgeStore, selectedMetricStore, countyJudgesStore } from '$lib/stores/data';
+	import {
+		selectedCountyStore,
+		selectedJudgeStore,
+		selectedMetricStore, showCountyJudgesStore,
+		stateBailCases,
+		countyJudgesStore
+	} from '$lib/stores/data';
 	import Close from '$lib/assets/Close.svelte';
 
 	let selectedCountyInfo: CountyExpandedProperties | null = null;
@@ -16,14 +22,16 @@
 	$: selectedCountyInfo = $selectedCountyStore;
 	$: topJudges = $countyJudgesStore;
 
-	$: cases_bail_set = selectedCountyInfo?.countyProps.cases_bail_set ?? 0;
-	$: cases_ror = selectedCountyInfo?.countyProps.cases_ror ?? 0;
-	$: cases_remand = selectedCountyInfo?.countyProps.cases_remand ?? 0;
-	$: cases_unknown = selectedCountyInfo?.countyProps.cases_unknown ?? 0;
-	$: countyName = selectedCountyInfo?.countyProps.name ?? '';
-	$: bailAmount = selectedCountyInfo?.countyProps.average_bail_set ?? 0;
-	$: numberOfCasesRaw = selectedCountyInfo?.countyProps.number_of_cases ?? 0;
-	$: numberOfCases = formatNumber(selectedCountyInfo?.countyProps.number_of_cases ?? 0);
+	// State-level data
+	$: cases_bail_set = stateBailCases.bailSetCases;
+	$: cases_ror = stateBailCases.rorCases;
+	$: cases_remand = stateBailCases.remandCases;
+	$: cases_unknown = stateBailCases.unknownCases;
+	$: averageBailAmount = stateBailCases.averageBailAmount;
+	$: numberOfCasesRaw = stateBailCases.totalCases;
+	$: numberOfCases = formatNumber(stateBailCases.totalCases);
+	$: totalBailAmount = stateBailCases.totalBailSetAmount;
+
 
 	function handleMouseEnter(stat: string) {
 		hoveredStat = stat;
@@ -34,13 +42,14 @@
 	}
 </script>
 
-<div class="judge-detail">
+<div class="judge-detail flex-1 rounded-lg p-4 md:p-6 bg-zinc-800 hover:outline outline-zinc-700 shadow-lg flex-col flex">
 	<div class="flex justify-end">
-		<button class="x-button mb-4 -mr-1 -mt-2 w-4" on:click={() => selectedCountyStore.set(null)}>
+		<button class="x-button mb-4 -mr-1 -mt-2 w-4"
+						on:click={() => {showCountyJudgesStore.set(false); selectedCountyStore.set(null)}}>
 			<Close />
 		</button>
 	</div>
-	<h2>{countyName} County</h2>
+	<h2>New York State</h2>
 	<div>
 		<ul class="space-y-2">
 			<li class="judge-stat">
@@ -57,9 +66,9 @@
 					<div class="money flex-row text-right">
 						<span class="text-green-600">$</span>
 						<span class="font-bold text-white font-mono">
-							{selectedCountyInfo ? formatMoney(hoveredStat === 'amount' ? selectedCountyInfo?.countyProps.cases_bail_set * selectedCountyInfo.countyProps.average_bail_set : selectedCountyInfo.countyProps.average_bail_set).split('.')[0] : '0'}
+							{hoveredStat === 'amount' ? formatMoney(totalBailAmount).split('.')[0] : formatMoney(averageBailAmount).split('.')[0]}
 						</span>&nbsp;<span class="super font-mono">
-							.{selectedCountyInfo ? formatMoney(selectedCountyInfo.countyProps.average_bail_set).split('.')[1] : '00'}
+							.{formatMoney(averageBailAmount).split('.')[1]}
 						</span>
 					</div>
 				</div>
@@ -69,7 +78,7 @@
 					{hoveredStat === 'remand' ? 'Remand total:' : 'Remand frequency:'}
 				</h3>
 				<p class="font-bold font-mono text-right text-red-600">
-					{hoveredStat === 'remand' ? formatNumber(selectedCountyInfo?.countyProps.cases_remand) : (selectedCountyInfo ? formatNumber((selectedCountyInfo.countyProps.cases_remand / selectedCountyInfo.countyProps.number_of_cases) * 100) + '%' : '0%')}
+					{hoveredStat === 'remand' ? formatNumber(cases_remand) : formatNumber((cases_remand / numberOfCasesRaw) * 100) + '%'}
 				</p>
 			</li>
 			<li class="judge-stat" on:mouseenter={() => handleMouseEnter('release')} on:mouseleave={handleMouseLeave}>
@@ -77,7 +86,7 @@
 					{hoveredStat === 'release' ? 'Release total:' : 'Release frequency:'}
 				</h3>
 				<p class="font-bold font-mono text-right text-green-600">
-					{hoveredStat === 'release' ? formatNumber(Number(selectedCountyInfo?.countyProps.cases_nmr) + Number(selectedCountyInfo?.countyProps.cases_ror)) : (selectedCountyInfo ? formatNumber(((selectedCountyInfo.countyProps.cases_nmr + selectedCountyInfo.countyProps.cases_ror) / selectedCountyInfo.countyProps.number_of_cases) * 100) + '%' : '0%')}
+					{hoveredStat === 'release' ? formatNumber(cases_ror) : formatNumber((cases_ror / numberOfCasesRaw) * 100) + '%'}
 				</p>
 			</li>
 			<li class="judge-stat" on:mouseenter={() => handleMouseEnter('bail')} on:mouseleave={handleMouseLeave}>
@@ -85,7 +94,7 @@
 					{hoveredStat === 'bail' ? 'Bail set total:' : 'Bail set frequency:'}
 				</h3>
 				<p class="font-bold font-mono text-right text-yellow-300">
-					{hoveredStat === 'bail' ? formatNumber(selectedCountyInfo?.countyProps.cases_bail_set) : (selectedCountyInfo ? formatNumber((selectedCountyInfo.countyProps.cases_bail_set / selectedCountyInfo.countyProps.number_of_cases) * 100) + '%' : '0%')}
+					{hoveredStat === 'bail' ? formatNumber(cases_bail_set) : formatNumber((cases_bail_set / numberOfCasesRaw) * 100) + '%'}
 				</p>
 			</li>
 			<li class="judge-stat" on:mouseenter={() => handleMouseEnter('unknown')} on:mouseleave={handleMouseLeave}>
@@ -93,7 +102,7 @@
 					{hoveredStat === 'unknown' ? 'Unknown total:' : 'Unknown:'}
 				</h3>
 				<p class="font-bold font-mono text-right text-zinc-600">
-					{hoveredStat === 'unknown' ? formatNumber(selectedCountyInfo?.countyProps.cases_unknown) : (selectedCountyInfo ? formatNumber((selectedCountyInfo.countyProps.cases_unknown / selectedCountyInfo.countyProps.number_of_cases) * 100) + '%' : '0%')}
+					{hoveredStat === 'unknown' ? formatNumber(cases_unknown) : formatNumber((cases_unknown / numberOfCasesRaw) * 100) + '%'}
 				</p>
 			</li>
 		</ul>
@@ -101,15 +110,4 @@
 </div>
 
 <style>
-    .tooltip {
-        position: absolute;
-        pointer-events: none;
-        visibility: hidden;
-        padding: 5px;
-        background-color: rgba(0, 0, 0, 0.75);
-        border-radius: 5px;
-        color: white;
-        font-size: 12px;
-        z-index: 10;
-    }
 </style>
