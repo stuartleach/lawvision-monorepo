@@ -18,6 +18,8 @@
 	import StateDetails from '$lib/components/StateDetails.svelte';
 	import AllCountiesSelector from '$lib/components/AllCountiesSelector.svelte';
 	import AllJudgesSelector from '$lib/components/AllJudgesSelector.svelte';
+	import Container from '$lib/components/Container.svelte';
+	import { Card } from 'flowbite-svelte';
 
 	let loading: boolean;
 	let selectedCountyInfo: CountyProperties | null = {
@@ -92,50 +94,51 @@
 				</button>
 			</nav>
 		</div>
-		<div class="middle-container">
-			<div class="flex-col flex h-full">
-				<section class="details-container transition">
-					<StateDetails />
-				</section>
-				<section class="details-container transition">
-					<AllJudgesSelector />
-				</section>
-			</div>
+		<div class="middle-container mb-10">
+			<!--			<div class="flex-col flex h-full">-->
+			<section class="sub-middle details-container transition">
+				<StateDetails />
+			</section>
+			<section class="sub-middle details-container transition">
+				<AllJudgesSelector />
+			</section>
+			<!--			</div>-->
 
-			<section class="map-container">
+			<section class="sub-middle map-container">
 				<Map />
 			</section>
 
-			<section class="details-container transition">
+			<section class="sub-middle details-container transition h-full">
 				<AllCountiesSelector />
 			</section>
 
 			{#if $selectedCountyStore}
-				<div class="flex-col flex flex-1 self-baseline">
-					<section class="details-container transition">
-						<CountyDetails />
-					</section>
-				</div>
+				<!--				<div class="sub-middle flex-col flex flex-1 self-baseline">-->
+				<section class="sub-middle details-container transition">
+					<CountyDetails />
+				</section>
+				<!--				</div>-->
 			{/if}
 
 
 			{#if $selectedJudgeStore}
 
-				<section class="details-container transition">
+				<section class="sub-middle details-container transition">
 					<CountyJudges />
 				</section>
 
-				<section class="details-container transition">
+				<section class="sub-middle details-container transition">
 					<JudgeDetails />
 				</section>
 			{/if}
 
-			<div class="footer-container ">
+
+		</div>
+		<div class="footer-container ">
 				<Footer>
 					© 2024 LawVision. All rights reserved.
 				</Footer>
 			</div>
-		</div>
 	</div>
 
 {/if}

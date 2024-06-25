@@ -23,7 +23,7 @@ export async function load({ fetch, params }) {
 	try {
 		const newYorkCountyGeoJson: CountyJsonData = await fetch('/ny-counties.json').then(res => res.json());
 		const countyPretrialData: CountyProperties[] = await getCounties(fetch);
-		const allJudges = await getAllJudges(fetch, 10);
+		const allJudges = await getAllJudges(fetch, 500);
 
 
 
@@ -33,13 +33,13 @@ export async function load({ fetch, params }) {
 
 		let bailMinMax: [number, number] = [0, 0];
 		let bailAmounts: number[] = [];
-		let bailSetMinMaxPct: [number, number] = [0, 0];
+		let bailSetMinMaxPct: [number, number] = [Infinity, -Infinity];
 		let bailSetAmounts: number[] = [];
-		let remandMinMaxPct: [number, number] = [0, 0];
+		let remandMinMaxPct: [number, number] = [Infinity, -Infinity];
 		let remandAmounts: number[] = [];
-		let releaseMinMaxPct: [number, number] = [0, 0];
+		let releaseMinMaxPct: [number, number] = [Infinity, -Infinity];
 		let releaseAmounts: number[] = [];
-		let unknownMinMaxPct: [number, number] = [0, 0];
+		let unknownMinMaxPct: [number, number] = [Infinity, -Infinity];
 		let unknownAmounts: number[] = [];
 
 		const processedFeatures = newYorkCountyGeoJson.features.map((county) => {
