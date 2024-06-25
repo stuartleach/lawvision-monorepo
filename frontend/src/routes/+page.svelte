@@ -76,6 +76,7 @@
 			<h1 slot="title">New York Pretrial Data</h1>
 			<h2 slot="subtitle">Taking a look at bail, remand, and release data by county and judge.</h2>
 			<h3 slot="subtext">10/1/2020 - 9/1/2022</h3>
+			<h4 slot="source"><a class="hover:text-white border-dashed border-zinc-500 border-b-2 hover:border-none pb-0.25 transition" target="_blank" href="https://ww2.nycourts.gov/pretrial-release-data-33136">Source</a></h4>
 		</Title>
 	</section>
 	<div class="inner-container">

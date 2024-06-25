@@ -6,8 +6,11 @@
 		<div class="text-zinc-300 font-semibold flex justify-center py-2 w-full font-light">
 			<slot name="subtitle" />
 		</div>
-		<div class="text-zinc-400 text-sm font-mono flex justify-center w-full font-light">
+		<div class="text-zinc-400 text-sm font-mono mt-2 flex justify-center w-full font-light">
 			<slot name="subtext" />
+		</div>
+		<div class="text-zinc-400 text-sm font-mono mt-2 -mb-6 flex justify-center w-full font-light">
+			<slot name="source" />
 		</div>
 	</div>
 </div>
