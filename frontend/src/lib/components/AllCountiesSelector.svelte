@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { formatMoneyValue, formatNumber, sortTopJudges, sortAllCounties } from '$lib/utils';
-	import type { CountyExpandedProperties, CountyFeature, CountyProperties, JudgeExpandedProperties } from '$lib/types';
+	import type { CountyFeature, County, Judge } from '$lib/types';
 	import {
 		allCountiesStore,
 		selectedCountyStore,
@@ -12,12 +12,12 @@
 	import Close from '$lib/assets/Close.svelte';
 	import Money from '$lib/components/Money.svelte';
 
-	let selectedCountyInfo: CountyExpandedProperties | null = null;
-	let selectedJudgeInfo: JudgeExpandedProperties | null = null;
-	let topJudgesPromise: Promise<JudgeExpandedProperties[]> | null = null;
-	let topJudges: JudgeExpandedProperties[] = [];
+	let selectedCountyInfo: County | null = null;
+	let selectedJudgeInfo: Judge | null = null;
+	let topJudgesPromise: Promise<Judge[]> | null = null;
+	let topJudges: Judge[] = [];
 	let metric: 'bail' | 'remand' | 'release' = 'bail';
-	let allCounties: CountyFeature[] = [];
+	let allCounties: County[] = [];
 
 	// Reactive declarations
 	$: metric = $selectedMetricStore;
@@ -43,6 +43,10 @@
 	function handleMouseLeave() {
 		hoveredStat = null;
 	}
+
+	$: Promise.resolve(allCounties).then((counties) => {
+		console.log(counties[2].name, selectedCountyInfo?.name);
+	});
 </script>
 
 <div class="county-detail rounded-lg p-4 md:p-6 bg-zinc-800 hover:outline outline-zinc-700 shadow-lg flex-col flex">
@@ -60,19 +64,21 @@
 		{:then topCounties}
 			{#if topCounties && topCounties.length > 0}
 				<ul class="space-y-2">
-					{#each topCounties.slice(0, 5).map(c => c.properties) as county}
+					{#each topCounties.slice(0, 5) as county}
 						<button on:click={() => selectedCountyStore.set(county)}
-										class="list-item w-full text-left {county.county_name === selectedCountyInfo?.county_name ? 'selected' : ''}">
+										class:selected="{county.name === selectedCountyInfo?.name}"
+										class="list-item w-full text-left">
 							<p class="text-lg text-zinc-300 font-bold pb-1">{county.name}</p>
 							<div class="">
 								{#if metric === 'bail'}
 									<p class="font-mono">
 										<Money
-											value={hoveredStat === 'amount' ? county.countyProps.average_bail_set * county.countyProps.cases_bail_set : county.countyProps.average_bail_set} />
+											value={hoveredStat === 'amount' ? county * county.countyProps.cases_bail_set : county.countyProps.average_bail_set} />
 										<span class="case-count text-zinc-300 super">
-                      <p class="text-xs float-right align-super">({formatNumber(county.countyProps.cases_bail_set)}
-												cases)</p>
-                    </span>
+                                        <p
+																					class="text-xs float-right align-super">({formatNumber(county.countyProps.cases_bail_set)}
+																					cases)</p>
+                                    </span>
 									</p>
 								{/if}
 								{#if metric === 'release'}
@@ -81,10 +87,10 @@
 											class="text-green-600">{formatNumber((county.cases_ror_pct + county.cases_nmr_pct) * 100)}</span>
 										<span class="text-gray-300 -ml-1">%</span>
 										<span class="case-count text-zinc-300 super">
-                      <p
-												class="text-xs float-right align-super">({formatNumber(county.countyProps.cases_ror + county.countyProps.cases_nmr)}
-												cases)</p>
-                    </span>
+                                        <p
+																					class="text-xs float-right align-super">({formatNumber(county.countyProps.cases_ror + county.countyProps.cases_nmr)}
+																					cases)</p>
+                                    </span>
 									</p>
 								{/if}
 								{#if metric === 'remand'}
@@ -92,9 +98,10 @@
 										<span class="text-red-600">{formatNumber(county.cases_remand_pct * 100)}</span>
 										<span class="text-gray-300 -ml-1">%</span>
 										<span class="case-count text-zinc-300 super">
-                      <p class="text-xs float-right align-super">({formatNumber(county.countyProps.cases_remand)}
-												cases)</p>
-                    </span>
+                                        <p
+																					class="text-xs float-right align-super">({formatNumber(county.countyProps.cases_remand)}
+																					cases)</p>
+                                    </span>
 									</p>
 								{/if}
 							</div>
@@ -108,6 +115,7 @@
 			<p class="text-red-500">Error fetching top counties: {error.message}</p>
 		{/await}
 	</div>
+
 </div>
 
 <style>

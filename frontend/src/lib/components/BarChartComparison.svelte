@@ -1,11 +1,11 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { selectedCountyStore, selectedJudgeStore, selectedStatsStore } from '$lib/stores/data.js';
-	import type { CountyProperties, JudgeProperties } from '$lib/types';
+	import type { County, Judge } from '$lib/types/types';
 	import * as d3 from 'd3';
 
-	let selectedJudgeInfo: JudgeProperties | null = null;
-	let countySelectedInfo: CountyProperties | null = null;
+	let selectedJudgeInfo: Judge | null = null;
+	let countySelectedInfo: County | null = null;
 
 	$: selectedJudgeInfo = $selectedJudgeStore;
 	$: countySelectedInfo = $selectedCountyStore;

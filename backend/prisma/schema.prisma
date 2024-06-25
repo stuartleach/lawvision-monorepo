@@ -141,7 +141,7 @@ model counties {
   county_uuid                               String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   county_name                               String      @unique
   average_bail_set                          Decimal?    @db.Decimal
-  number_of_cases                           Int?
+  case_count                                Int?
   median_income                             Int?
   median_id                                 String?     @db.Uuid
   cases_bail_set                            Int?

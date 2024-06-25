@@ -1,23 +1,27 @@
 // $lib/stores/data.ts
 import { writable } from 'svelte/store';
 import type {
-	CountyExpandedProperties,
-	CountyFeature,
-	CountyProperties,
-	JudgeExpandedProperties,
-	JudgeProperties
+	County, CountyFeature, geoJsonData,
+	Judge, MinMax
 } from '$lib/types';
 
-export const allCountiesStore = writable<CountyFeature[]>([]);
+export const allCountiesStore = writable<County[]>([]);
+
+export const geoJsonStore = writable<geoJsonData>()
+export const countiesMinMax = writable<MinMax>()
+export const judgesStateMinMax = writable<MinMax>()
+
+export const judgesCountyMinMax = writable<MinMax>()
+
 export const allCountiesPromiseStore = writable<Promise<CountyFeature[]> | null>(null);
-export const allJudgesStore = writable<JudgeExpandedProperties[]>([]);
-export const allJudgesPromiseStore = writable<Promise<JudgeExpandedProperties[]> | null>(null);
-export const selectedCountyStore = writable<CountyExpandedProperties | null>(null);
+export const allJudgesStore = writable<Judge[]>([]);
+export const allJudgesPromiseStore = writable<Promise<Judge[]> | null>(null);
+export const selectedCountyStore = writable<County | null>(null);
 export const bailMinMaxStore = writable<[number, number]>([0, 0]);
 export const bailAmountsStore = writable<number[]>([]);
-export const countyJudgesStore = writable<JudgeExpandedProperties[]>([]);
-export const countyJudgesPromiseStore = writable<Promise<JudgeExpandedProperties[]> | null>(null);
-export const selectedJudgeStore = writable<JudgeExpandedProperties | null>(null);
+export const countyJudgesStore = writable<Judge[]>([]);
+export const countyJudgesPromiseStore = writable<Promise<Judge[]> | null>(null);
+export const selectedJudgeStore = writable<Judge | null>(null);
 
 export const selectedMetricStore = writable<'bail' | 'remand' | 'release'>('bail');
 

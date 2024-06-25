@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { Chart } from 'flowbite-svelte';
 	import { allCountiesStore, selectedCountyStore, selectedJudgeStore, selectedStatsStore } from '$lib/stores/data.js';
-	import type { CountyFeature, CountyProperties, JudgeProperties } from '$lib/types';
+	import type { CountyFeature, County, Judge } from '$lib/types/types';
 	import { quantize, interpolatePlasma, pie, arc } from 'd3';
 
 	/*
@@ -20,8 +20,8 @@
 	};
 
 	let selectedStats: string = 'state';
-	let countySelectedInfo: CountyProperties | null = null;
-	let judgeSelectedInfo: JudgeProperties | null = null;
+	let countySelectedInfo: County | null = null;
+	let judgeSelectedInfo: Judge | null = null;
 
 	const stats = {
 		bailSetCases: 0,

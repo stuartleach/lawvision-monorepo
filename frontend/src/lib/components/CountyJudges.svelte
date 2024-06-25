@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { formatMoney, formatMoneyValue, formatNumber, sortTopJudges } from '$lib/utils';
-	import type { CountyProperties, JudgeExpandedProperties, JudgeProperties } from '$lib/types';
+	import type { County, Judge, Judge } from '$lib/types/types';
 	import {
 		selectedCountyStore,
 		selectedJudgeStore,
@@ -11,10 +11,10 @@
 	import { get } from 'svelte/store';
 	import Close from '$lib/assets/Close.svelte';
 
-	let selectedCountyInfo: CountyProperties | null = null;
-	let selectedJudgeInfo: JudgeExpandedProperties | null = null;
-	let topJudgesPromise: Promise<JudgeExpandedProperties[]> | null = null;
-	let topJudges: JudgeExpandedProperties[] = [];
+	let selectedCountyInfo: County | null = null;
+	let selectedJudgeInfo: Judge | null = null;
+	let topJudgesPromise: Promise<Judge[]> | null = null;
+	let topJudges: Judge[] = [];
 	let metric: 'bail' | 'remand' | 'release' = 'bail';
 	let cases_bail_set = 0;
 	let cases_ror = 0;

@@ -1,8 +1,14 @@
 import { sveltekit } from '@sveltejs/kit/vite';
 import { defineConfig } from 'vitest/config';
 import tsconfigPaths from 'vite-tsconfig-paths';
+import path from 'node:path';
 
 export default defineConfig({
+  resolve: {
+    alias: {
+      $lib: path.resolve('./src/lib')
+    }
+  },
   plugins: [
     sveltekit(),
     tsconfigPaths({

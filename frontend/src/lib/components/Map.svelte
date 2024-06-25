@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount, onDestroy } from 'svelte';
 	import * as d3 from 'd3';
-	import type { CountyProperties, CountyFeature, CountyExpandedProperties } from '$lib/types';
+	import type { County } from '$lib/types/types';
 	import { createColorScale, formatMoney, formatNumber } from '$lib/utils';
 	import {
 		allCountiesStore,
@@ -15,8 +15,9 @@
 	} from '$lib/stores/data';
 	import type { Unsubscriber } from 'svelte/store';
 
-	export let allCounties: CountyFeature[] = [];
-	export let selectedCountyInfo: CountyExpandedProperties | null = null;
+	export let allCounties: County[] = [];
+	export let selectedCountyInfo: County | null = null;
+
 	let minMaxArray: [number, number] = [0, 0];
 
 	let metric: 'bail' | 'remand' | 'release' = 'bail';
@@ -53,7 +54,7 @@
 		d3.select(svg)
 			.select('g')
 			.selectAll('path')
-			.data(allCounties, (d) => (d as CountyFeature)?.properties?.geoid)
+			.data(allCounties, (d) => (d as County)?.geoid)
 			.join(
 				(enter) => enter.append('path')
 					.attr('class', 'county')
@@ -61,28 +62,28 @@
 				(update) => update.transition().attr('d', pathGenerator),
 				(exit) => exit.remove()
 			)
-			.attr('fill', (d) => {
-				const value = metric === 'bail' ? d?.properties?.countyProps?.average_bail_set :
-					metric === 'remand' ? d?.properties?.cases_remand_pct :
-						d?.properties?.cases_nmr_pct + d?.properties?.cases_ror_pct;
+			.attr('fill', (county) => {
+				const value = metric === 'bail' ? county.stats.averageBailSet :
+					metric === 'remand' ? county?.stats.pct.remand :
+						county.stats.pct.nmr + county?.stats.pct.ror;
 				return colorScale(value);
 			})
 			.attr('stroke', 'rgba(55, 65, 81, 0.15)')
-			.on('click', (event, d: CountyFeature) => {
-				selectedCountyStore.set(d.properties as CountyExpandedProperties);
+			.on('click', (event, d: County) => {
+				selectedCountyStore.set(d);
 			})
-			.on('mouseover', (event, d: CountyFeature) => {
+			.on('mouseover', (event, county: County) => {
 				d3.select(event.currentTarget)
 					.attr('stroke', 'rgba(255, 255, 255, 0.4)')
 					.attr('stroke-width', 1)
 					.attr('stroke-linejoin', 'round')
 					.attr('style', 'cursor:pointer')
 					.attr('classes', 'hover:outline hover:scale-150 outline-zinc-700 shadow-lg');
-				const countyName = (d as CountyFeature)?.properties.name;
+				const countyName = (county.name);
 				const [pageX, pageY] = [event.pageX, event.pageY];
-				const value = metric === 'bail' ? d?.properties?.countyProps?.average_bail_set :
-					metric === 'remand' ? d?.properties?.cases_remand_pct :
-						d?.properties?.cases_nmr_pct + d?.properties?.cases_ror_pct;
+				const value = metric === 'bail' ? county.stats.averageBailSet :
+					metric === 'remand' ? county.stats.pct.remand :
+						county.stats.pct.nmr + county?.stats.pct.ror;
 				const tooltipValue = metric === 'bail' ? formatMoney(value) : formatNumber(value);
 				const metricLabel = metric.charAt(0).toUpperCase() + metric.slice(1) + (metric === 'bail' ? ' amount' : ' rate');
 
