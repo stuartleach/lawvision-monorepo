@@ -1,11 +1,14 @@
 <script lang="ts">
 	import { formatMoney, formatNumber } from '$lib/utils';
-	import type { Judge } from '$lib/types/types';
-	import { selectedCountyStore, selectedJudgeStore } from '$lib/stores/data';
+	import type { Judge, RaceOutcomesMap } from '$lib/types/types';
+	import { selectedCountyStore, selectedJudgeRaceOutcomesStore, selectedJudgeStore } from '$lib/stores/data';
 	import Close from '$lib/assets/Close.svelte';
 	import ScrollableList from '$lib/components/ScrollableList.svelte';
-	import CustomListItem from '$lib/components/CustomListItem.svelte';
+	import ClickableListItem from '$lib/components/ClickableListItem.svelte';
 	import { LawCard } from '$lib/components/index';
+	import { setJudgeRaceOutcomes } from '$lib/api';
+	import Money from '$lib/components/Money.svelte';
+	import HoverableItem from '$lib/components/HoverableItem.svelte';
 
 	let selectedJudgeInfo: Judge | null;
 
@@ -13,18 +16,29 @@
 
 	let hoveredStat: string | null = null;
 
-	function handleMouseEnter(stat: string) {
+	const handleMouseEnter = (stat: string) => {
 		hoveredStat = stat;
-	}
+	};
 
-	function handleMouseLeave() {
+	const handleMouseLeave = () => {
 		hoveredStat = null;
-	}
+	};
 
+	$: judgeId = selectedJudgeInfo?.judgeUUID ?? '';
+
+	const openRaceOutcomes = (judgeId: string | undefined) => {
+		console.log('clicked!');
+		if (!judgeId) return;
+		console.log(judgeId);
+		setJudgeRaceOutcomes({ fetch, judgeId });
+	};
+
+	let raceOutcomes: RaceOutcomesMap | null;
+	$: raceOutcomes = $selectedJudgeRaceOutcomesStore;
 </script>
 
 <LawCard>
-	<div class=" flex justify-end">
+	<div class="flex justify-end">
 		<button class="x-button mb-4 -mr-1 -mt-2 w-4" on:click={() => selectedJudgeStore.set(null)}>
 			<Close />
 		</button>
@@ -34,50 +48,64 @@
 	<h2>{selectedJudgeInfo?.name || "The Honorable Judge X"}</h2>
 	<div>
 		<ScrollableList>
-			<CustomListItem>
-				<h3 class="text-lg text-zinc-300 font-bold">Total cases:</h3>
+			<ClickableListItem onClick={() => openRaceOutcomes(selectedJudgeInfo?.judgeUUID)}>
+				<h3 slot="title">Racial Breakdown</h3>
+			</ClickableListItem>
+			<ClickableListItem>
+				<h3 slot="title">Total cases:</h3>
 				<p
 					class="font-bold text-right text-zinc-400 font-mono">{selectedJudgeInfo ? formatNumber(selectedJudgeInfo.stats.caseCount) : '0'}</p>
-			</CustomListItem>
-			<CustomListItem class="stat" mouseenter={() => handleMouseEnter('amount')} mouseleave={handleMouseLeave}>
-				<h3 class="text-lg text-zinc-300 font-bold">{hoveredStat === 'amount' ? 'Total bail set:' : 'Average bail amount:'}</h3>
-				<div class="right text-right">
-					<div class="money flex-row text-right">
-						<span class="text-green-600">$</span>
-						<span
-							class="font-bold text-white font-mono">{selectedJudgeInfo ? formatMoney(hoveredStat === 'amount' ? selectedJudgeInfo.stats.totalBailSet : selectedJudgeInfo.stats.averageBailSet).split('.')[0] : '0'}</span>&nbsp;<span
-						class="super font-mono">.{selectedJudgeInfo ? formatMoney(selectedJudgeInfo.stats.averageBailSet).split('.')[1] : '00'}</span>
-					</div>
-				</div>
-			</CustomListItem>
-			<CustomListItem class="stat" mouseenter={() => handleMouseEnter('remand')} mouseleave={handleMouseLeave}>
+			</ClickableListItem>
+			<ClickableListItem onMouseEnter={() => handleMouseEnter('amount')} onMouseLeave={handleMouseLeave}>
+				<h3 slot="title">{hoveredStat === 'amount' ? 'Total bail set:' : 'Average bail amount:'}</h3>
+				<p slot="stat">
+					<Money
+						value={selectedJudgeInfo ? (hoveredStat === 'amount' ? selectedJudgeInfo.stats.totalBailSet : selectedJudgeInfo.stats.averageBailSet) : 0} />
+				</p>
+			</ClickableListItem>
+			<ClickableListItem onMouseEnter={() => handleMouseEnter('remand')} onMouseLeave={handleMouseLeave}>
 				<h3
-					class="text-lg text-zinc-300 font-bold">{hoveredStat === 'remand' ? 'Remand total:' : 'Remand frequency:'}</h3>
-				<p class="font-bold font-mono text-right text-red-600">
-					{hoveredStat === 'remand' ? formatNumber(selectedJudgeInfo?.stats.raw.remand) : (selectedJudgeInfo ? formatNumber((selectedJudgeInfo.stats.pct.remand) * 100) + '%' : '0%')}
+					slot="title">{hoveredStat === 'remand' ? 'Remand total:' : 'Remand frequency:'}</h3>
+				<p slot="stat" class="text-red-600">
+					<HoverableItem
+						targetBool={hoveredStat === 'remand'}
+						valueWhenNotHovered={selectedJudgeInfo ? formatNumber(selectedJudgeInfo.stats.pct.remand * 100) + '%' : '0%'}
+						valueWhenHovered={formatNumber(selectedJudgeInfo?.stats.raw.remand)}
+					/>
 				</p>
-			</CustomListItem>
-			<CustomListItem class="stat" mouseenter={() => handleMouseEnter('release')} mouseleave={handleMouseLeave}>
+			</ClickableListItem>
+			<ClickableListItem onMouseEnter={() => handleMouseEnter('release')} onMouseLeave={handleMouseLeave}>
 				<h3
-					class="text-lg text-zinc-300 font-bold">{hoveredStat === 'release' ? 'Release total:' : 'Release frequency:'}</h3>
-				<p class="font-bold font-mono text-right text-green-600">
-					{hoveredStat === 'release' ? formatNumber(Number(selectedJudgeInfo?.stats.raw.release)) : (selectedJudgeInfo ? formatNumber(selectedJudgeInfo.stats.pct.release * 100) + '%' : '0%')}
+					slot="title">{hoveredStat === 'release' ? 'Release total:' : 'Release frequency:'}</h3>
+				<p slot="stat" class="text-green-600">
+					<HoverableItem
+						targetBool={hoveredStat === 'release'}
+						valueWhenNotHovered={selectedJudgeInfo ? formatNumber(selectedJudgeInfo.stats.pct.release * 100) + '%' : '0%'}
+						valueWhenHovered={formatNumber(selectedJudgeInfo?.stats.raw.release)}
+					/>
 				</p>
-			</CustomListItem>
-			<CustomListItem class="stat" mouseenter={() => handleMouseEnter('bail')} mouseleave={handleMouseLeave}>
+			</ClickableListItem>
+			<ClickableListItem onMouseEnter={() => handleMouseEnter('bail')} onMouseLeave={handleMouseLeave}>
 				<h3
-					class="text-lg text-zinc-300 font-bold">{hoveredStat === 'bail' ? 'Bail set total:' : 'Bail set frequency:'}</h3>
-				<p class="font-bold font-mono text-right text-yellow-300">
-					{hoveredStat === 'bail' ? formatNumber(selectedJudgeInfo?.stats.raw.bailSet) : (selectedJudgeInfo ? formatNumber(selectedJudgeInfo.stats.pct.bailSet * 100) + '%' : '0%')}
+					slot="title">{hoveredStat === 'bail' ? 'Bail set total:' : 'Bail set frequency:'}</h3>
+				<p slot="stat" class="text-yellow-300">
+					<HoverableItem
+						targetBool={hoveredStat === 'bail'}
+						valueWhenNotHovered={selectedJudgeInfo ? formatNumber(selectedJudgeInfo.stats.pct.bailSet * 100) + '%' : '0%'}
+						valueWhenHovered={formatNumber(selectedJudgeInfo?.stats.raw.bailSet)}
+					/>
 				</p>
-			</CustomListItem>
-			<CustomListItem class="stat" mouseenter={() => handleMouseEnter('unknown')} mouseleave={handleMouseLeave}>
-				<h3 class="text-lg text-zinc-300 font-bold">{hoveredStat === 'unknown' ? 'Unknown total:' : 'Unknown:'}</h3>
-				<p class="font-bold font-mono text-right text-zinc-600">
-					{hoveredStat === 'unknown' ? formatNumber(selectedJudgeInfo?.stats.raw.unknown) : (selectedJudgeInfo ? formatNumber(selectedJudgeInfo.stats.pct.unknown * 100) + '%' : '0%')}
+			</ClickableListItem>
+			<ClickableListItem onMouseEnter={() => handleMouseEnter('unknown')} onMouseLeave={handleMouseLeave}>
+				<h3 slot="title">{hoveredStat === 'unknown' ? 'Unknown total:' : 'Unknown:'}</h3>
+				<p slot="stat" class="text-zinc-600">
+					<HoverableItem
+						targetBool={hoveredStat === 'unknown'}
+						valueWhenNotHovered={selectedJudgeInfo ? formatNumber(selectedJudgeInfo.stats.pct.unknown * 100) + '%' : '0%'}
+						valueWhenHovered={formatNumber(selectedJudgeInfo?.stats.raw.unknown)}
+					/>
 				</p>
-			</CustomListItem>
+			</ClickableListItem>
 		</ScrollableList>
 	</div>
 </LawCard>
-

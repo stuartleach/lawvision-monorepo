@@ -31,8 +31,8 @@ export type GeoJSONData = {
 };
 
 export interface CountyWithGeoJSON {
-    county: County;
-    geoJsonFeature: GeoJSONFeature;
+	county: County;
+	geoJsonFeature: GeoJSONFeature;
 }
 
 export interface MinMax {
@@ -77,4 +77,48 @@ export interface CaseStats {
 	};
 }
 
+export type FetchFunction = (input: RequestInfo, init?: RequestInit) => Promise<Response>;
 
+export type JudgeQuery = {
+	fetch: FetchFunction;
+	countyId: string;
+	limit: number;
+}
+
+export type JudgeRaceOutcomesQuery = {
+	fetch: FetchFunction;
+	judgeId: string;
+}
+
+export type CombinedPreTrialOutcomes = {
+	[chargeWeight: string]: RaceOutcomesMap
+};
+
+export type RaceOutcomesMap = {
+	'White': PretrialOutcomes;
+	'Black': PretrialOutcomes;
+	'American Indian/Alaska Native': PretrialOutcomes;
+	'Asian/Pacific Islander': PretrialOutcomes;
+	'Other': PretrialOutcomes;
+	'Unknown': PretrialOutcomes;
+}
+
+export type PretrialOutcomeTypes = {
+	'bail': number;
+	'release': number;
+	'unknown': number;
+	'remand': number;
+}
+
+export type PretrialOutcomes = {
+	raw: PretrialOutcomeTypes;
+	pct: PretrialOutcomeTypes;
+}
+
+export type CountyQuery = {
+	fetch: FetchFunction;
+}
+
+export type GeoJSONQuery = {
+	fetch: FetchFunction
+}

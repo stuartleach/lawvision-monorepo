@@ -1,5 +1,5 @@
 import type { County, GeoJSONData } from '$lib/types/types';
-import { getAllJudges, getAllCounties, getGeoJson } from '$lib/api';
+import { getGeoJson, getCounties, getJudges } from '$lib/api';
 import {
 	allCountiesStore,
 	loadingStore,
@@ -9,12 +9,14 @@ import { combineCountiesWithGeoJSON, getMinMax } from '$lib/utils';
 
 /** @type {import('./$types').PageLoad} */
 
+
+
 export async function load({ fetch, params }) {
 	loadingStore.set(true);
 	try {
-		const newYorkGeoJson: GeoJSONData = await getGeoJson(fetch);
-		const counties: County[] = await getAllCounties(fetch);
-		const judges = await getAllJudges(fetch, 500);
+		const newYorkGeoJson: GeoJSONData = await getGeoJson({ fetch });
+		const counties: County[] = await getCounties({ fetch });
+		const judges = await getJudges({ fetch, countyId: '', limit: 100 });
 
 		geoJSONStore.set(newYorkGeoJson);
 		allCountiesStore.set(counties);

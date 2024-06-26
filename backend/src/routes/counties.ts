@@ -1,14 +1,15 @@
 import { Router } from 'express';
-import { prisma } from '../prisma_client';
+import { getCounties, getPreTrialOutcomesForEachChargeWeight } from '../queries';
+import {
+	getCombinedPreTrialOutcomes
+} from '../queries/complexQueries';
 
-const router = Router();
+const countiesRouter = Router();
 
 
-router.get('/', async (req, res) => {
+countiesRouter.get('/', async (req, res) => {
 	try {
-		const results = await prisma.counties.findMany({
-			orderBy: { average_bail_set: 'desc' }
-		});
+		const results = await getCounties();
 		res.json(results);
 	} catch (error) {
 		console.error('Error fetching counties:', error);
@@ -16,11 +17,28 @@ router.get('/', async (req, res) => {
 	}
 });
 
-router.get('/:countyId/race_outcomes', async (req, res) => {
-	const countyId = req.params.countyId;
-//     for each race in cases belonging to the county,
-	//    get the number of cases with the
-	//
+countiesRouter.get('/:county_name/race_outcomes', async (req, res) => {
+	const countyName = req.params.county_name;
+	try {
+		// const raceOutcomes = await getNumberOfCasesOfEachRace({ countyName: countyName });
+		const raceOutcomes = await getCombinedPreTrialOutcomes({ countyName: countyName });
+		return res.json(raceOutcomes);
+	} catch (error) {
+		console.error;
+		return res.status(500).json({ error: 'Internal Server Error' });
+	}
 });
 
-export default router;
+countiesRouter.get('/:county_name/charges', async (req, res) => {
+	const countyName = req.params.county_name;
+	try {
+		const charges = await getPreTrialOutcomesForEachChargeWeight({ countyName: countyName });
+		return res.json(charges);
+	} catch (error) {
+		console.error;
+		return res.status(500).json({ error: 'Internal Server Error' });
+	}
+});
+
+
+export default countiesRouter;

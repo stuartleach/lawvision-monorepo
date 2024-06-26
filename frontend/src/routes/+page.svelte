@@ -23,7 +23,8 @@
 		AllJudgesSelector,
 		LawCard
 	} from '$lib/components/index';
-	import { fetchTopJudges } from '$lib/api';
+	import { setTopJudges } from '$lib/api';
+	import RaceCard from '$lib/components/RaceCard.svelte';
 
 	let selectedCountyInfo: County | null;
 	let allCounties: County[] = [];
@@ -34,7 +35,7 @@
 	let metric: 'bail' | 'remand' | 'release' = 'bail';
 
 	$: selectedCountyInfo = $selectedCountyStore;
-	$: if ($selectedCountyStore) fetchTopJudges($selectedCountyStore.name);
+	$: if ($selectedCountyStore) setTopJudges($selectedCountyStore.name);
 	$: topJudgesArray = $countyJudgesStore;
 	$: bailAmountsArray = $bailAmountsStore;
 	$: bailMinMaxArray = $bailMinMaxStore;
@@ -82,6 +83,7 @@
 			<CountyDetails />
 			<CountyJudges />
 			<JudgeDetails />
+			<RaceCard />
 		</div>
 		<div class="footer-container ">
 			<Footer>

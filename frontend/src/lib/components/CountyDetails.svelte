@@ -4,6 +4,10 @@
 	import { selectedCountyStore, selectedJudgeStore, selectedMetricStore, countyJudgesStore } from '$lib/stores/data';
 	import Close from '$lib/assets/Close.svelte';
 	import { LawCard } from '$lib/components/index';
+	import ScrollableList from '$lib/components/ScrollableList.svelte';
+	import ClickableListItem from '$lib/components/ClickableListItem.svelte';
+	import Money from '$lib/components/Money.svelte';
+	import HoverableItem from '$lib/components/HoverableItem.svelte';
 
 	let county: County | null = null;
 	let selectedJudgeInfo: Judge | null = null;
@@ -20,6 +24,9 @@
 	let totalBailAmount: number;
 	let numberOfCasesRaw: number;
 
+	let selectedCountyInfo: County | null;
+
+
 	$: casesBailSet = county?.stats.raw.bailSet ?? 0;
 	$: casesRelease = county?.stats.raw.release ?? 0;
 	$: casesRemand = county?.stats.raw.remand ?? 0;
@@ -29,6 +36,8 @@
 	$: casesReleasePct = county?.stats.pct.release ?? 0;
 	$: casesRemandPct = county?.stats.pct.remand ?? 0;
 	$: casesUnknownPct = county?.stats.pct.unknown ?? 0;
+
+	$: selectedCountyInfo = $selectedCountyStore;
 
 
 	$: countyName = county?.name ?? '';
@@ -54,65 +63,63 @@
 	</div>
 	<h2>{countyName} County</h2>
 	<div>
-		<ul class="space-y-2">
-			<li class="stat">
-				<h3 class="text-lg text-zinc-300 font-bold">Number of cases:</h3>
+		<ScrollableList>
+			<ClickableListItem>
+				<h3 slot="title">Number of cases:</h3>
 				<p class="font-bold text-right text-zinc-400 font-mono">
 					{formatNumber(numberOfCasesRaw)}
 				</p>
-			</li>
-			<li class="stat" on:mouseenter={() => handleMouseEnter('amount')} on:mouseleave={handleMouseLeave}>
-				<div class="left text-left">
-					<h3>{hoveredStat === 'amount' ? 'Total bail set:' : 'Average bail amount:'}</h3>
-				</div>
-				<div class="right text-right">
-					<div class="money flex-row text-right">
-						<span class="text-green-600">$</span>
-						<span class="font-bold text-white font-mono">
-							{county ? formatMoney(hoveredStat === 'amount' ? totalBailAmount : averageBailAmount).split('.')[0] : '0'}
-						</span>&nbsp;<span class="super font-mono">
-							.{county ? formatMoney(averageBailAmount).split('.')[1] : '00'}
-						</span>
-					</div>
-				</div>
-			</li>
-			<li class="stat" on:mouseenter={() => handleMouseEnter('remand')} on:mouseleave={handleMouseLeave}>
-				<h3 class="text-lg text-zinc-300 font-bold">
-					{hoveredStat === 'remand' ? 'Remand total:' : 'Remand frequency:'}
-				</h3>
-				<p class="font-bold font-mono text-right text-red-600">
-					{hoveredStat === 'remand' ? formatNumber(casesRemand) : (county ? formatNumber(casesRemandPct * 100) + '%' : '0%')}
+			</ClickableListItem>
+			<ClickableListItem onMouseEnter={() => handleMouseEnter('amount')} onMouseLeave={handleMouseLeave}>
+				<h3 slot="title">{hoveredStat === 'amount' ? 'Total bail set:' : 'Average bail amount:'}</h3>
+				<p slot="stat">
+					<Money
+						value={selectedCountyInfo ? (hoveredStat === 'amount' ? selectedCountyInfo.stats.totalBailSet : selectedCountyInfo.stats.averageBailSet) : 0} />
 				</p>
-			</li>
-			<li class="stat" on:mouseenter={() => handleMouseEnter('release')} on:mouseleave={handleMouseLeave}>
-				<h3 class="text-lg text-zinc-300 font-bold">
-					{hoveredStat === 'release' ? 'Release total:' : 'Release frequency:'}
-				</h3>
-				<p class="font-bold font-mono text-right text-green-600">
-					{hoveredStat === 'release' ? formatNumber(casesRelease)
-						: (county ? formatNumber(casesReleasePct * 100) + '%' : '0%')}
+			</ClickableListItem>
+			<ClickableListItem onMouseEnter={() => handleMouseEnter('remand')} onMouseLeave={handleMouseLeave}>
+				<h3
+					slot="title">{hoveredStat === 'remand' ? 'Remand total:' : 'Remand frequency:'}</h3>
+				<p slot="stat" class="text-red-600">
+					<HoverableItem
+						targetBool={hoveredStat === 'remand'}
+						valueWhenNotHovered={selectedCountyInfo ? formatNumber(selectedCountyInfo.stats.pct.remand * 100) + '%' : '0%'}
+						valueWhenHovered={formatNumber(selectedCountyInfo?.stats.raw.remand)}
+					/>
 				</p>
-			</li>
-			<li class="stat" on:mouseenter={() => handleMouseEnter('bail')} on:mouseleave={handleMouseLeave}>
-				<h3 class="text-lg text-zinc-300 font-bold">
-					{hoveredStat === 'bail' ? 'Bail set total:' : 'Bail set frequency:'}
-				</h3>
-				<p class="font-bold font-mono text-right text-yellow-300">
-					{hoveredStat === 'bail' ? formatNumber(casesBailSet)
-						: (county ? formatNumber(casesBailSetPct * 100) + '%'
-							: '0%')}
+			</ClickableListItem>
+			<ClickableListItem onMouseEnter={() => handleMouseEnter('release')} onMouseLeave={handleMouseLeave}>
+				<h3
+					slot="title">{hoveredStat === 'release' ? 'Release total:' : 'Release frequency:'}</h3>
+				<p slot="stat" class="text-green-600">
+					<HoverableItem
+						targetBool={hoveredStat === 'release'}
+						valueWhenNotHovered={selectedCountyInfo ? formatNumber(selectedCountyInfo.stats.pct.release * 100) + '%' : '0%'}
+						valueWhenHovered={formatNumber(selectedCountyInfo?.stats.raw.release)}
+					/>
 				</p>
-			</li>
-			<li class="stat" on:mouseenter={() => handleMouseEnter('unknown')} on:mouseleave={handleMouseLeave}>
-				<h3 class="text-lg text-zinc-300 font-bold">
-					{hoveredStat === 'unknown' ? 'Unknown total:' : 'Unknown:'}
-				</h3>
-				<p class="font-bold font-mono text-right text-zinc-600">
-					{hoveredStat === 'unknown' ? formatNumber(casesUnknown)
-						: (county ? formatNumber(casesUnknownPct * 100) + '%'
-							: '0%')}
+			</ClickableListItem>
+			<ClickableListItem onMouseEnter={() => handleMouseEnter('bail')} onMouseLeave={handleMouseLeave}>
+				<h3
+					slot="title">{hoveredStat === 'bail' ? 'Bail set total:' : 'Bail set frequency:'}</h3>
+				<p slot="stat" class="text-yellow-300">
+					<HoverableItem
+						targetBool={hoveredStat === 'bail'}
+						valueWhenNotHovered={selectedCountyInfo ? formatNumber(selectedCountyInfo.stats.pct.bailSet * 100) + '%' : '0%'}
+						valueWhenHovered={formatNumber(selectedCountyInfo?.stats.raw.bailSet)}
+					/>
 				</p>
-			</li>
-		</ul>
+			</ClickableListItem>
+			<ClickableListItem onMouseEnter={() => handleMouseEnter('unknown')} onMouseLeave={handleMouseLeave}>
+				<h3 slot="title">{hoveredStat === 'unknown' ? 'Unknown total:' : 'Unknown:'}</h3>
+				<p slot="stat" class="text-zinc-600">
+					<HoverableItem
+						targetBool={hoveredStat === 'unknown'}
+						valueWhenNotHovered={selectedCountyInfo ? formatNumber(selectedCountyInfo.stats.pct.unknown * 100) + '%' : '0%'}
+						valueWhenHovered={formatNumber(selectedCountyInfo?.stats.raw.unknown)}
+					/>
+				</p>
+			</ClickableListItem>
+		</ScrollableList>
 	</div>
 </LawCard>

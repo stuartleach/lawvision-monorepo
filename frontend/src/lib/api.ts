@@ -1,10 +1,16 @@
-import type { CaseStats, County, GeoJSONData, Judge } from '$lib/types';
+import type {
+	County,
+	CountyQuery, FetchFunction,
+	GeoJSONData, GeoJSONQuery,
+	Judge,
+	JudgeQuery,
+	JudgeRaceOutcomesQuery, RaceOutcomesMap
+} from '$lib/types';
 import type { CountyModel, JudgeModel } from '$lib/types';
 import { mutateCounty, mutateJudge } from '$lib/utils';
-import { allCountiesStore, countyJudgesStore } from '$lib/stores/data';
+import { allCountiesStore, countyJudgesStore, selectedJudgeRaceOutcomesStore } from '$lib/stores/data';
 
-// Generic fetch function to reduce redundancy
-const fetchData = async <T>(fetch: (input: RequestInfo, init?: RequestInit) => Promise<Response>, url: string, options?: RequestInit): Promise<T> => {
+const fetchData = async <T>(fetch: FetchFunction, url: string, options?: RequestInit): Promise<T> => {
 	const response = await fetch(url, {
 		headers: {
 			'Content-Type': 'application/json',
@@ -21,33 +27,54 @@ const fetchData = async <T>(fetch: (input: RequestInfo, init?: RequestInit) => P
 	return response.json();
 };
 
-// Fetch all counties with specific mutation function
-const getAllCounties = async (fetch: (input: RequestInfo, init?: RequestInit) => Promise<Response>): Promise<County[]> => {
-	const allCounties: CountyModel[] = await fetchData<CountyModel[]>(fetch, `/api/counties?limit=10000`);
-	return allCounties.map(mutateCounty);
-};
-
-// Fetch geographic JSON data
-const getGeoJson = async (fetch: (input: RequestInfo, init?: RequestInit) => Promise<Response>): Promise<GeoJSONData> => {
+const getGeoJson = async (query: GeoJSONQuery): Promise<GeoJSONData> => {
+	const { fetch } = query;
 	return fetchData<GeoJSONData>(fetch, '/ny-counties.json');
 };
 
-// Fetch judges by county with limit
-const getJudgesByCounty = async (fetch: (input: RequestInfo, init?: RequestInit) => Promise<Response>, county: string, limit: number): Promise<Judge[]> => {
-	const allJudges: JudgeModel[] = await fetchData<JudgeModel[]>(fetch, `/api/judges?county=${county}&limit=${limit}`);
-	return allJudges.map(mutateJudge);
+const getJudges = async (query: JudgeQuery): Promise<Judge[]> => {
+	const { fetch, countyId, limit } = query;
+	let url = `/api/judges`;
+	const params: string[] = [];
+	if (countyId) {
+		params.push(`county=${encodeURIComponent(countyId)}`);
+	}
+	if (limit !== undefined) {
+		params.push(`limit=${encodeURIComponent(limit)}`);
+	}
+	if (params.length) {
+		url += `?${params.join('&')}`;
+	}
+	const judges: JudgeModel[] = await fetchData<JudgeModel[]>(fetch, url);
+	return judges.map(mutateJudge);
 };
 
-// Fetch all judges with limit
-const getAllJudges = async (fetch: (input: RequestInfo, init?: RequestInit) => Promise<Response>, limit: number): Promise<Judge[]> => {
-	const allJudges: JudgeModel[] = await fetchData<JudgeModel[]>(fetch, `/api/judges?limit=${limit}`);
-	return allJudges.map(mutateJudge);
+const setJudgeRaceOutcomes = async (query: JudgeRaceOutcomesQuery): Promise<void> => {
+
+	const { fetch, judgeId } = query;
+
+	const result = await fetchData<RaceOutcomesMap>(fetch, `/api/judges/${judgeId}/race_outcomes`);
+
+	console.log("result", result)
+
+	selectedJudgeRaceOutcomesStore.set(result);
+
 };
 
-const fetchTopJudges = async (countyName: string) => {
+const getCounties = async (query: CountyQuery): Promise<County[]> => {
+	const { fetch } = query;
+
+	let url = '/api/counties';
+
+	const counties: CountyModel[] = await fetchData<CountyModel[]>(fetch, url);
+	return counties.map(mutateCounty);
+};
+
+
+const setTopJudges = async (countyName: string) => {
 	if (countyName) {
 		try {
-			const judges = await getJudgesByCounty(fetch, countyName, 20);
+			const judges = await getJudges({ fetch, countyId: countyName, limit: 20 });
 			countyJudgesStore.set(judges);
 		} catch (error) {
 			console.error('Error fetching judges:', error);
@@ -57,4 +84,4 @@ const fetchTopJudges = async (countyName: string) => {
 	}
 };
 
-export { getAllCounties, getJudgesByCounty, getAllJudges, getGeoJson, fetchTopJudges };
+export { getGeoJson, setTopJudges, getCounties, getJudges, setJudgeRaceOutcomes };

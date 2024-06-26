@@ -47,11 +47,6 @@
 	$: geoJSON = $geoJSONStore;
 	$: metric = $selectedMetricStore;
 
-	$: console.log('geoJSON:', geoJSON);
-	$: console.log('allCountiesWithGeoJSON:', allCountiesWithGeoJSON);
-	$: console.log('allCountiesWithGeoJSON[0].geoJsonFeature:', allCountiesWithGeoJSON[0]?.geoJsonFeature); // Make sure it's safe to access
-	$: console.log('width:', width, 'height:', height);
-
 
 	$: if (geoJSON && (width || height)) {
 		updateMap();
