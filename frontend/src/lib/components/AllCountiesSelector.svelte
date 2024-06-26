@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { formatMoneyValue, formatNumber, sortTopJudges, sortAllCounties } from '$lib/utils';
-	import type { CountyFeature, County, Judge } from '$lib/types';
+	import { formatNumber, sortTopJudges, sortAllCounties } from '$lib/utils';
+	import type { County, Judge } from '$lib/types';
 	import {
 		allCountiesStore,
 		selectedCountyStore,
@@ -11,6 +11,7 @@
 	} from '$lib/stores/data';
 	import Close from '$lib/assets/Close.svelte';
 	import Money from '$lib/components/Money.svelte';
+	import { LawCard } from '$lib/components/index';
 
 	let selectedCountyInfo: County | null = null;
 	let selectedJudgeInfo: Judge | null = null;
@@ -44,12 +45,10 @@
 		hoveredStat = null;
 	}
 
-	$: Promise.resolve(allCounties).then((counties) => {
-		console.log(counties[2].name, selectedCountyInfo?.name);
-	});
+	$: Promise.resolve(allCounties);
 </script>
 
-<div class="county-detail rounded-lg p-4 md:p-6 bg-zinc-800 hover:outline outline-zinc-700 shadow-lg flex-col flex">
+<LawCard>
 	<div class="flex justify-end">
 		<button class="x-button mb-4 -mr-1 -mt-2 w-4" on:click={() => showCountyJudgesStore.set(false)}>
 			<Close />
@@ -73,10 +72,10 @@
 								{#if metric === 'bail'}
 									<p class="font-mono">
 										<Money
-											value={hoveredStat === 'amount' ? county * county.countyProps.cases_bail_set : county.countyProps.average_bail_set} />
+											value={hoveredStat === 'amount' ? county.stats.totalBailSet : county.stats.averageBailSet} />
 										<span class="case-count text-zinc-300 super">
                                         <p
-																					class="text-xs float-right align-super">({formatNumber(county.countyProps.cases_bail_set)}
+																					class="text-xs float-right align-super">({formatNumber(county.stats.raw.bailSet)}
 																					cases)</p>
                                     </span>
 									</p>
@@ -84,22 +83,22 @@
 								{#if metric === 'release'}
 									<p class="font-mono">
 										<span
-											class="text-green-600">{formatNumber((county.cases_ror_pct + county.cases_nmr_pct) * 100)}</span>
+											class="text-green-600">{formatNumber((county.stats.pct.release) * 100)}</span>
 										<span class="text-gray-300 -ml-1">%</span>
 										<span class="case-count text-zinc-300 super">
                                         <p
-																					class="text-xs float-right align-super">({formatNumber(county.countyProps.cases_ror + county.countyProps.cases_nmr)}
+																					class="text-xs float-right align-super">({formatNumber(county.stats.raw.release)}
 																					cases)</p>
                                     </span>
 									</p>
 								{/if}
 								{#if metric === 'remand'}
 									<p class="font-mono">
-										<span class="text-red-600">{formatNumber(county.cases_remand_pct * 100)}</span>
+										<span class="text-red-600">{formatNumber(county.stats.pct.remand * 100)}</span>
 										<span class="text-gray-300 -ml-1">%</span>
 										<span class="case-count text-zinc-300 super">
                                         <p
-																					class="text-xs float-right align-super">({formatNumber(county.countyProps.cases_remand)}
+																					class="text-xs float-right align-super">({formatNumber(county.stats.raw.remand)}
 																					cases)</p>
                                     </span>
 									</p>
@@ -115,9 +114,4 @@
 			<p class="text-red-500">Error fetching top counties: {error.message}</p>
 		{/await}
 	</div>
-
-</div>
-
-<style>
-
-</style>
+</LawCard>

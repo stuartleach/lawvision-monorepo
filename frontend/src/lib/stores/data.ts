@@ -1,26 +1,22 @@
 // $lib/stores/data.ts
 import { writable } from 'svelte/store';
 import type {
-	County, CountyFeature, geoJsonData,
+	County, CountyWithGeoJSON, GeoJSONData,
 	Judge, MinMax
 } from '$lib/types';
 
 export const allCountiesStore = writable<County[]>([]);
-
-export const geoJsonStore = writable<geoJsonData>()
-export const countiesMinMax = writable<MinMax>()
-export const judgesStateMinMax = writable<MinMax>()
-
-export const judgesCountyMinMax = writable<MinMax>()
-
-export const allCountiesPromiseStore = writable<Promise<CountyFeature[]> | null>(null);
+export const allCountiesWithGeoJSONStore = writable<CountyWithGeoJSON[]>([]);
+export const geoJSONStore = writable<GeoJSONData>();
+export const countiesMinMax = writable<MinMax>();
+export const judgesStateMinMax = writable<MinMax>();
 export const allJudgesStore = writable<Judge[]>([]);
 export const allJudgesPromiseStore = writable<Promise<Judge[]> | null>(null);
 export const selectedCountyStore = writable<County | null>(null);
 export const bailMinMaxStore = writable<[number, number]>([0, 0]);
 export const bailAmountsStore = writable<number[]>([]);
-export const countyJudgesStore = writable<Judge[]>([]);
 export const countyJudgesPromiseStore = writable<Promise<Judge[]> | null>(null);
+export const countyJudgesStore = writable<Judge[]>([]);
 export const selectedJudgeStore = writable<Judge | null>(null);
 
 export const selectedMetricStore = writable<'bail' | 'remand' | 'release'>('bail');
@@ -31,30 +27,10 @@ export const loadingStore = writable<boolean>(true);
 
 export const selectedStatsStore = writable<'state' | 'county' | 'judge'>('state');
 
-export const chartFocusStore = writable<'bail' | 'remand' | 'nmr' | 'ror' | 'unknown'>('bail');
-
 export const showCountyJudgesStore = writable<boolean>(true);
 export const countyRemandMinMaxPctStore = writable<[number, number]>([0, 0]);
-export const countyRemandAmountsStore = writable<number[]>([]);
 export const countyReleaseMinMaxPctStore = writable<[number, number]>([0, 0]);
-export const countyReleaseAmountsStore = writable<number[]>([]);
 
-export const countyBailSetMinMaxPctStore = writable<[number, number]>([0, 0]);
-export const countyBailSetAmountsStore = writable<number[]>([]);
-
-export const countyUnknownMinMaxPctStore = writable<[number, number]>([0, 0]);
-export const countyUnknownAmountsStore = writable<number[]>([]);
-export const judgeRemandMinMaxPctStore = writable<[number, number]>([0, 0]);
-
-export const judgeRemandAmountsStore = writable<number[]>([]);
-export const judgeReleaseMinMaxPctStore = writable<[number, number]>([0, 0]);
-export const judgeReleaseAmountsStore = writable<number[]>([]);
-
-export const judgeBailSetMinMaxPctStore = writable<[number, number]>([0, 0]);
-export const judgeBailSetAmountsStore = writable<number[]>([]);
-
-export const judgeUnknownMinMaxPctStore = writable<[number, number]>([0, 0]);
-export const judgeUnknownAmountsStore = writable<number[]>([]);
 
 export const stateBailCases = {
 	totalBailSetAmount: 4309524656,

@@ -1,4 +1,4 @@
-import type { CaseStats, County, geoJsonData, Judge } from '$lib/types';
+import type { CaseStats, County, GeoJSONData, Judge } from '$lib/types';
 import type { CountyModel, JudgeModel } from '$lib/types';
 import { mutateCounty, mutateJudge } from '$lib/utils';
 import { allCountiesStore, countyJudgesStore } from '$lib/stores/data';
@@ -23,24 +23,24 @@ const fetchData = async <T>(fetch: (input: RequestInfo, init?: RequestInit) => P
 
 // Fetch all counties with specific mutation function
 const getAllCounties = async (fetch: (input: RequestInfo, init?: RequestInit) => Promise<Response>): Promise<County[]> => {
-	const allCounties: CountyModel[] = await fetchData<CountyModel[]>(fetch, `/api/counties`);
+	const allCounties: CountyModel[] = await fetchData<CountyModel[]>(fetch, `/api/counties?limit=10000`);
 	return allCounties.map(mutateCounty);
 };
 
 // Fetch geographic JSON data
-const getGeoJson = async (fetch: (input: RequestInfo, init?: RequestInit) => Promise<Response>): Promise<geoJsonData> => {
-	return fetchData<geoJsonData>(fetch, '/ny-counties.json');
+const getGeoJson = async (fetch: (input: RequestInfo, init?: RequestInit) => Promise<Response>): Promise<GeoJSONData> => {
+	return fetchData<GeoJSONData>(fetch, '/ny-counties.json');
 };
 
 // Fetch judges by county with limit
 const getJudgesByCounty = async (fetch: (input: RequestInfo, init?: RequestInit) => Promise<Response>, county: string, limit: number): Promise<Judge[]> => {
-	const allJudges: JudgeModel[] = await fetchData<JudgeModel[]>(fetch, `/api/top_judges_by_county?county=${county}&limit=${limit}`);
+	const allJudges: JudgeModel[] = await fetchData<JudgeModel[]>(fetch, `/api/judges?county=${county}&limit=${limit}`);
 	return allJudges.map(mutateJudge);
 };
 
 // Fetch all judges with limit
 const getAllJudges = async (fetch: (input: RequestInfo, init?: RequestInit) => Promise<Response>, limit: number): Promise<Judge[]> => {
-	const allJudges: JudgeModel[] = await fetchData<JudgeModel[]>(fetch, `/api/top_judges?limit=${limit}`);
+	const allJudges: JudgeModel[] = await fetchData<JudgeModel[]>(fetch, `/api/judges?limit=${limit}`);
 	return allJudges.map(mutateJudge);
 };
 

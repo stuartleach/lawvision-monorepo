@@ -1,4 +1,12 @@
-import type { CaseStats, County, Judge, JudgeOrCounty, MinMax } from '$lib/types/types';
+import type {
+	CaseStats,
+	County,
+	CountyWithGeoJSON, GeoJSONData,
+	GeoJSONFeature,
+	Judge,
+	JudgeOrCounty,
+	MinMax
+} from '$lib/types/types';
 import * as d3 from 'd3';
 import type { CountyModel, JudgeModel, JudgeModelOrCountyModel } from '$lib/types/prismaTypes';
 
@@ -44,7 +52,7 @@ function formatMoneyValue(value: number): [string, string] {
 export const calculateCasePercentages = (stats: CaseStats) => {
 	const totalCases = stats.caseCount;
 
-	stats.pct.bail = stats.raw.bail / totalCases;
+	stats.pct.bailSet = stats.raw.bailSet / totalCases;
 	stats.pct.remand = stats.raw.remand / totalCases;
 	stats.pct.ror = stats.raw.ror / totalCases;
 	stats.pct.nmr = stats.raw.nmr / totalCases;
@@ -67,36 +75,39 @@ const sortTopJudges = (judges: Judge[], metric: 'bail' | 'remand' | 'release'): 
 };
 
 const mutateCounty = (county: CountyModel): County => {
-	return {
-		medianIncome: county.medianIncome ?? 0,
-		countyUUID: county.countyUuid,
-		name: county.countyName,
+	const result = {
+		medianIncome: county.median_income ?? 0,
+		countyUUID: county.county_uuid,
+		name: county.county_name,
 		stats: mutateStats(county)
 	};
+
+	return result;
 };
 
 const mutateStats = (item: JudgeModelOrCountyModel): CaseStats => {
-	const stats = {
-		averageBailSet: item.averageBailSet ?? 0,
-		caseCount: item.caseCount ?? 0,
-		totalBailSet: (item.averageBailSet ?? 0) * (item?.caseCount ?? 0),
+	const stats: CaseStats = {
+		averageBailSet: item.average_bail_set ?? 0,
+		caseCount: item.case_count ?? 0,
+		totalBailSet: (item.average_bail_set ?? 0) * (item?.case_count ?? 0),
 		raw: {
-			ror: item.casesRor ?? 0,
-			remand: item.casesRemand ?? 0,
-			bail: item.casesBailSet ?? 0,
-			unknown: item.casesUnknown ?? 0,
-			nmr: item.casesNmr ?? 0,
-			release: (item.casesNmr ?? 0) + (item.casesRor ?? 0)
+			ror: item.cases_ror ?? 0,
+			remand: item.cases_remand ?? 0,
+			bailSet: item.cases_bail_set ?? 0,
+			unknown: item.cases_unknown ?? 0,
+			nmr: item.cases_nmr ?? 0,
+			release: (item.cases_nmr ?? 0) + (item.cases_ror ?? 0)
 		},
 		pct: {
 			ror: 0,
 			nmr: 0,
 			remand: 0,
-			bail: 0,
+			bailSet: 0,
 			unknown: 0,
 			release: 0
 		}
 	};
+
 
 	return calculateCasePercentages(stats);
 };
@@ -105,8 +116,8 @@ const mutateStats = (item: JudgeModelOrCountyModel): CaseStats => {
 const mutateJudge = (judge: JudgeModel): Judge => {
 
 	return {
-		name: judge.judgeName,
-		judgeUUID: judge.judgeUuid,
+		name: judge.judge_name,
+		judgeUUID: judge.judge_uuid,
 		stats: mutateStats(judge)
 	};
 };
@@ -127,7 +138,7 @@ const getMinMax = (targets: JudgeOrCounty[]): MinMax => {
 
 	return stats.reduce((acc: MinMax, stat) => {
 		acc.bailAmount = [Math.min(acc.bailAmount[0], stat.averageBailSet), Math.max(acc.bailAmount[1], stat.averageBailSet)];
-		acc.bailSet = [Math.min(acc.bailSet[0], stat.pct.bail), Math.max(acc.bailSet[1], stat.pct.bail)];
+		acc.bailSet = [Math.min(acc.bailSet[0], stat.pct.bailSet), Math.max(acc.bailSet[1], stat.pct.bailSet)];
 		acc.remand = [Math.min(acc.remand[0], stat.pct.remand), Math.max(acc.remand[1], stat.pct.remand)];
 		acc.ror = [Math.min(acc.ror[0], stat.pct.ror), Math.max(acc.ror[1], stat.pct.ror)];
 		acc.nmr = [Math.min(acc.nmr[0], stat.pct.nmr), Math.max(acc.nmr[1], stat.pct.nmr)];
@@ -171,6 +182,22 @@ const sortAllJudges = (allJudges: Judge[], metric: 'bail' | 'remand' | 'release'
 			}
 		});
 };
+
+export function combineCountiesWithGeoJSON(counties: County[], geoJsonData: GeoJSONData): CountyWithGeoJSON[] {
+	return counties.map(county => {
+		// Find the GeoJSONFeature that matches the county name
+		const feature: GeoJSONFeature | undefined = geoJsonData.features.find(feature => feature.properties.name === county.name);
+
+		if (!feature) {
+			throw new Error(`No GeoJSONFeature found for county ${county.name}`);
+		}
+
+		return {
+			county: county,
+			geoJsonFeature: feature
+		};
+	});
+}
 
 
 export {

@@ -7,9 +7,32 @@ export interface County {
 	stats: CaseStats;
 }
 
-export interface CountyFeature extends Feature {
+type Coordinates = number[][][][];
+
+interface MultiPolygon {
+	type: 'MultiPolygon';
+	coordinates: Coordinates;
+}
+
+interface FeatureProperties {
 	geoid: string;
-	properties: County;
+	name: string;
+}
+
+export interface GeoJSONFeature {
+	geometry: MultiPolygon;
+	type: 'Feature';
+	properties: FeatureProperties;
+}
+
+export type GeoJSONData = {
+	type: string;
+	features: GeoJSONFeature[];
+};
+
+export interface CountyWithGeoJSON {
+    county: County;
+    geoJsonFeature: GeoJSONFeature;
 }
 
 export interface MinMax {
@@ -32,8 +55,6 @@ export type JudgeOrCounty = {
 	stats: CaseStats
 }
 
-
-
 export interface CaseStats {
 	averageBailSet: number;
 	totalBailSet: number;
@@ -41,7 +62,7 @@ export interface CaseStats {
 	raw: {
 		ror: number;
 		remand: number;
-		bail: number;
+		bailSet: number;
 		unknown: number;
 		nmr: number;
 		release: number;
@@ -50,13 +71,10 @@ export interface CaseStats {
 		ror: number;
 		nmr: number;
 		remand: number;
-		bail: number;
+		bailSet: number;
 		unknown: number;
 		release: number;
 	};
 }
 
-export type geoJsonData = {
-	type: string;
-	features: CountyFeature[];
-};
+

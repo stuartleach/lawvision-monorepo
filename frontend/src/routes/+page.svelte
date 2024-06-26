@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { County, Judge, geoJsonData } from '$lib/types';
+	import type { County, Judge, GeoJSONData } from '$lib/types';
 	import {
 		bailMinMaxStore,
 		bailAmountsStore,
@@ -7,9 +7,8 @@
 		allCountiesStore,
 		loadingStore,
 		selectedCountyStore,
-		showCountyJudgesStore,
 		selectedMetricStore,
-		geoJsonStore
+		geoJSONStore
 	} from '$lib/stores/data';
 
 	import {
@@ -23,7 +22,7 @@
 		AllCountiesSelector,
 		AllJudgesSelector,
 		LawCard
-	} from '$lib/components';
+	} from '$lib/components/index';
 	import { fetchTopJudges } from '$lib/api';
 
 	let selectedCountyInfo: County | null;
@@ -31,17 +30,16 @@
 	let topJudgesArray: Judge[] = [];
 	let bailAmountsArray: number[] = [];
 	let bailMinMaxArray: [number, number] = [0, 0];
-	let geoJson: geoJsonData | null;
+	let geoJson: GeoJSONData | null;
 	let metric: 'bail' | 'remand' | 'release' = 'bail';
 
-	// Use reactive statements wisely to link stores directly to local variables
 	$: selectedCountyInfo = $selectedCountyStore;
 	$: if ($selectedCountyStore) fetchTopJudges($selectedCountyStore.name);
 	$: topJudgesArray = $countyJudgesStore;
 	$: bailAmountsArray = $bailAmountsStore;
 	$: bailMinMaxArray = $bailMinMaxStore;
 	$: allCounties = $allCountiesStore;
-	$: geoJson = $geoJsonStore;
+	$: geoJson = $geoJSONStore;
 	$: metric = $selectedMetricStore;
 	$: loading = $loadingStore;
 </script>
@@ -77,31 +75,13 @@
 			</nav>
 		</div>
 		<div class="middle-container mb-10">
-			<LawCard class="state-detail bg-white">
-				<StateDetails />
-			</LawCard>
-			<LawCard>
-				<AllJudgesSelector />
-			</LawCard>
-			<section class="sub-middle map-container">
-				<Map />
-			</section>
-			<section class="sub-middle details-container transition h-full">
-				<AllCountiesSelector />
-			</section>
-			{#if $selectedCountyStore}
-				<section class="sub-middle details-container transition">
-					<CountyDetails />
-				</section>
-			{/if}
-			{#if $showCountyJudgesStore}
-				<section class="sub-middle details-container transition">
-					<CountyJudges />
-				</section>
-				<section class="sub-middle details-container transition">
-					<JudgeDetails />
-				</section>
-			{/if}
+			<Map />
+			<StateDetails />
+			<AllJudgesSelector />
+			<AllCountiesSelector />
+			<CountyDetails />
+			<CountyJudges />
+			<JudgeDetails />
 		</div>
 		<div class="footer-container ">
 			<Footer>

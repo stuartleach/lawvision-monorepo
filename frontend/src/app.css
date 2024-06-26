@@ -33,12 +33,9 @@ body {
 
 .outer-container {
     @apply flex flex-col  p-6;
-    /*@apply bg-zinc-800;*/
-    /*@apply border-x border-neutral-700;*/
     background-color: rgba(39, 39, 42, 0.1);
     @apply w-screen sm:w-screen lg:w-screen;
     @apply h-full justify-between;
-    /* Ensure it can scroll if content is too large */
 }
 
 @media (min-width: 2000px) {
@@ -51,7 +48,6 @@ body {
 /* SUB-CONTAINERS */
 /******************/
 .sub-container {
-    /*@apply rounded-xl shadow-lg outline outline-neutral-900 bg-zinc-900;*/
     display: flex;
     flex-direction: column;
     @apply w-full;
@@ -71,8 +67,6 @@ body {
 
 .details-container {
     @apply sub-container flex-col md:flex-row p-2 flex-[1] h-full;
-    /*gap: 1rem;*/
-    /*box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);*/
 }
 
 .footer-container {
@@ -87,9 +81,6 @@ body {
 
 .map-container {
     @apply sub-container flex-[2];
-    /*@apply h-[100vw];*/
-    /*box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);*/
-    /*@apply translate-x-5;*/
 }
 
 .chart-container {
@@ -100,14 +91,11 @@ body {
 .inner-container {
     @apply flex flex-col;
     @apply drop-shadow-lg;
-    /*@apply h-[60vh];*/
     @apply h-full;
 }
 
 .middle-container {
-    @apply flex flex-row justify-evenly flex-wrap flex flex-grow;
-    /*@apply h-[100vh]*/
-    @apply w-full;
+    @apply flex-wrap justify-start content-evenly flex;
 }
 
 .middle-container .sub-container {
@@ -132,20 +120,16 @@ body {
 
 .stat:hover {
     transform: translateY(-2px);
-    /*@apply transition;*/
-    /*@apply w-[98%];*/
     background-color: rgba(0, 0, 0, 0.7);
 }
+
 .list-item {
     transition: transform 0.2s, box-shadow 0.2s, background-color 0.2s;
-    @apply  text-zinc-200 py-2 px-4 bg-zinc-900 rounded-lg hover:bg-zinc-700 transition-all outline-none focus:outline-none cursor-pointer;
-    /*@apply ;*/
+    @apply text-zinc-200 py-2 px-4 bg-zinc-900 rounded-lg hover:bg-zinc-700 transition-all outline-none focus:outline-none cursor-pointer;
 }
 
 .list-item:hover {
     transform: translateY(-2px);
-    /*@apply transition;*/
-    /*@apply w-[98%];*/
     background-color: rgba(0, 0, 0, 0.7);
 }
 
@@ -154,8 +138,6 @@ body {
 }
 
 .judge-item {
-    /*transition: transform 0.2s, box-shadow 0.2s, background-color 0.2s, transform 0.2s;*/
-    /*@apply transition;*/
     @apply text-zinc-200 py-2 px-4 bg-zinc-900 rounded-lg hover:bg-zinc-700 hover:shadow-2xl transition-all outline-none focus:outline-none cursor-pointer;
 }
 
@@ -184,9 +166,11 @@ body {
     @apply overflow-y-scroll h-[30vh];
 }
 
+.law-card:hover {
+    transform: translateY(-2px);
+}
+
 .list-item {
-    /*transition: transform 0.2s, box-shadow 0.2s, background-color 0.2s, transform 0.2s;*/
-    /*@apply transition;*/
     @apply text-zinc-200 py-2 px-4 bg-zinc-900 rounded-lg hover:bg-zinc-700 hover:shadow-2xl transition-all outline-none focus:outline-none cursor-pointer;
 }
 
@@ -209,14 +193,10 @@ body {
 
 .judge-item:hover {
     transform: translateY(-2px);
-    /*@apply transition;*/
-    /*@apply w-[98%];*/
     background-color: rgba(0, 0, 0, 0.7);
 }
 
 .county-detail, .judge-detail {
-
-    /*@apply h-full w-full;*/
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
@@ -258,10 +238,6 @@ body {
 
 .law-card h2 {
     @apply text-3xl font-semibold tracking-tight text-gray-50 mb-4;
-}
-
-.judge-detail h4 {
-    @apply text-xl tracking-tight font-bold text-gray-500 mb-1;
 }
 
 .state-detail {

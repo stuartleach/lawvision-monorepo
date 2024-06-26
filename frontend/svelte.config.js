@@ -9,7 +9,8 @@ const config = {
 	compilerOptions: {
 		// enable run-time checks when not in production
 		dev: process.env.NODE_ENV !== 'production',
-		errorMode: 'warn'
+		errorMode: 'warn',
+
 	},
 
 	// set default route

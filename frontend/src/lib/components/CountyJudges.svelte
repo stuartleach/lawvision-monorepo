@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { formatMoney, formatMoneyValue, formatNumber, sortTopJudges } from '$lib/utils';
-	import type { County, Judge, Judge } from '$lib/types/types';
+	import type { County, Judge } from '$lib/types/types';
 	import {
 		selectedCountyStore,
 		selectedJudgeStore,
@@ -10,8 +10,9 @@
 	} from '$lib/stores/data';
 	import { get } from 'svelte/store';
 	import Close from '$lib/assets/Close.svelte';
+	import ScrollableList from '$lib/components/ScrollableList.svelte';
+	import { LawCard } from '$lib/components/index';
 
-	let selectedCountyInfo: County | null = null;
 	let selectedJudgeInfo: Judge | null = null;
 	let topJudgesPromise: Promise<Judge[]> | null = null;
 	let topJudges: Judge[] = [];
@@ -21,12 +22,23 @@
 	let cases_remand = 0;
 	let cases_unknown = 0;
 
-	$:  cases_bail_set = $selectedCountyStore?.cases_bail_set ?? 0;
-	$: cases_ror = $selectedCountyStore?.cases_ror ?? 0;
-	$: cases_remand = $selectedCountyStore?.cases_remand ?? 0;
-	$: cases_unknown = $selectedCountyStore?.cases_unknown ?? 0;
+	let county: County | null = null;
+
+	$: county = $selectedCountyStore;
+
+	$: casesBailSet = county?.stats.raw.bailSet ?? 0;
+	$: casesRor = county?.stats.raw.ror ?? 0;
+	$: casesRemand = county?.stats.raw.remand ?? 0;
+	$: casesUnknown = county?.stats.raw.unknown ?? 0;
+
+	$: casesBailSetPct = county?.stats.pct.bailSet ?? 0;
+	$: casesRorPct = county?.stats.pct.ror ?? 0;
+	$: casesRemandPct = county?.stats.pct.remand ?? 0;
+	$: casesUnknownPct = county?.stats.pct.unknown ?? 0;
 
 	// Reactive declarations
+
+	let countyJudgesPromise: Promise<Judge[]>;
 
 	$: metric = $selectedMetricStore;
 	$: selectedJudgeInfo = $selectedJudgeStore;
@@ -37,17 +49,9 @@
 	// order top judges by metric
 	$: topJudges = sortTopJudges(topJudges, metric);
 
-	$: countyName = $selectedCountyStore?.name ?? '';
-	$: bailAmount = $selectedCountyStore?.average_bail_set ?? 0;
-	$: [bailDollars, bailCents] = formatMoneyValue(bailAmount);
-	let numberOfCasesRaw = 0;
-	$: numberOfCasesRaw = $selectedCountyStore?.number_of_cases ?? 0;
-	$: numberOfCases = formatNumber($selectedCountyStore?.number_of_cases ?? 0);
-
 </script>
 
-<div
-	class="county-detail rounded-lg p-4 md:p-6 bg-zinc-800 hover:outline outline-zinc-700 shadow-lg flex-col flex county-judges-scroller">
+<LawCard>
 	<div class="flex justify-end">
 		<button class="x-button mb-4 -mr-1 -mt-2 w-4" on:click={()=>showCountyJudgesStore.set(false)}>
 			<Close />
@@ -63,45 +67,47 @@
 			<p class="text-zinc-400">Fetching top judges...</p>
 		{:then judges}
 			{#if judges && judges.length > 0}
-				<ul class="space-y-2">
+				<ScrollableList>
 					{#each judges as judge}
 						<button on:click={() => selectedJudgeStore.set(judge)}
-										class="judge-item w-full text-left {judge.judge_name === selectedJudgeInfo?.judge_name ? 'selected' : ''}">
-							<p class="text-lg text-zinc-300 font-bold pb-1">{judge.judge_name}</p>
+										class="judge-item w-full text-left {judge.name === selectedJudgeInfo?.name ? 'selected' : ''}">
+							<p class="text-lg text-zinc-300 font-bold pb-1">{judge.name}</p>
 							<div class="">
 								{#if metric === 'bail'}
 									<p class="font-mono">
 										<span class="text-green-600">$</span>
-										<span class="text-gray-300">{formatMoney(judge.average_bail_set).split('.')[0]}</span>
+										<span class="text-gray-300">{formatMoney(judge.stats.averageBailSet).split('.')[0]}</span>
 										<span
-											class="text-gray-500 -ml-2 tracking-tighter text-xs align-text-top">.{formatMoney(judge.average_bail_set).split('.')[1]}</span>
+											class="text-gray-500 -ml-2 tracking-tighter text-xs align-text-top">.{formatMoney(judge.stats.averageBailSet).split('.')[1]}</span>
 										<span class="case-count text-zinc-300 super">
-									<p class="text-xs float-right align-super">({formatNumber(judge.cases_bail_set)} cases)</p>
+									<p class="text-xs float-right align-super">({formatNumber(judge.stats.raw.bailSet)} cases)</p>
 								</span>
 									</p>
 								{/if}
 								{#if metric === 'release'}
 									<p class="font-mono">
-										<span class="text-green-600">{formatNumber((judge.cases_ror_pct + judge.cases_nmr_pct) * 100 )}</span>
+										<span
+											class="text-green-600">{formatNumber(judge.stats.pct.release * 100)}</span>
 										<span class="text-gray-300 -ml-1">%</span>
 										<span class="case-count text-zinc-300 super">
-									<p class="text-xs float-right align-super">({formatNumber(judge.cases_ror + judge.cases_nmr)} cases)</p>
+									<p class="text-xs float-right align-super">({formatNumber(judge.stats.raw.release)}
+										cases)</p>
 								</span>
 									</p>
 								{/if}
 								{#if metric === 'remand'}
 									<p class="font-mono">
-										<span class="text-red-600">{formatNumber(judge.cases_remand_pct * 100)}</span>
+										<span class="text-red-600">{formatNumber(judge.stats.pct.remand * 100)}</span>
 										<span class="text-gray-300 -ml-1">%</span>
 										<span class="case-count text-zinc-300 super">
-									<p class="text-xs float-right align-super">({formatNumber(judge.cases_remand)} cases)</p>
+									<p class="text-xs float-right align-super">({formatNumber(judge.stats.raw.remand)} cases)</p>
 								</span>
 									</p>
 								{/if}
 							</div>
 						</button>
 					{/each}
-				</ul>
+				</ScrollableList>
 			{:else}
 				<p class="text-zinc-400">No judges found for this county.</p>
 			{/if}
@@ -109,7 +115,7 @@
 			<p class="text-red-500">Error fetching top judges: {error.message}</p>
 		{/await}
 	</div>
-</div>
+</LawCard>
 
 <style>
     /* Your styles here */
