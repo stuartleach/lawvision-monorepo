@@ -4,22 +4,13 @@
 	import {
 		allCountiesStore,
 		selectedCountyStore,
-		selectedJudgeStore,
 		selectedMetricStore,
 		showCountyJudgesStore,
 		countyJudgesStore,
-		allJudgesStore
+		countyJudgesPromiseStore
 	} from '$data';
 
-	import {
-		Money,
-		LawCard,
-		CloseButton,
-		ScrollableList,
-		HoverableItem,
-		ClickableListSelector,
-		SortBadge
-	} from '$components';
+	import { ClickableListSelector, HoverableItem, LawCard, Money, ScrollableList, SortBadge } from '$components';
 
 	let selectedCountyInfo: County | null = null;
 	let selectedJudgeInfo: Judge | null = null;
@@ -30,29 +21,15 @@
 
 	// Reactive declarations
 	$: metric = $selectedMetricStore;
-	$: selectedJudgeInfo = $selectedJudgeStore;
 	$: selectedCountyInfo = $selectedCountyStore;
 	$: topJudges = $countyJudgesStore;
 	$: topJudgesPromise = Promise.resolve(topJudges);
-
-	let allJudges: Judge[];
-	$: allJudges = sortBy($allJudgesStore, metric);
-	$: allJudgesPromise = Promise.resolve(allJudges);
 	$: allCounties = $allCountiesStore;
 	$: allCountiesPromise = Promise.resolve(allCounties);
 
-	$: allJudges = allJudges.map(judge => ({
-		counties: judge.counties.map(county => county.toLowerCase()),
-		...judge
-	}));
 
-	let countyJudges: Judge[] = [];
-
-	$: countyJudges = allJudges.filter(judge => judge.counties.includes(selectedCountyInfo?.name));
-
-	$: countyJudgesStore.set(countyJudges);
-
-	$: console.log($countyJudgesStore)
+	// Sort top counties by selected metric
+	$: topCounties = sortBy(allCounties, metric).slice(0, 5);
 
 	let hoveredStat: string | null = null;
 
@@ -65,44 +42,45 @@
 	}
 </script>
 
-<LawCard>
 
-	<h4 slot="super-title">Top Judges in </h4>
-	<h2 slot="title">{selectedCountyInfo?.name} County
+<LawCard>
+	<h4 slot="super-title">Top Counties in </h4>
+	<h2 slot="title">New York State
 		<SortBadge />
 	</h2>
+
 	<div slot="data">
-		{#await topJudgesPromise}
+		{#await allCountiesPromise}
 			<p class="text-zinc-400">Fetching top counties...</p>
-		{:then allJudges}
-			{#if countyJudges && countyJudges.length > 0}
+		{:then allCounties}
+			{#if allCounties && allCounties.length > 0}
 				<ScrollableList>
-					{#each countyJudges.slice(0, 100) as judge, index}
+					{#each allCounties.slice(0, 100) as county, index}
 						<ClickableListSelector
-							onClick={() => selectedJudgeStore.set(judge)}
-							className="{judge.name === selectedJudgeInfo?.name ? 'selected' : ''}">
-							<p slot="title">{judge.name}</p>
+							onClick={() => selectedCountyStore.set(county)}
+							className="{county.name === selectedJudgeInfo?.name ? 'selected' : ''}">
+							<p slot="title">{county.name}</p>
 							<div slot="stat">
 								{#if metric === 'bail'}
 									<Money
-										value={hoveredStat === 'amount' ? Number(judge) * judge.stats.totalBailSet : judge.stats.averageBailSet} />
-									<p class="text-xs align-super text-right">({formatNumber(judge.stats.raw.bailSet)} cases)</p>
+										value={hoveredStat === 'amount' ? Number(county) * county.stats.totalBailSet : county.stats.averageBailSet} />
+									<p class="text-xs align-super text-right">({formatNumber(county.stats.raw.bailSet)} cases)</p>
 								{/if}
 								{#if metric === 'release'}
 										<span
 											class="text-green-600">
 											<HoverableItem
 												targetBool={hoveredStat === 'remand'}
-												valueWhenNotHovered={formatNumber(judge.stats.pct.release * 100) + '%'}
-												valueWhenHovered={formatNumber(judge.stats.raw.release)} />
+												valueWhenNotHovered={formatNumber(county.stats.pct.release * 100) + '%'}
+												valueWhenHovered={formatNumber(county.stats.raw.release)} />
 										</span>
 									<span class="text-gray-300 -ml-1">%</span>
 								{/if}
 								{#if metric === 'remand'}
 									<span class="text-red-600"><HoverableItem
 										targetBool={hoveredStat === 'remand'}
-										valueWhenNotHovered={formatNumber(judge.stats.pct.remand * 100) + '%'}
-										valueWhenHovered={formatNumber(judge.stats.raw.remand)} /></span>
+										valueWhenNotHovered={formatNumber(county.stats.pct.remand * 100) + '%'}
+										valueWhenHovered={formatNumber(county.stats.raw.remand)} /></span>
 									<span class="text-gray-300 -ml-1">%</span>
 								{/if}
 							</div>
@@ -118,3 +96,4 @@
 
 	</div>
 </LawCard>
+

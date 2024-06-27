@@ -1,5 +1,4 @@
 <script lang="ts">
-	import type { County, Judge, GeoJSONData } from '$lib/types';
 	import {
 		bailMinMaxStore,
 		bailAmountsStore,
@@ -9,7 +8,7 @@
 		selectedCountyStore,
 		selectedMetricStore,
 		geoJSONStore
-	} from '$lib/stores/data';
+	} from '$data';
 
 	import {
 		Map,
@@ -19,34 +18,17 @@
 		Title,
 		Footer,
 		StateDetails,
-		AllCountiesSelector,
+		CountiesSelector,
 		AllJudgesSelector,
-		LawCard
-	} from '$lib/components/index';
-	import { setTopJudges } from '$lib/api';
-	import RaceCard from '$lib/components/RaceCard.svelte';
-
-	let selectedCountyInfo: County | null;
-	let allCounties: County[] = [];
-	let topJudgesArray: Judge[] = [];
-	let bailAmountsArray: number[] = [];
-	let bailMinMaxArray: [number, number] = [0, 0];
-	let geoJson: GeoJSONData | null;
-	let metric: 'bail' | 'remand' | 'release' = 'bail';
-
-	$: selectedCountyInfo = $selectedCountyStore;
-	$: if ($selectedCountyStore) setTopJudges($selectedCountyStore.name);
-	$: topJudgesArray = $countyJudgesStore;
-	$: bailAmountsArray = $bailAmountsStore;
-	$: bailMinMaxArray = $bailMinMaxStore;
-	$: allCounties = $allCountiesStore;
-	$: geoJson = $geoJSONStore;
-	$: metric = $selectedMetricStore;
-	$: loading = $loadingStore;
+		LawCard,
+		MetricSelector,
+		RaceCard
+	} from '$components';
+	import Row from '$lib/components/Row.svelte';
 </script>
 
 
-{#if loading}
+{#if $loadingStore}
 	<div class="loading">Loading...</div>
 {:else}
 	<section class="title-container">
@@ -60,35 +42,35 @@
 		</Title>
 	</section>
 	<div class="inner-container">
-		<div class="flex justify-center">
-			<nav
-				class="details-nav bg-neutral-900 rounded-lg py-1 flex flex-row w-[20vw] justify-self-center justify-between my-4">
-				<button on:click={() => selectedMetricStore.set('bail')}
-								class="text-md font-semibold tracking-tight text-yellow-400 {metric === 'bail' ? 'selected' : ''}">Bail
-				</button>
-				<button on:click={() => selectedMetricStore.set('release')}
-								class="text-md font-semibold tracking-tight text-green-400 {metric === 'release' ? 'selected' : ''}">
-					Release
-				</button>
-				<button on:click={() => selectedMetricStore.set('remand')}
-								class="text-md font-semibold tracking-tight text-red-400 {metric === 'remand' ? 'selected' : ''}">Remand
-				</button>
-			</nav>
-		</div>
+		<MetricSelector />
 		<div class="middle-container mb-10">
-			<Map />
-			<StateDetails />
-			<AllJudgesSelector />
-			<AllCountiesSelector />
-			<CountyDetails />
-			<CountyJudges />
-			<JudgeDetails />
-			<RaceCard />
-		</div>
-		<div class="footer-container ">
-			<Footer>
-				© 2024 LawVision. All rights reserved.
-			</Footer>
+			<Row>
+				<div class="flex-grow">
+					<Map />
+				</div>
+				<StateDetails />
+				<AllJudgesSelector />
+				<CountiesSelector />
+			</Row>
+			<Row>
+				<CountyDetails />
+				<CountyJudges />
+				<JudgeDetails />
+			</Row>
+			<!--				<RaceCard />-->
 		</div>
 	</div>
+	<div class="footer-container">
+		<Footer>
+			© 2024 LawVision. All rights reserved.
+		</Footer>
+	</div>
 {/if}
+
+<style>
+    .middle-container {
+        /*@apply grid grid-flow-row-dense grid-cols-3 grid-rows-3 ;*/
+        @apply w-[80vw] flex flex-col;
+        /*@apply flex;*/
+    }
+</style>

@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { formatMoneyValue, formatNumber, sortTopJudges, sortAllCounties, sortAllJudges } from '$lib/utils';
-	import type { County, Judge } from '$lib/types/types';
+	import { formatNumber, sortBy } from '$utils';
+	import type { County, Judge } from '$types';
 	import {
 		allCountiesStore,
 		selectedCountyStore,
@@ -9,10 +9,17 @@
 		showCountyJudgesStore,
 		countyJudgesStore,
 		allJudgesStore
-	} from '$lib/stores/data';
-	import Close from '$lib/assets/Close.svelte';
-	import Money from '$lib/components/Money.svelte';
-	import { LawCard } from '$lib/components/index';
+	} from '$data';
+
+	import {
+		Money,
+		LawCard,
+		CloseButton,
+		ScrollableList,
+		HoverableItem,
+		ClickableListSelector,
+		SortBadge
+	} from '$components';
 
 	let selectedCountyInfo: County | null = null;
 	let selectedJudgeInfo: Judge | null = null;
@@ -27,17 +34,10 @@
 	$: selectedCountyInfo = $selectedCountyStore;
 	$: topJudges = $countyJudgesStore;
 	$: topJudgesPromise = Promise.resolve(topJudges);
-	$: allJudges = sortAllJudges($allJudgesStore, metric);
+	$: allJudges = sortBy($allJudgesStore, metric);
 	$: allJudgesPromise = Promise.resolve(allJudges);
 	$: allCounties = $allCountiesStore;
 	$: allCountiesPromise = Promise.resolve(allCounties);
-
-	// Sort top judges by selected metric
-	$: topJudges = sortTopJudges(topJudges, metric);
-
-
-	// Sort top counties by selected metric
-	$: topCounties = sortAllCounties(allCounties, metric).slice(0, 5);
 
 	let hoveredStat: string | null = null;
 
@@ -52,60 +52,60 @@
 
 
 <LawCard>
-	<div class="flex justify-end">
-		<button class="x-button mb-4 -mr-1 -mt-2 w-4" on:click={() => showCountyJudgesStore.set(false)}>
-			<Close />
-		</button>
-	</div>
 
-	<h2 class="font-bold text-xl md:text-2xl text-gray-50 mb-2">Top Judges in New York State</h2>
-
-	<div class="all-judges-scroller">
+	<h4 slot="super-title">Top Judges in </h4>
+	<h2 slot="title">New York State
+		<SortBadge />
+	</h2>
+	<div slot="data">
 		{#await allJudgesPromise}
 			<p class="text-zinc-400">Fetching top counties...</p>
 		{:then allJudges}
 			{#if allJudges && allJudges.length > 0}
-				<ul class="space-y-2">
+				<ScrollableList>
 					{#each allJudges.slice(0, 100) as judge, index}
-						<button on:click={() => selectedJudgeStore.set(judge)}
-										class="list-item w-full text-left {judge.name === selectedJudgeInfo?.name ? 'selected' : ''}">
-							<span class="float-right top-0 pt-1">{index + 1}.</span>
-							<p class="text-lg text-zinc-300 font-bold pb-1">{judge.name}</p>
-
-							<div class="font-mono  w-full">
+						<ClickableListSelector
+							onClick={() => selectedJudgeStore.set(judge)}
+							className="{judge.name === selectedJudgeInfo?.name ? 'selected' : ''}">
+							<p slot="title">{judge.name}</p>
+							<div slot="stat">
 								{#if metric === 'bail'}
 									<Money
 										value={hoveredStat === 'amount' ? Number(judge) * judge.stats.totalBailSet : judge.stats.averageBailSet} />
-									<span class="case-count text-zinc-300 super">
-                      <p class="text-xs float-right align-super">({formatNumber(judge.stats.raw.bailSet)} cases)</p>
-                    </span>
+									<p class="text-xs align-super text-right">({formatNumber(judge.stats.raw.bailSet)} cases)</p>
 								{/if}
 								{#if metric === 'release'}
 										<span
-											class="text-green-600">{formatNumber((judge.stats.pct.release) * 100)}</span>
+											class="text-green-600">
+											<HoverableItem
+												targetBool={hoveredStat === 'release'}
+												valueWhenNotHovered={formatNumber(judge.stats.pct.release * 100) + '%'}
+												valueWhenHovered={formatNumber(judge.stats.raw.release)} />
+										</span>
 									<span class="text-gray-300 -ml-1">%</span>
-									<span class="case-count text-zinc-300 super">
-                      <p class="text-xs float-right align-super">({formatNumber(judge.stats.raw.release)}
-												cases)</p>
-                    </span>
+									<p class="text-xs align-super text-right">({formatNumber(judge.stats.raw.release)} cases)</p>
+
 								{/if}
 								{#if metric === 'remand'}
-									<span class="text-red-600">{formatNumber(judge.stats.pct.remand * 100)}</span>
+									<span class="text-red-600"><HoverableItem
+										targetBool={hoveredStat === 'remand'}
+										valueWhenNotHovered={formatNumber(judge.stats.pct.remand * 100) + '%'}
+										valueWhenHovered={formatNumber(judge.stats.raw.remand)} /></span>
 									<span class="text-gray-300 -ml-1">%</span>
-									<span class="case-count text-zinc-300 super">
-                      <p class="text-xs float-right align-super">({formatNumber(judge.stats.raw.remand)} cases)</p>
-                    </span>
+									<p class="text-xs align-super text-right">({formatNumber(judge.stats.raw.remand)} cases)</p>
+
 								{/if}
 							</div>
-						</button>
+						</ClickableListSelector>
 					{/each}
-				</ul>
+				</ScrollableList>
 			{:else}
 				<p class="text-zinc-400">No counties found.</p>
 			{/if}
 		{:catch error}
 			<p class="text-red-500">Error fetching top counties: {error.message}</p>
 		{/await}
+
 	</div>
 </LawCard>
 

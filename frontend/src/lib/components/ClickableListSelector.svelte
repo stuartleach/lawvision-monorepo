@@ -18,4 +18,3 @@
 		<slot name="stat" />
 	</div>
 </button>
-

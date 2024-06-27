@@ -16,9 +16,7 @@
 					</div>
 					<div class="hidden md:block">
 						<div class="ml-10 flex items-baseline space-x-4">
-							<!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" -->
-							<a href="/" class="transition rounded-md bg-zinc-950 px-3 py-2 text-sm font-medium text-white"
-								 aria-current="page">Demo</a>
+							<a href="/" class="transition rounded-md bg-zinc-950 px-3 py-2 text-sm font-medium text-white">Demo</a>
 							<a href="about"
 								 class="transition rounded-md px-3 py-2 text-sm font-medium text-zinc-300 hover:bg-zinc-700 hover:text-white">About</a>
 							<a href="contact"
@@ -31,11 +29,17 @@
 
 	</nav>
 	<div class="flex justify-center flex-row">
-			<div class="outer-container">
-				<slot></slot>
-			</div>
+		<div class="outer-container">
+			<slot></slot>
+		</div>
 	</div>
 </div>
 
 
-<style></style>
+<style>
+
+    .outer-container {
+        @apply flex flex-col  p-6 w-screen sm:w-screen lg:w-screen h-full justify-between;
+        background-color: rgba(39, 39, 42, 0.1);
+    }
+</style>

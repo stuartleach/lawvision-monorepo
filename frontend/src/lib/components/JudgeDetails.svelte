@@ -9,6 +9,7 @@
 	import { setJudgeRaceOutcomes } from '$lib/api';
 	import Money from '$lib/components/Money.svelte';
 	import HoverableItem from '$lib/components/HoverableItem.svelte';
+	import { CloseButton } from '$components';
 
 	let selectedJudgeInfo: Judge | null;
 
@@ -27,9 +28,7 @@
 	$: judgeId = selectedJudgeInfo?.judgeUUID ?? '';
 
 	const openRaceOutcomes = (judgeId: string | undefined) => {
-		console.log('clicked!');
 		if (!judgeId) return;
-		console.log(judgeId);
 		setJudgeRaceOutcomes({ fetch, judgeId });
 	};
 
@@ -38,23 +37,20 @@
 </script>
 
 <LawCard>
-	<div class="flex justify-end">
-		<button class="x-button mb-4 -mr-1 -mt-2 w-4" on:click={() => selectedJudgeStore.set(null)}>
-			<Close />
-		</button>
+	<div slot="menuBar">
+		<CloseButton store={selectedJudgeStore} />
 	</div>
-	<h4
-		class="text-xl tracking-tight font-bold text-gray-500 mb-1">{selectedJudgeInfo?.name ? "The Honorable Judge" : ""}</h4>
-	<h2>{selectedJudgeInfo?.name || "The Honorable Judge X"}</h2>
-	<div>
+	<h4 slot="super-title">{selectedJudgeInfo?.name ? "The Honorable Judge" : ""}</h4>
+	<h2 slot="title">{selectedJudgeInfo?.name || "The Honorable Judge X"}
+	</h2>
+	<div slot="data">
 		<ScrollableList>
 			<ClickableListItem onClick={() => openRaceOutcomes(selectedJudgeInfo?.judgeUUID)}>
 				<h3 slot="title">Racial Breakdown</h3>
 			</ClickableListItem>
 			<ClickableListItem>
 				<h3 slot="title">Total cases:</h3>
-				<p
-					class="font-bold text-right text-zinc-400 font-mono">{selectedJudgeInfo ? formatNumber(selectedJudgeInfo.stats.caseCount) : '0'}</p>
+				<p slot="stat">{selectedJudgeInfo ? formatNumber(selectedJudgeInfo?.stats.caseCount) : '0'}</p>
 			</ClickableListItem>
 			<ClickableListItem onMouseEnter={() => handleMouseEnter('amount')} onMouseLeave={handleMouseLeave}>
 				<h3 slot="title">{hoveredStat === 'amount' ? 'Total bail set:' : 'Average bail amount:'}</h3>

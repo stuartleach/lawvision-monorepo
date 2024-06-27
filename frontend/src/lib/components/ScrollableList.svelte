@@ -1,3 +1,3 @@
-<ul class="space-y-2 overflow-y-scroll">
+<ul class="scrollable-list">
 	<slot>Loading</slot>
 </ul>

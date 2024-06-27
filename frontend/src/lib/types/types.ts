@@ -49,6 +49,7 @@ export interface Judge {
 	judgeUUID: string;
 	name: string;
 	stats: CaseStats;
+	counties?: string[];
 }
 
 export type JudgeOrCounty = {

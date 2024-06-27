@@ -1,17 +1,18 @@
 <script lang="ts">
 	import { formatMoney, formatNumber } from '$lib/utils';
-	import type { County, Judge, CountyExpandedProperties } from '$lib/types/types';
-	import {
-		selectedCountyStore,
-		selectedJudgeStore,
-		selectedMetricStore, showCountyJudgesStore,
-		stateBailCases,
-		countyJudgesStore
-	} from '$lib/stores/data';
-	import Close from '$lib/assets/Close.svelte';
-	import { LawCard } from '$lib/components/index';
+	import type { County, Judge } from '$lib/types/types';
+	import { selectedCountyStore, selectedJudgeStore, selectedMetricStore, countyJudgesStore } from '$lib/stores/data';
+	import { stateBailCases, stateBailCasesPct } from '$lib/stores/data';
 
-	let selectedCountyInfo: CountyExpandedProperties | null = null;
+	import {
+		LawCard,
+		ScrollableList,
+		ClickableListItem,
+		Money,
+		HoverableItem
+	} from '$components';
+
+	let county: County | null = null;
 	let selectedJudgeInfo: Judge | null = null;
 	let topJudges: Judge[] = [];
 	let metric: 'bail' | 'remand' | 'release' = 'bail';
@@ -20,19 +21,18 @@
 	// Reactive declarations
 	$: metric = $selectedMetricStore;
 	$: selectedJudgeInfo = $selectedJudgeStore;
-	$: selectedCountyInfo = $selectedCountyStore;
+	$: county = $selectedCountyStore;
 	$: topJudges = $countyJudgesStore;
+	let countyName: string;
+	let totalBailAmount: number;
+	let numberOfCasesRaw: number;
 
-	// State-level data
-	$: cases_bail_set = stateBailCases.bailSetCases;
-	$: cases_ror = stateBailCases.rorCases;
-	$: cases_remand = stateBailCases.remandCases;
-	$: cases_unknown = stateBailCases.unknownCases;
-	$: averageBailAmount = stateBailCases.averageBailAmount;
-	$: numberOfCasesRaw = stateBailCases.totalCases;
-	$: numberOfCases = formatNumber(stateBailCases.totalCases);
-	$: totalBailAmount = stateBailCases.totalBailSetAmount;
 
+	$: countyName = county?.name ?? '';
+	$: averageBailAmount = county?.stats.averageBailSet ?? 0;
+	$: totalBailAmount = county?.stats.totalBailSet ?? 0;
+	$: numberOfCasesRaw = county?.stats.caseCount ?? 0;
+	$: numberOfCases = formatNumber(county?.stats.caseCount ?? 0);
 
 	function handleMouseEnter(stat: string) {
 		hoveredStat = stat;
@@ -44,71 +44,69 @@
 </script>
 
 <LawCard>
-	<div class="flex justify-end">
-		<button class="x-button mb-4 -mr-1 -mt-2 w-4"
-						on:click={() => {showCountyJudgesStore.set(false); selectedCountyStore.set(null)}}>
-			<Close />
-		</button>
-	</div>
-	<h2>New York State</h2>
-	<div>
-		<ul class="space-y-2">
-			<li class="stat">
-				<h3 class="text-lg text-zinc-300 font-bold">Number of cases:</h3>
-				<p class="font-bold text-right text-zinc-400 font-mono">
-					{formatNumber(numberOfCasesRaw)}
+	<h4 slot="super-title">Pretrial Data for</h4>
+	<h2 slot="title">New York State</h2>
+	<div slot="data">
+		<ScrollableList>
+			<ClickableListItem>
+				<h3 slot="title">Number of cases:</h3>
+				<p slot="stat" class="font-bold text-right text-zinc-400 font-mono">
+					{formatNumber(stateBailCases.totalCases)}
 				</p>
-			</li>
-			<li class="stat" on:mouseenter={() => handleMouseEnter('amount')} on:mouseleave={handleMouseLeave}>
-				<div class="left text-left">
-					<h3>{hoveredStat === 'amount' ? 'Total bail set:' : 'Average bail amount:'}</h3>
-				</div>
-				<div class="right text-right">
-					<div class="money flex-row text-right">
-						<span class="text-green-600">$</span>
-						<span class="font-bold text-white font-mono">
-							{hoveredStat === 'amount' ? formatMoney(totalBailAmount).split('.')[0] : formatMoney(averageBailAmount).split('.')[0]}
-						</span>&nbsp;<span class="super font-mono">
-							.{formatMoney(averageBailAmount).split('.')[1]}
-						</span>
-					</div>
-				</div>
-			</li>
-			<li class="stat" on:mouseenter={() => handleMouseEnter('remand')} on:mouseleave={handleMouseLeave}>
-				<h3 class="text-lg text-zinc-300 font-bold">
-					{hoveredStat === 'remand' ? 'Remand total:' : 'Remand frequency:'}
-				</h3>
-				<p class="font-bold font-mono text-right text-red-600">
-					{hoveredStat === 'remand' ? formatNumber(cases_remand) : formatNumber((cases_remand / numberOfCasesRaw) * 100) + '%'}
+			</ClickableListItem>
+			<ClickableListItem onMouseEnter={() => handleMouseEnter('amount')} onMouseLeave={handleMouseLeave}>
+				<h3 slot="title">{hoveredStat === 'amount' ? 'Total bail set:' : 'Average bail amount:'}</h3>
+				<p slot="stat">
+					<Money
+						value={hoveredStat === 'amount' ? stateBailCases.totalBailSetAmount : stateBailCases.averageBailAmount} />
 				</p>
-			</li>
-			<li class="stat" on:mouseenter={() => handleMouseEnter('release')} on:mouseleave={handleMouseLeave}>
-				<h3 class="text-lg text-zinc-300 font-bold">
-					{hoveredStat === 'release' ? 'Release total:' : 'Release frequency:'}
-				</h3>
-				<p class="font-bold font-mono text-right text-green-600">
-					{hoveredStat === 'release' ? formatNumber(cases_ror) : formatNumber((cases_ror / numberOfCasesRaw) * 100) + '%'}
+			</ClickableListItem>
+			<ClickableListItem onMouseEnter={() => handleMouseEnter('remand')} onMouseLeave={handleMouseLeave}
+												 onClick={()=>selectedMetricStore.set('remand')}>
+				<h3
+					slot="title">{hoveredStat === 'remand' ? 'Remand total:' : 'Remand frequency:'}</h3>
+				<p slot="stat" class="text-red-600">
+					<HoverableItem
+						targetBool={hoveredStat === 'remand'}
+						valueWhenNotHovered={formatNumber(stateBailCasesPct.remandCasesPct * 100) + '%'}
+						valueWhenHovered={formatNumber(stateBailCases.remandCases)}
+					/>
 				</p>
-			</li>
-			<li class="stat" on:mouseenter={() => handleMouseEnter('bail')} on:mouseleave={handleMouseLeave}>
-				<h3 class="text-lg text-zinc-300 font-bold">
-					{hoveredStat === 'bail' ? 'Bail set total:' : 'Bail set frequency:'}
-				</h3>
-				<p class="font-bold font-mono text-right text-yellow-300">
-					{hoveredStat === 'bail' ? formatNumber(cases_bail_set) : formatNumber((cases_bail_set / numberOfCasesRaw) * 100) + '%'}
+			</ClickableListItem>
+			<ClickableListItem onMouseEnter={() => handleMouseEnter('release')} onMouseLeave={handleMouseLeave}
+												 onClick={()=>selectedMetricStore.set('release')}>
+				<h3
+					slot="title">{hoveredStat === 'release' ? 'Release total:' : 'Release frequency:'}</h3>
+				<p slot="stat" class="text-green-600">
+					<HoverableItem
+						targetBool={hoveredStat === 'release'}
+						valueWhenNotHovered={formatNumber(stateBailCasesPct.releasePct * 100) + '%'}
+						valueWhenHovered={formatNumber(stateBailCases.releaseCases)}
+					/>
 				</p>
-			</li>
-			<li class="stat" on:mouseenter={() => handleMouseEnter('unknown')} on:mouseleave={handleMouseLeave}>
-				<h3 class="text-lg text-zinc-300 font-bold">
-					{hoveredStat === 'unknown' ? 'Unknown total:' : 'Unknown:'}
-				</h3>
-				<p class="font-bold font-mono text-right text-zinc-600">
-					{hoveredStat === 'unknown' ? formatNumber(cases_unknown) : formatNumber((cases_unknown / numberOfCasesRaw) * 100) + '%'}
+			</ClickableListItem>
+			<ClickableListItem onMouseEnter={() => handleMouseEnter('bail')} onMouseLeave={handleMouseLeave}
+												 onClick={()=>selectedMetricStore.set('bail')}>
+				<h3
+					slot="title">{hoveredStat === 'bail' ? 'Bail set total:' : 'Bail set frequency:'}</h3>
+				<p slot="stat" class="text-yellow-300">
+					<HoverableItem
+						targetBool={hoveredStat === 'bail'}
+						valueWhenNotHovered={formatNumber(stateBailCasesPct.bailSetCasesPct * 100) + '%'}
+						valueWhenHovered={formatNumber(stateBailCases.bailSetCases)}
+					/>
 				</p>
-			</li>
-		</ul>
+			</ClickableListItem>
+			<ClickableListItem onMouseEnter={() => handleMouseEnter('unknown')} onMouseLeave={handleMouseLeave}>
+				<h3 slot="title">{hoveredStat === 'unknown' ? 'Unknown total:' : 'Unknown:'}</h3>
+				<p slot="stat" class="text-zinc-600">
+					<HoverableItem
+						targetBool={hoveredStat === 'unknown'}
+						valueWhenNotHovered={formatNumber(stateBailCasesPct.unknownCasesPct * 100) + '%'}
+						valueWhenHovered={formatNumber(stateBailCases.unknownCases)}
+					/>
+				</p>
+			</ClickableListItem>
+		</ScrollableList>
 	</div>
 </LawCard>
-
-<style>
-</style>

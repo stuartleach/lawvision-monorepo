@@ -9,10 +9,14 @@
 :root {
     --color-primary: #ff0000;
     --color-secondary: #00ff00;
-    /*background-color: var(--color-primary);*/
-    /*@apply bg-zinc-800 w-screen;*/
+    --color-tertiary: #0000ff;
+    --color-neutral: #f9f9f9;
+    --color-neutral-dark: #333;
+    --color-neutral-light: #f9f9f9;
+    --color-neutral-lighter: #f3f3f3;
+    --color-neutral-lightest: #f9f9f9;
+    --color-neutral-darkest: #333;
     background-color: rgb(49, 49, 52, 1);
-    /*@apply h-full flex flex-col;*/
 }
 
 html {
@@ -25,17 +29,6 @@ body {
     font-family: 'Inter', sans-serif;
     /*@apply h-full bg-blue-500 flex;*/
 
-}
-
-.main-container {
-    @apply w-full;
-}
-
-.outer-container {
-    @apply flex flex-col  p-6;
-    background-color: rgba(39, 39, 42, 0.1);
-    @apply w-screen sm:w-screen lg:w-screen;
-    @apply h-full justify-between;
 }
 
 @media (min-width: 2000px) {
@@ -57,6 +50,7 @@ body {
     @apply list-none;
 }
 
+
 .overview {
     @apply text-zinc-200 tracking-tight;
 }
@@ -67,20 +61,6 @@ body {
 
 .details-container {
     @apply sub-container flex-col md:flex-row p-2 flex-[1] h-full;
-}
-
-.footer-container {
-    @apply sub-container;
-    padding: 1rem;
-    text-align: center;
-}
-
-.sub-middle {
-    @apply sub-container h-full flex flex-col;
-}
-
-.map-container {
-    @apply sub-container flex-[2];
 }
 
 .chart-container {
@@ -94,15 +74,6 @@ body {
     @apply h-full;
 }
 
-.middle-container {
-    @apply flex-wrap justify-start content-evenly flex;
-}
-
-.middle-container .sub-container {
-    @apply flex-[1] h-full;
-}
-
-
 .title-container {
     @apply sub-container;
 }
@@ -111,11 +82,81 @@ body {
 /* DETAIL CARDS */
 /****************/
 
+.list-item {
+    @apply min-w-full flex;
+    @apply flex flex-row items-center justify-between;
+}
 
-.stat {
+button.list-item {
+    @apply px-4 py-4 w-full flex;
+    @apply h-[4.5rem];
+    @apply grow-0;
+}
+
+.list-item h3 {
+    @apply text-zinc-300 font-bold text-lg text-left;
+    @apply w-[10rem];
+}
+
+.law-card {
+    @apply /*max-w-[50vw] min-w-[30vw] */
+    h-full;
+    /*@apply grow-0;*/
+}
+
+.law-card h4 {
+    @apply text-xl tracking-tight font-bold text-gray-500;
+}
+
+.law-card h6 {
+    @apply text-end tracking-tight font-bold text-gray-500;
+}
+
+.law-card .sort {
+    @apply float-right tracking-tight text-sm font-bold text-gray-500 -mt-2;
+}
+
+.bail-color {
+    @apply text-yellow-500;
+}
+
+.remand-color {
+    @apply text-red-500;
+}
+
+.release-color {
+    @apply text-green-500;
+}
+
+
+.law-card-inner {
+    @apply rounded-lg flex min-w-[20vw] flex-col p-6 pt-9 bg-zinc-800 hover:outline outline-zinc-700 shadow-lg transition-all;
+    /*@apply h-full w-full;*/
+    @apply grow-0;
+    /*@apply max-h-[40rem]*/
+}
+
+.map-data {
+    @apply flex justify-center -ml-[10%] p-[10%];
+    /*@apply col-span-4;*/
+    @apply w-full;
+    /*@apply min-w-[30rem] max-w-[60rem] sm:min-w-[50rem];*/
+    /*flex-grow: 5;*/
+}
+
+.list-item .stat-container {
+    @apply font-bold text-zinc-400 text-right flex justify-end font-mono;
     transition: transform 0.2s, box-shadow 0.2s, background-color 0.2s;
-    @apply flex text-zinc-200 py-2 px-4 bg-zinc-900 rounded-lg hover:bg-zinc-700 transition-all outline-none focus:outline-none cursor-pointer;
-    @apply flex-row items-center justify-between py-4;
+}
+
+.selector-nav {
+    @apply max-w-full min-w-[20vw] details-nav bg-neutral-900 rounded-lg py-1 flex flex-row justify-self-center justify-between my-4;
+}
+
+.selector-nav button {
+    @apply w-[10rem] text-center py-1 font-semibold tracking-tight;
+    /*@apply  py-2 text-md font-semibold tracking-tight;*/
+    /*@apply bg-white;*/
 }
 
 .stat:hover {
@@ -125,7 +166,7 @@ body {
 
 .list-item {
     transition: transform 0.2s, box-shadow 0.2s, background-color 0.2s;
-    @apply text-zinc-200 py-2 px-4 bg-zinc-900 rounded-lg hover:bg-zinc-700 transition-all outline-none focus:outline-none cursor-pointer;
+    /*@apply text-zinc-200 py-2 px-4 bg-zinc-900 rounded-lg hover:bg-zinc-700 transition-all outline-none focus:outline-none cursor-pointer;*/
 }
 
 .list-item:hover {
@@ -133,37 +174,29 @@ body {
     background-color: rgba(0, 0, 0, 0.7);
 }
 
-.judge-stat h3 {
+.item-stat h3 {
     @apply text-zinc-300 font-bold text-lg;
 }
 
-.judge-item {
+.item {
     @apply text-zinc-200 py-2 px-4 bg-zinc-900 rounded-lg hover:bg-zinc-700 hover:shadow-2xl transition-all outline-none focus:outline-none cursor-pointer;
 }
 
-.judge-item .case-count {
+.item .case-count {
     display: none;
 }
 
-.judge-item:hover .case-count {
+.item:hover .case-count {
     display: inline;
 }
 
-.judge-item button {
+.item button {
     @apply text-zinc-400 mb-2;
 }
 
-.judge-item.selected {
+.item.selected {
     background-color: rgba(0, 0, 0, 0.7);
     @apply transition;
-}
-
-.county-judges-scroller {
-    @apply overflow-y-scroll h-[30vh];
-}
-
-.all-judges-scroller {
-    @apply overflow-y-scroll h-[30vh];
 }
 
 .law-card:hover {
@@ -191,15 +224,18 @@ body {
     @apply text-zinc-400 mb-2;
 }
 
-.judge-item:hover {
+.item:hover {
     transform: translateY(-2px);
     background-color: rgba(0, 0, 0, 0.7);
 }
 
-.county-detail, .judge-detail {
+.county-detail, .detail {
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
+.scrollable-list {
+    @apply space-y-2 overflow-y-scroll max-h-[30rem];
+}
 
 .details-nav button {
     cursor: pointer;
@@ -218,7 +254,7 @@ body {
 /* MAP */
 /*******/
 
-.county-detail, .judge-detail {
+.county-detail, .detail {
     transition: transform 0.2s, box-shadow 0.2s;
 }
 
@@ -228,52 +264,29 @@ body {
     transform: translateY(-1px);
 }
 
-.judge-detail {
-    @apply rounded-lg p-4 md:p-6 bg-zinc-800 hover:outline outline-neutral-700 shadow-lg ;
+.detail {
+    @apply rounded-lg p-4 md:p-6 bg-zinc-800 hover:outline outline-neutral-700 shadow-lg;
 }
 
-.judge-detail h2 {
+.detail h2 {
     @apply text-3xl font-semibold tracking-tight text-gray-50 mb-4;
 }
 
 .law-card h2 {
-    @apply text-3xl font-semibold tracking-tight text-gray-50 mb-4;
+    @apply text-2xl font-semibold tracking-tight text-gray-50 mb-2;
 }
 
-.state-detail {
-    @apply rounded-lg p-4 md:p-6 bg-zinc-800 hover:outline outline-neutral-700 shadow-lg ;
-}
 
-.state-detail h2 {
-    @apply text-3xl font-semibold tracking-tight text-gray-50 mb-4;
-}
-
-.state-detail h4 {
+.detail h4 {
     @apply text-xl tracking-tight font-bold text-gray-500 mb-1;
 }
 
 
-.detail:hover, .county-detail:hover, .judge-detail:hover {
+.detail:hover, .county-detail:hover, .detail:hover {
     transform: translateY(-2px);
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
 }
 
-.county.selected {
-    stroke: white;
-    stroke-width: 1;
-}
-
-
-.tooltip {
-    position: absolute;
-    visibility: hidden;
-    pointer-events: none;
-    background-color: rgba(255, 255, 255, 0.9); /* Slightly more opaque background */
-    border: 2px solid rgba(255, 255, 255, 0.2);
-    padding: 10px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    z-index: 10;
-}
 
 /*************/
 /* UTILITIES */
