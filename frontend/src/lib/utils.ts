@@ -124,7 +124,7 @@ const sortBy = (targets: County[] | Judge[], metric: 'bail' | 'remand' | 'releas
 	if (targets.length === 0) {
 		return [];
 	}
-	console.log(targets[0])
+	console.log(targets[0]);
 	if (targets[0].hasOwnProperty('judgeUUID')) {
 
 		targets = targets as Judge[];

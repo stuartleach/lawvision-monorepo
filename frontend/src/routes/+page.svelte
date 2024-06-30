@@ -7,7 +7,7 @@
 		loadingStore,
 		selectedCountyStore,
 		selectedMetricStore,
-		geoJSONStore
+		geoJSONStore, selectedJudgeStore
 	} from '$data';
 
 	import {
@@ -25,6 +25,8 @@
 		RaceCard
 	} from '$components';
 	import Row from '$lib/components/Row.svelte';
+	import BarPlot from '$lib/components/BarPlot.svelte';
+
 </script>
 
 
@@ -44,20 +46,19 @@
 	<div class="inner-container">
 		<MetricSelector />
 		<div class="middle-container mb-10">
-			<Row>
-				<div class="flex-grow">
-					<Map />
-				</div>
-				<StateDetails />
-				<AllJudgesSelector />
-				<CountiesSelector />
-			</Row>
-			<Row>
+				<Map />
+			<StateDetails />
+			<AllJudgesSelector />
+			<CountiesSelector />
+			{#if $selectedCountyStore}
 				<CountyDetails />
+			{/if}
+			{#if $selectedCountyStore}
 				<CountyJudges />
+			{/if}
+			{#if $selectedJudgeStore}
 				<JudgeDetails />
-			</Row>
-			<!--				<RaceCard />-->
+			{/if}
 		</div>
 	</div>
 	<div class="footer-container">
@@ -69,8 +70,7 @@
 
 <style>
     .middle-container {
-        /*@apply grid grid-flow-row-dense grid-cols-3 grid-rows-3 ;*/
-        @apply w-[80vw] flex flex-col;
-        /*@apply flex;*/
+        @apply w-[80vw] flex flex-wrap justify-center;
+        /*@apply grid grid-cols-2 gap-12 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4;*/
     }
 </style>

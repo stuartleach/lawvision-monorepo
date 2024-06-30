@@ -1,4 +1,4 @@
-<div class="law-card details-container transition">
+<div class="law-card details-container transition ">
 	<div
 		class="law-card-inner">
 		<div class="justify-end flex">

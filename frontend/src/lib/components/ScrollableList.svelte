@@ -1,3 +1,3 @@
-<ul class="scrollable-list">
+<ul class="{$$restProps.class} scrollable-list">
 	<slot>Loading</slot>
 </ul>

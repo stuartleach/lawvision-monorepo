@@ -32,6 +32,8 @@
 	<div slot="menuBar">
 		<CloseButton store={selectedCountyStore} />
 	</div>
+	<h4 slot="super-title">Pretrial Data for</h4>
+
 	<h2 slot="title">{$selectedCountyStore?.name} County</h2>
 	<div slot="data">
 		<ScrollableList>

@@ -6,7 +6,6 @@
 		selectedCountyStore,
 		selectedJudgeStore,
 		selectedMetricStore,
-		showCountyJudgesStore,
 		countyJudgesStore,
 		allJudgesStore
 	} from '$data';
@@ -20,6 +19,7 @@
 		ClickableListSelector,
 		SortBadge
 	} from '$components';
+	import BarPlot from '$lib/components/BarPlot.svelte';
 
 	let selectedCountyInfo: County | null = null;
 	let selectedJudgeInfo: Judge | null = null;
@@ -52,7 +52,7 @@
 
 	$: countyJudgesStore.set(countyJudges);
 
-	$: console.log($countyJudgesStore)
+	$: console.log($countyJudgesStore);
 
 	let hoveredStat: string | null = null;
 
@@ -70,6 +70,7 @@
 	<h4 slot="super-title">Top Judges in </h4>
 	<h2 slot="title">{selectedCountyInfo?.name} County
 		<SortBadge />
+
 	</h2>
 	<div slot="data">
 		{#await topJudgesPromise}

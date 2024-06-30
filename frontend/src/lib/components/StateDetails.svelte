@@ -11,6 +11,7 @@
 		Money,
 		HoverableItem
 	} from '$components';
+	import StatItem from '$lib/components/StatItem.svelte';
 
 	let county: County | null = null;
 	let selectedJudgeInfo: Judge | null = null;
@@ -47,22 +48,22 @@
 	<h4 slot="super-title">Pretrial Data for</h4>
 	<h2 slot="title">New York State</h2>
 	<div slot="data">
-		<ScrollableList>
-			<ClickableListItem>
+		<ScrollableList class="stat-wrapper">
+			<StatItem>
 				<h3 slot="title">Number of cases:</h3>
 				<p slot="stat" class="font-bold text-right text-zinc-400 font-mono">
 					{formatNumber(stateBailCases.totalCases)}
 				</p>
-			</ClickableListItem>
-			<ClickableListItem onMouseEnter={() => handleMouseEnter('amount')} onMouseLeave={handleMouseLeave}>
+			</StatItem>
+			<StatItem onMouseEnter={() => handleMouseEnter('amount')} onMouseLeave={handleMouseLeave}>
 				<h3 slot="title">{hoveredStat === 'amount' ? 'Total bail set:' : 'Average bail amount:'}</h3>
 				<p slot="stat">
 					<Money
 						value={hoveredStat === 'amount' ? stateBailCases.totalBailSetAmount : stateBailCases.averageBailAmount} />
 				</p>
-			</ClickableListItem>
-			<ClickableListItem onMouseEnter={() => handleMouseEnter('remand')} onMouseLeave={handleMouseLeave}
-												 onClick={()=>selectedMetricStore.set('remand')}>
+			</StatItem>
+			<StatItem onMouseEnter={() => handleMouseEnter('remand')} onMouseLeave={handleMouseLeave}
+								onClick={()=>selectedMetricStore.set('remand')}>
 				<h3
 					slot="title">{hoveredStat === 'remand' ? 'Remand total:' : 'Remand frequency:'}</h3>
 				<p slot="stat" class="text-red-600">
@@ -72,9 +73,9 @@
 						valueWhenHovered={formatNumber(stateBailCases.remandCases)}
 					/>
 				</p>
-			</ClickableListItem>
-			<ClickableListItem onMouseEnter={() => handleMouseEnter('release')} onMouseLeave={handleMouseLeave}
-												 onClick={()=>selectedMetricStore.set('release')}>
+			</StatItem>
+			<StatItem onMouseEnter={() => handleMouseEnter('release')} onMouseLeave={handleMouseLeave}
+								onClick={()=>selectedMetricStore.set('release')}>
 				<h3
 					slot="title">{hoveredStat === 'release' ? 'Release total:' : 'Release frequency:'}</h3>
 				<p slot="stat" class="text-green-600">
@@ -84,9 +85,9 @@
 						valueWhenHovered={formatNumber(stateBailCases.releaseCases)}
 					/>
 				</p>
-			</ClickableListItem>
-			<ClickableListItem onMouseEnter={() => handleMouseEnter('bail')} onMouseLeave={handleMouseLeave}
-												 onClick={()=>selectedMetricStore.set('bail')}>
+			</StatItem>
+			<StatItem onMouseEnter={() => handleMouseEnter('bail')} onMouseLeave={handleMouseLeave}
+								onClick={()=>selectedMetricStore.set('bail')}>
 				<h3
 					slot="title">{hoveredStat === 'bail' ? 'Bail set total:' : 'Bail set frequency:'}</h3>
 				<p slot="stat" class="text-yellow-300">
@@ -96,8 +97,8 @@
 						valueWhenHovered={formatNumber(stateBailCases.bailSetCases)}
 					/>
 				</p>
-			</ClickableListItem>
-			<ClickableListItem onMouseEnter={() => handleMouseEnter('unknown')} onMouseLeave={handleMouseLeave}>
+			</StatItem>
+			<StatItem onMouseEnter={() => handleMouseEnter('unknown')} onMouseLeave={handleMouseLeave}>
 				<h3 slot="title">{hoveredStat === 'unknown' ? 'Unknown total:' : 'Unknown:'}</h3>
 				<p slot="stat" class="text-zinc-600">
 					<HoverableItem
@@ -106,7 +107,7 @@
 						valueWhenHovered={formatNumber(stateBailCases.unknownCases)}
 					/>
 				</p>
-			</ClickableListItem>
+			</StatItem>
 		</ScrollableList>
 	</div>
 </LawCard>

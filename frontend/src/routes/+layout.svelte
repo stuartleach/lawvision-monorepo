@@ -37,9 +37,8 @@
 
 
 <style>
-
     .outer-container {
-        @apply flex flex-col  p-6 w-screen sm:w-screen lg:w-screen h-full justify-between;
+        @apply flex flex-col p-6 w-screen sm:w-screen lg:w-screen h-full justify-between;
         background-color: rgba(39, 39, 42, 0.1);
     }
 </style>

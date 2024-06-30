@@ -187,16 +187,19 @@
 	}
 </script>
 
-<LawCard>
-	<div slot="data"
-			 class="map-data">
+<!--<LawCard>-->
+
+<div class="map-wrapper">
+	<div class="map-data"><!--<div slot="data"
+			 class="map-data">-->
 		<svg bind:this={svg} class="flex justify-center inset-0" viewBox={`0 0 ${width} ${height}`}
 				 preserveAspectRatio="xMidYMid meet">
 			<g bind:this={g}></g>
 		</svg>
 		<div bind:this={tooltip} class="tooltip absolute rounded" style="visibility: hidden;"></div>
 	</div>
-</LawCard>
+</div>
+<!--</LawCard>-->
 
 <style>
     .tooltip {
@@ -210,9 +213,18 @@
         z-index: 10;
     }
 
-    svg {
-        z-index: 9;
+    .map-data {
+        @apply flex ml-1;
     }
+
+    /*svg {*/
+    /*    z-index: 9;*/
+    /*    @apply flex;*/
+    /*}*/
+
+    /*g {*/
+    /*    @apply m-2.5;*/
+    /*}*/
 
     .county.selected {
         stroke: white;

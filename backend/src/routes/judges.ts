@@ -1,7 +1,8 @@
 import { Request, Response, Router } from 'express';
 import { getJudges } from '../queries';
-import { getCombinedPreTrialOutcomes } from '../queries/complexQueries';
+// import { getCombinedPreTrialOutcomes } from '../queries/complexQueries.ts';
 import countiesRouter from './counties';
+import { getCombinedPreTrialOutcomes } from '../queries/complexQueries';
 
 const judgesRouter = Router();
 

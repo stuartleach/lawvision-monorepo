@@ -40,11 +40,6 @@ export const selectedStatsStore = writable<'state' | 'county' | 'judge'>('state'
 export const showCountyJudgesStore = writable<boolean>(true);
 export const sortSelectorStore = writable<'bail' | 'remand' | 'release'>('bail');
 
-
-
-
-
-
 export const stateBailCases = {
 	totalBailSetAmount: 4309524656,
 	bailSetCases: 125076,
@@ -56,7 +51,6 @@ export const stateBailCases = {
 	averageBailAmount: 4834.87,
 	releaseCases: 624889,
 };
-
 
 export const stateBailCasesPct = {
 	bailSetCasesPct: stateBailCases.bailSetCases / stateBailCases.totalCases,

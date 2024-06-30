@@ -31,15 +31,74 @@ body {
 
 }
 
+/*****************/
+/* MEDIA QUERIES */
+/*****************/
+
 @media (min-width: 2000px) {
     .outer-container {
         @apply w-[80vw] transition-all;
     }
 }
 
+@media (max-width: 768px) {
+    /*.details-container {*/
+    /*    flex-direction: column;*/
+    /*}*/
+}
+
+@media (min-width: 768px) {
+    /*.county-detail, .judge-detail {*/
+    /*    max-height: 45vh;*/
+    /*}*/
+}
+
+@media (min-width: 1024px) {
+    /*.county-detail, .judge-detail {*/
+    /*    max-height: 60vh;*/
+    /*}*/
+}
+
+
+/*****************/
+/* COLORS */
+/*****************/
+
+.bail-color {
+    @apply text-yellow-500;
+}
+
+.remand-color {
+    @apply text-red-500;
+}
+
+.release-color {
+    @apply text-green-500;
+}
+
+/*************/
+/* UTILITIES */
+/*************/
+
+.loading {
+    text-align: center;
+    padding: 2rem;
+    font-size: 1.5rem;
+}
+
+.super {
+    font-size: 0.75rem;
+    vertical-align: text-top;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
 /******************/
 /* SUB-CONTAINERS */
 /******************/
+
 .sub-container {
     display: flex;
     flex-direction: column;
@@ -49,7 +108,6 @@ body {
 .overview ul {
     @apply list-none;
 }
-
 
 .overview {
     @apply text-zinc-200 tracking-tight;
@@ -82,26 +140,41 @@ body {
 /* DETAIL CARDS */
 /****************/
 
-.list-item {
-    @apply min-w-full flex;
-    @apply flex flex-row items-center justify-between;
-}
 
-button.list-item {
-    @apply px-4 py-4 w-full flex;
-    @apply h-[4.5rem];
-    @apply grow-0;
-}
-
-.list-item h3 {
-    @apply text-zinc-300 font-bold text-lg text-left;
-    @apply w-[10rem];
-}
-
+/*****************/
+/* LAW-CARD */
+/*****************/
 .law-card {
-    @apply /*max-w-[50vw] min-w-[30vw] */
-    h-full;
-    /*@apply grow-0;*/
+    @apply max-w-[50vw] min-w-[20vw] h-[75%] h-full;
+    @apply grow-0;
+    @apply col-span-1 flex flex-col divide-y divide-gray-200 rounded-lg ;
+}
+
+.map-data {
+    /*@apply flex justify-center -ml-[10%] p-[10%];*/
+    /*@apply col-span-4;*/
+    /*@apply w-[30vw];*/
+    /*@apply w-[15vw];*/
+    /*flex-grow: 5;*/
+}
+
+.map-wrapper {
+    @apply flex flex-col;
+    @apply w-[20vw] h-[20vw];
+    @apply bg-zinc-800 rounded-xl;
+    @apply py-2;
+}
+
+.law-card:hover {
+    transform: translateY(-2px);
+}
+
+.law-card-inner {
+    @apply rounded-lg flex sm:w-[30vw] lg:w-[30vw] w-96 flex-col p-6 pt-9 bg-zinc-800 hover:outline outline-zinc-700 transition-all;
+    @apply h-full w-full;
+    @apply grow-0;
+    @apply flex flex-1 flex-col p-8;
+    /*@apply max-h-[40rem]*/
 }
 
 .law-card h4 {
@@ -116,70 +189,20 @@ button.list-item {
     @apply float-right tracking-tight text-sm font-bold text-gray-500 -mt-2;
 }
 
-.bail-color {
-    @apply text-yellow-500;
+.law-card h2 {
+    @apply text-2xl font-semibold tracking-tight text-gray-50 mb-2;
 }
 
-.remand-color {
-    @apply text-red-500;
-}
+/*****************/
+/*     ITEM      */
+/*****************/
 
-.release-color {
-    @apply text-green-500;
-}
-
-
-.law-card-inner {
-    @apply rounded-lg flex min-w-[20vw] flex-col p-6 pt-9 bg-zinc-800 hover:outline outline-zinc-700 shadow-lg transition-all;
-    /*@apply h-full w-full;*/
-    @apply grow-0;
-    /*@apply max-h-[40rem]*/
-}
-
-.map-data {
-    @apply flex justify-center -ml-[10%] p-[10%];
-    /*@apply col-span-4;*/
-    @apply w-full;
-    /*@apply min-w-[30rem] max-w-[60rem] sm:min-w-[50rem];*/
-    /*flex-grow: 5;*/
-}
-
-.list-item .stat-container {
-    @apply font-bold text-zinc-400 text-right flex justify-end font-mono;
-    transition: transform 0.2s, box-shadow 0.2s, background-color 0.2s;
-}
-
-.selector-nav {
-    @apply max-w-full min-w-[20vw] details-nav bg-neutral-900 rounded-lg py-1 flex flex-row justify-self-center justify-between my-4;
-}
-
-.selector-nav button {
-    @apply w-[10rem] text-center py-1 font-semibold tracking-tight;
-    /*@apply  py-2 text-md font-semibold tracking-tight;*/
-    /*@apply bg-white;*/
-}
-
-.stat:hover {
-    transform: translateY(-2px);
-    background-color: rgba(0, 0, 0, 0.7);
-}
-
-.list-item {
-    transition: transform 0.2s, box-shadow 0.2s, background-color 0.2s;
-    /*@apply text-zinc-200 py-2 px-4 bg-zinc-900 rounded-lg hover:bg-zinc-700 transition-all outline-none focus:outline-none cursor-pointer;*/
-}
-
-.list-item:hover {
-    transform: translateY(-2px);
-    background-color: rgba(0, 0, 0, 0.7);
+.item {
+    @apply text-zinc-200 py-2 px-4 bg-zinc-900 rounded-lg hover:bg-zinc-700 hover:shadow-2xl transition-all outline-none focus:outline-none cursor-pointer;
 }
 
 .item-stat h3 {
     @apply text-zinc-300 font-bold text-lg;
-}
-
-.item {
-    @apply text-zinc-200 py-2 px-4 bg-zinc-900 rounded-lg hover:bg-zinc-700 hover:shadow-2xl transition-all outline-none focus:outline-none cursor-pointer;
 }
 
 .item .case-count {
@@ -199,8 +222,103 @@ button.list-item {
     @apply transition;
 }
 
-.law-card:hover {
+/***********/
+/*   STAT  */
+/***********/
+
+.stat-wrapper {
+    @apply flex flex-col;
+    @apply w-full;
+    @apply bg-zinc-900 rounded-xl;
+    @apply my-4 py-2;
+}
+
+.stat-item {
+    @apply min-w-full flex;
+    @apply flex flex-row items-center justify-between;
+}
+
+button.stat-item {
+    @apply px-4 py-4 w-full flex;
+    @apply h-[4.5rem];
+    @apply grow-0;
+}
+
+.stat-item h3 {
+    @apply text-zinc-300 font-bold text-lg text-left;
+    @apply w-[10rem];
+    font-size: 1rem /* 18px */;
+    line-height: 1.25rem /* 28px */;
+}
+
+.stat-item {
+    @apply text-zinc-200 py-2 px-4;
+    /*@apply border-t-2;*/
+    /*@apply bg-zinc-500 rounded-lg hover:bg-zinc-700;*/
+    @apply hover:shadow-2xl transition-all outline-none focus:outline-none cursor-pointer;
+}
+
+.stat-item:first-child {
+    @apply border-none;
+}
+
+.stat-item {
+    @apply border-t border-gray-600 flex;
+}
+
+.stat-item .stat-container {
+    @apply font-bold text-zinc-400 text-right flex justify-end font-mono;
+    transition: transform 0.2s, box-shadow 0.2s, background-color 0.2s;
+}
+
+.selector-nav {
+    @apply max-w-full min-w-[20vw] details-nav bg-neutral-900 rounded-lg py-1 flex flex-row justify-self-center justify-between my-4;
+}
+
+.selector-nav button {
+    @apply w-[10rem] text-center py-1 font-semibold tracking-tight;
+    /*@apply  py-2 text-md font-semibold tracking-tight;*/
+    /*@apply bg-white;*/
+}
+
+.stat:hover {
     transform: translateY(-2px);
+    background-color: rgba(0, 0, 0, 0.7);
+}
+
+/*****************/
+/* LIST-ITEM */
+/*****************/
+
+.list-item {
+    @apply min-w-full flex;
+    @apply flex flex-row items-center justify-between;
+}
+
+button.list-item {
+    @apply px-4 py-4 w-full flex;
+    @apply h-[4.5rem];
+    @apply grow-0;
+}
+
+.list-item h3 {
+    @apply text-zinc-300 font-bold text-lg text-left;
+    @apply w-[10rem];
+}
+
+.list-item .stat-container {
+    @apply font-bold text-zinc-400 text-right flex justify-end font-mono;
+    transition: transform 0.2s, box-shadow 0.2s, background-color 0.2s;
+}
+
+.list-item {
+    transition: transform 0.2s, box-shadow 0.2s, background-color 0.2s;
+    /*@apply text-zinc-200 py-2 px-4 bg-zinc-900 rounded-lg hover:bg-zinc-700 transition-all outline-none focus:outline-none cursor-pointer;*/
+}
+
+.list-item:hover {
+    transform: translateY(-2px);
+    background-color: rgba(0, 0, 0, 0.7);
 }
 
 .list-item {
@@ -254,6 +372,14 @@ button.list-item {
 /* MAP */
 /*******/
 
+.map-data {
+    @apply flex justify-center -ml-[10%] p-[10%];
+    /*@apply col-span-4;*/
+    @apply w-full;
+    /*@apply min-w-[30rem] max-w-[60rem] sm:min-w-[50rem];*/
+    /*flex-grow: 5;*/
+}
+
 .county-detail, .detail {
     transition: transform 0.2s, box-shadow 0.2s;
 }
@@ -272,59 +398,12 @@ button.list-item {
     @apply text-3xl font-semibold tracking-tight text-gray-50 mb-4;
 }
 
-.law-card h2 {
-    @apply text-2xl font-semibold tracking-tight text-gray-50 mb-2;
-}
-
-
 .detail h4 {
     @apply text-xl tracking-tight font-bold text-gray-500 mb-1;
 }
-
 
 .detail:hover, .county-detail:hover, .detail:hover {
     transform: translateY(-2px);
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
 }
 
-
-/*************/
-/* UTILITIES */
-/*************/
-
-.loading {
-    text-align: center;
-    padding: 2rem;
-    font-size: 1.5rem;
-}
-
-.super {
-    font-size: 0.75rem;
-    vertical-align: text-top;
-}
-
-.cursor-pointer {
-    cursor: pointer;
-}
-
-/*****************/
-/* MEDIA QUERIES */
-/*****************/
-
-@media (max-width: 768px) {
-    /*.details-container {*/
-    /*    flex-direction: column;*/
-    /*}*/
-}
-
-@media (min-width: 768px) {
-    /*.county-detail, .judge-detail {*/
-    /*    max-height: 45vh;*/
-    /*}*/
-}
-
-@media (min-width: 1024px) {
-    /*.county-detail, .judge-detail {*/
-    /*    max-height: 60vh;*/
-    /*}*/
-}
