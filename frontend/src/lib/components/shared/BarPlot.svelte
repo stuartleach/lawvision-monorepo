@@ -1,7 +1,6 @@
 <script>
 	import { onMount } from 'svelte';
 	import * as d3 from 'd3';
-	import { LawCard } from '$components';
 
 	onMount(() => {
 		// Set the dimensions and margins of the graph

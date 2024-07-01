@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { formatNumber, sortBy } from '$utils';
-	import type { County, Judge } from '$types';
+	import { formatNumber, sortBy } from '$lib/utils';
+	import type { County, Judge } from '$lib/types';
 	import {
 		allCountiesStore,
 		selectedCountyStore,
@@ -8,9 +8,14 @@
 		showCountyJudgesStore,
 		countyJudgesStore,
 		countyJudgesPromiseStore
-	} from '$data';
+	} from '$lib/stores/data';
+	import LawCard from '$lib/components/cards/LawCard.svelte';
+	import SortBadge from '$lib/components/shared/SortBadge.svelte';
+	import ScrollableList from '$lib/components/shared/ScrollableList.svelte';
+	import ClickableListSelector from '$lib/components/shared/ClickableListSelector.svelte';
+	import Money from '$lib/components/shared/Money.svelte';
+	import HoverableItem from '$lib/components/shared/HoverableItem.svelte';
 
-	import { ClickableListSelector, HoverableItem, LawCard, Money, ScrollableList, SortBadge } from '$components';
 
 	let selectedCountyInfo: County | null = null;
 	let selectedJudgeInfo: Judge | null = null;

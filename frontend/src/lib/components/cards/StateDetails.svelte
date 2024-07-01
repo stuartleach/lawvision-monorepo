@@ -1,17 +1,20 @@
 <script lang="ts">
-	import { formatMoney, formatNumber } from '$lib/utils';
-	import type { County, Judge } from '$lib/types/types';
-	import { selectedCountyStore, selectedJudgeStore, selectedMetricStore, countyJudgesStore } from '$lib/stores/data';
-	import { stateBailCases, stateBailCasesPct } from '$lib/stores/data';
+	import LawCard from '$lib/components/cards/LawCard.svelte';
+	import HoverableItem from '$lib/components/shared/HoverableItem.svelte';
+	import Money from '$lib/components/shared/Money.svelte';
+	import ScrollableList from '$lib/components/shared/ScrollableList.svelte';
 
+	import StatItem from '$lib/components/shared/StatItem.svelte';
 	import {
-		LawCard,
-		ScrollableList,
-		ClickableListItem,
-		Money,
-		HoverableItem
-	} from '$components';
-	import StatItem from '$lib/components/StatItem.svelte';
+		countyJudgesStore,
+		selectedCountyStore,
+		selectedJudgeStore,
+		selectedMetricStore,
+		stateBailCases,
+		stateBailCasesPct
+	} from '$lib/stores/data';
+	import type { County, Judge } from '$lib/types/frontendTypes';
+	import { formatNumber } from '$lib/utils';
 
 	let county: County | null = null;
 	let selectedJudgeInfo: Judge | null = null;

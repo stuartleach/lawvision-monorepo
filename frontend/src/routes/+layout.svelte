@@ -1,6 +1,6 @@
 <script>
 	import '../app.css';
-	import LawVisionIcon from '$lib/assets/Logo.svelte';
+	import LawVisionIcon from '../lib/components/shared/Logo.svelte';
 </script>
 <div class="flex-col">
 	<nav class="bg-zinc-900 shadow-md ">

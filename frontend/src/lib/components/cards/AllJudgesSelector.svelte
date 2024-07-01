@@ -1,25 +1,22 @@
 <script lang="ts">
-	import { formatNumber, sortBy } from '$utils';
-	import type { County, Judge } from '$types';
+	import { formatNumber, sortBy } from '$lib/utils';
+	import type { County, Judge } from '$lib/types';
 	import {
 		allCountiesStore,
 		selectedCountyStore,
 		selectedJudgeStore,
 		selectedMetricStore,
+		showCountyJudgesStore,
 		countyJudgesStore,
 		allJudgesStore
-	} from '$data';
+	} from '$lib/stores/data';
+	import HoverableItem from '$lib/components/shared/HoverableItem.svelte';
+	import ClickableListSelector from '$lib/components/shared/ClickableListSelector.svelte';
+	import ScrollableList from '$lib/components/shared/ScrollableList.svelte';
+	import SortBadge from '$lib/components/shared/SortBadge.svelte';
+	import LawCard from '$lib/components/cards/LawCard.svelte';
+	import Money from '$lib/components/shared/Money.svelte';
 
-	import {
-		Money,
-		LawCard,
-		CloseButton,
-		ScrollableList,
-		HoverableItem,
-		ClickableListSelector,
-		SortBadge
-	} from '$components';
-	import BarPlot from '$lib/components/BarPlot.svelte';
 
 	let selectedCountyInfo: County | null = null;
 	let selectedJudgeInfo: Judge | null = null;
@@ -34,25 +31,10 @@
 	$: selectedCountyInfo = $selectedCountyStore;
 	$: topJudges = $countyJudgesStore;
 	$: topJudgesPromise = Promise.resolve(topJudges);
-
-	let allJudges: Judge[];
 	$: allJudges = sortBy($allJudgesStore, metric);
 	$: allJudgesPromise = Promise.resolve(allJudges);
 	$: allCounties = $allCountiesStore;
 	$: allCountiesPromise = Promise.resolve(allCounties);
-
-	$: allJudges = allJudges.map(judge => ({
-		counties: judge.counties.map(county => county.toLowerCase()),
-		...judge
-	}));
-
-	let countyJudges: Judge[] = [];
-
-	$: countyJudges = allJudges.filter(judge => judge.counties.includes(selectedCountyInfo?.name));
-
-	$: countyJudgesStore.set(countyJudges);
-
-	$: console.log($countyJudgesStore);
 
 	let hoveredStat: string | null = null;
 
@@ -65,20 +47,20 @@
 	}
 </script>
 
+
 <LawCard>
 
 	<h4 slot="super-title">Top Judges in </h4>
-	<h2 slot="title">{selectedCountyInfo?.name} County
+	<h2 slot="title">New York State
 		<SortBadge />
-
 	</h2>
 	<div slot="data">
-		{#await topJudgesPromise}
+		{#await allJudgesPromise}
 			<p class="text-zinc-400">Fetching top counties...</p>
 		{:then allJudges}
-			{#if countyJudges && countyJudges.length > 0}
+			{#if allJudges && allJudges.length > 0}
 				<ScrollableList>
-					{#each countyJudges.slice(0, 100) as judge, index}
+					{#each allJudges.slice(0, 100) as judge, index}
 						<ClickableListSelector
 							onClick={() => selectedJudgeStore.set(judge)}
 							className="{judge.name === selectedJudgeInfo?.name ? 'selected' : ''}">
@@ -93,11 +75,13 @@
 										<span
 											class="text-green-600">
 											<HoverableItem
-												targetBool={hoveredStat === 'remand'}
+												targetBool={hoveredStat === 'release'}
 												valueWhenNotHovered={formatNumber(judge.stats.pct.release * 100) + '%'}
 												valueWhenHovered={formatNumber(judge.stats.raw.release)} />
 										</span>
 									<span class="text-gray-300 -ml-1">%</span>
+									<p class="text-xs align-super text-right">({formatNumber(judge.stats.raw.release)} cases)</p>
+
 								{/if}
 								{#if metric === 'remand'}
 									<span class="text-red-600"><HoverableItem
@@ -105,6 +89,8 @@
 										valueWhenNotHovered={formatNumber(judge.stats.pct.remand * 100) + '%'}
 										valueWhenHovered={formatNumber(judge.stats.raw.remand)} /></span>
 									<span class="text-gray-300 -ml-1">%</span>
+									<p class="text-xs align-super text-right">({formatNumber(judge.stats.raw.remand)} cases)</p>
+
 								{/if}
 							</div>
 						</ClickableListSelector>
@@ -119,3 +105,4 @@
 
 	</div>
 </LawCard>
+

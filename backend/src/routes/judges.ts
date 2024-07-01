@@ -3,6 +3,7 @@ import { getJudges } from '../queries';
 // import { getCombinedPreTrialOutcomes } from '../queries/complexQueries.ts';
 import countiesRouter from './counties';
 import { getCombinedPreTrialOutcomes } from '../queries/complexQueries';
+import { getPretrialOutcomesForJudge } from '../queries/complexQueries';
 
 const judgesRouter = Router();
 
@@ -25,6 +26,18 @@ judgesRouter.get('/:judge_id/race_outcomes', async (req, res) => {
 	try {
 		// const raceOutcomes = await getNumberOfCasesOfEachRace({ judgeName: countyName });
 		const raceOutcomes = await getCombinedPreTrialOutcomes({ judgeId: judgeId });
+		return res.json(raceOutcomes);
+	} catch (error) {
+		console.error;
+		return res.status(500).json({ error: 'Internal Server Error' });
+	}
+});
+
+judgesRouter.get('/:judge_id/outcomes', async (req, res) => {
+	const judgeId = req.params.judge_id;
+	try {
+		// const raceOutcomes = await getNumberOfCasesOfEachRace({ judgeName: countyName });
+		const raceOutcomes = await getPretrialOutcomesForJudge({ judgeId: judgeId });
 		return res.json(raceOutcomes);
 	} catch (error) {
 		console.error;

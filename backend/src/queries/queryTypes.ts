@@ -19,6 +19,11 @@ export type ChargeSeverityOutcomesMap = {
 	'unknown': PretrialOutcomes;
 }
 
+export type JudgeOutcomes = {
+	charges: ChargeSeverityOutcomesMap;
+	races: RaceOutcomesMap;
+}
+
 export type RaceOutcomesMap = {
 	'White': PretrialOutcomes;
 	'Black': PretrialOutcomes;

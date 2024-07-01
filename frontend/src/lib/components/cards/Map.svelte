@@ -1,18 +1,18 @@
 <script lang="ts">
-	import { onMount, tick } from 'svelte';
-	import * as d3 from 'd3';
-	import type { County, CountyWithGeoJSON, GeoJSONData, MinMax } from '$types';
-	import { formatNumber } from '$utils';
 	import {
+		allCountiesWithGeoJSONStore,
+		countiesMinMaxStore,
+		geoJSONStore,
 		mapDimensionsStore,
 		selectedCountyStore,
 		selectedMetricStore,
-		showCountyJudgesStore,
-		geoJSONStore,
-		allCountiesWithGeoJSONStore,
-		countiesMinMaxStore
-	} from '$data';
-	import { LawCard } from '$components';
+		showCountyJudgesStore
+	} from '$lib/stores/data';
+	import type { County, CountyWithGeoJSON, GeoJSONData, MinMax } from '$lib/types';
+	import { formatNumber } from '$lib/utils';
+	import * as d3 from 'd3';
+	import { onMount, tick } from 'svelte';
+
 
 	export let selectedCountyInfo: County | null = null;
 

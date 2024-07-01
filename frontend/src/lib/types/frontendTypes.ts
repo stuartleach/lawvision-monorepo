@@ -1,5 +1,3 @@
-import type { Feature } from 'geojson';
-
 export interface County {
 	name: string;
 	countyUUID: string;
@@ -86,7 +84,7 @@ export type JudgeQuery = {
 	limit: number;
 }
 
-export type JudgeRaceOutcomesQuery = {
+export type JudgeOutcomesQuery = {
 	fetch: FetchFunction;
 	judgeId: string;
 }
@@ -95,6 +93,20 @@ export type CombinedPreTrialOutcomes = {
 	[chargeWeight: string]: RaceOutcomesMap
 };
 
+export type ChargeSeverityOutcomesMap = {
+	'AF': PretrialOutcomes;
+	'BF': PretrialOutcomes;
+	'CF': PretrialOutcomes;
+	'DF': PretrialOutcomes;
+	'EF': PretrialOutcomes;
+	'AM': PretrialOutcomes;
+	'BM': PretrialOutcomes;
+	'I': PretrialOutcomes;
+	'UM': PretrialOutcomes;
+	'unknown': PretrialOutcomes;
+}
+
+
 export type RaceOutcomesMap = {
 	'White': PretrialOutcomes;
 	'Black': PretrialOutcomes;
@@ -102,6 +114,11 @@ export type RaceOutcomesMap = {
 	'Asian/Pacific Islander': PretrialOutcomes;
 	'Other': PretrialOutcomes;
 	'Unknown': PretrialOutcomes;
+}
+
+export type JudgeOutcomes = {
+	charges: ChargeSeverityOutcomesMap;
+	races: RaceOutcomesMap;
 }
 
 export type PretrialOutcomeTypes = {

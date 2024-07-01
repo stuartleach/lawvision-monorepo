@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { selectedMetricStore } from '$data';
+	import { selectedMetricStore } from '$lib/stores/data';
 
 	export let metric: string = 'bail';
 

@@ -1,4 +1,4 @@
-import type { County, GeoJSONData } from '$lib/types/types';
+import type { County, GeoJSONData } from '$lib/types/frontendTypes';
 import { getGeoJson, getCounties, getJudges } from '$lib/api';
 import {
 	allCountiesStore,

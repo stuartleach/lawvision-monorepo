@@ -1,16 +1,14 @@
 <script lang="ts">
-	import { formatNumber } from '$utils';
-	import type { County, Judge } from '$types';
-	import { selectedCountyStore, selectedJudgeStore, selectedMetricStore, countyJudgesStore } from '$data';
+	import { formatNumber } from '$lib/utils';
+	import type { County, Judge } from '$lib/types';
+	import { selectedCountyStore } from '$lib/stores/data';
+	import LawCard from '$lib/components/cards/LawCard.svelte';
+	import ScrollableList from '$lib/components/shared/ScrollableList.svelte';
+	import ClickableListItem from '$lib/components/shared/ClickableListItem.svelte';
+	import Money from '$lib/components/shared/Money.svelte';
+	import HoverableItem from '$lib/components/shared/HoverableItem.svelte';
+	import CloseButton from '$lib/components/shared/CloseButton.svelte';
 
-	import {
-		LawCard,
-		ScrollableList,
-		ClickableListItem,
-		Money,
-		HoverableItem,
-		CloseButton
-	} from '$components';
 
 	let county: County | null = null;
 	let selectedJudgeInfo: Judge | null = null;

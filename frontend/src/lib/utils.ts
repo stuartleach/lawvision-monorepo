@@ -4,9 +4,9 @@ import type {
 	CountyWithGeoJSON, GeoJSONData,
 	GeoJSONFeature,
 	Judge,
-	JudgeOrCounty,
+	JudgeOrCounty, JudgeOutcomes,
 	MinMax
-} from '$lib/types/types';
+} from '$lib/types/frontendTypes';
 import type { CountyModel, JudgeModel, JudgeModelOrCountyModel } from '$lib/types/prismaTypes';
 
 const formatMoney = (amount: number) => {
@@ -24,6 +24,15 @@ const formatNumber = (amount: number | undefined) => {
 	amount = parseFloat(String(amount));
 	return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 };
+
+const formatPercent = (amount: number) => {
+	// if amount is less than one, multiply by 100
+	if (amount < 1) {
+		amount = amount * 100;
+	}
+	amount = parseFloat(String(amount));
+	return amount.toFixed(2) + '%';
+}
 
 
 function formatMoneyValue(value: number): [string, string] {
@@ -124,7 +133,6 @@ const sortBy = (targets: County[] | Judge[], metric: 'bail' | 'remand' | 'releas
 	if (targets.length === 0) {
 		return [];
 	}
-	console.log(targets[0]);
 	if (targets[0].hasOwnProperty('judgeUUID')) {
 
 		targets = targets as Judge[];
@@ -190,5 +198,6 @@ export {
 	sortBy,
 	getMinMax,
 	mutateJudge,
-	mutateCounty
+	mutateCounty,
+	formatPercent
 };

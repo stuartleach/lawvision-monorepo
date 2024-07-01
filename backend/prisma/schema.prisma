@@ -189,8 +189,6 @@ model judges {
   unique_districts              String[]
   case_count                    Int?
   counties                      String[]
-  court_names                   String[]
-  disposition_types             String[]
   remand_to_jail_count          Int?
   ror_count                     Int?
   bail_set_and_posted_count     Int?

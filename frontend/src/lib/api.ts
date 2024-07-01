@@ -4,11 +4,11 @@ import type {
 	GeoJSONData, GeoJSONQuery,
 	Judge,
 	JudgeQuery,
-	JudgeRaceOutcomesQuery, RaceOutcomesMap
+	JudgeOutcomesQuery, RaceOutcomesMap, CombinedPreTrialOutcomes, JudgeOutcomes
 } from '$lib/types';
 import type { CountyModel, JudgeModel } from '$lib/types';
 import { mutateCounty, mutateJudge } from '$lib/utils';
-import { allCountiesStore, countyJudgesStore, selectedJudgeRaceOutcomesStore } from '$lib/stores/data';
+import { allCountiesStore, countyJudgesStore, selectedJudgeOutcomesStore } from '$lib/stores/data';
 
 const fetchData = async <T>(fetch: FetchFunction, url: string, options?: RequestInit): Promise<T> => {
 	const response = await fetch(url, {
@@ -49,17 +49,15 @@ const getJudges = async (query: JudgeQuery): Promise<Judge[]> => {
 	return judges.map(mutateJudge);
 };
 
-const setJudgeRaceOutcomes = async (query: JudgeRaceOutcomesQuery): Promise<void> => {
+const getJudgeOutcomes = async (query: JudgeOutcomesQuery): Promise<void> => {
 
 	const { fetch, judgeId } = query;
 
-	const result = await fetchData<RaceOutcomesMap>(fetch, `/api/judges/${judgeId}/race_outcomes`);
+	const result = await fetchData<JudgeOutcomes>(fetch, `/api/judges/${judgeId}/outcomes`);
 
-	console.log("result", result)
-
-	selectedJudgeRaceOutcomesStore.set(result);
-
+	selectedJudgeOutcomesStore.set(result);
 };
+
 
 const getCounties = async (query: CountyQuery): Promise<County[]> => {
 	const { fetch } = query;
@@ -69,7 +67,6 @@ const getCounties = async (query: CountyQuery): Promise<County[]> => {
 	const counties: CountyModel[] = await fetchData<CountyModel[]>(fetch, url);
 	return counties.map(mutateCounty);
 };
-
 
 const setTopJudges = async (countyName: string) => {
 	if (countyName) {
@@ -84,4 +81,4 @@ const setTopJudges = async (countyName: string) => {
 	}
 };
 
-export { getGeoJson, setTopJudges, getCounties, getJudges, setJudgeRaceOutcomes };
+export { getGeoJson, setTopJudges, getCounties, getJudges, getJudgeOutcomes };

@@ -1,32 +1,19 @@
 <script lang="ts">
-	import {
-		bailMinMaxStore,
-		bailAmountsStore,
-		countyJudgesStore,
-		allCountiesStore,
-		loadingStore,
-		selectedCountyStore,
-		selectedMetricStore,
-		geoJSONStore, selectedJudgeStore
-	} from '$data';
+	import ContainerJudge from '$lib/components/containers/ContainerJudge.svelte';
+	import { loadingStore, selectedCountyStore, selectedJudgeStore } from '$lib/stores/data';
 
-	import {
-		Map,
-		CountyDetails,
-		CountyJudges,
-		JudgeDetails,
-		Title,
-		Footer,
-		StateDetails,
-		CountiesSelector,
-		AllJudgesSelector,
-		LawCard,
-		MetricSelector,
-		RaceCard
-	} from '$components';
-	import Row from '$lib/components/Row.svelte';
-	import BarPlot from '$lib/components/BarPlot.svelte';
-
+	import Title from '$lib/components/shared/Title.svelte';
+	import MetricSelector from '$lib/components/shared/MetricSelector.svelte';
+	import StateDetails from '$lib/components/cards/StateDetails.svelte';
+	import Map from '$lib/components/cards/Map.svelte';
+	import AllJudgesSelector from '$lib/components/cards/AllJudgesSelector.svelte';
+	import CountiesSelector from '$lib/components/cards/CountiesSelector.svelte';
+	import CountyDetails from '$lib/components/cards/CountyDetails.svelte';
+	import CountyJudges from '$lib/components/cards/CountyJudges.svelte';
+	import JudgeDetails from '$lib/components/cards/JudgeDetails.svelte';
+	import ChargeCard from '$lib/components/cards/ChargeCard.svelte';
+	import RaceCard from '$lib/components/cards/RaceCard.svelte';
+	import Footer from '$lib/components/layout/Footer.svelte';
 </script>
 
 
@@ -46,7 +33,8 @@
 	<div class="inner-container">
 		<MetricSelector />
 		<div class="middle-container mb-10">
-				<Map />
+			<ContainerJudge></ContainerJudge>
+			<Map />
 			<StateDetails />
 			<AllJudgesSelector />
 			<CountiesSelector />
@@ -58,6 +46,8 @@
 			{/if}
 			{#if $selectedJudgeStore}
 				<JudgeDetails />
+				<ChargeCard />
+				<RaceCard />
 			{/if}
 		</div>
 	</div>
@@ -71,6 +61,5 @@
 <style>
     .middle-container {
         @apply w-[80vw] flex flex-wrap justify-center;
-        /*@apply grid grid-cols-2 gap-12 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4;*/
     }
 </style>

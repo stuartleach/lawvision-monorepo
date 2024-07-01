@@ -1,4 +1,4 @@
-import type { CaseStats } from '$lib/types/types';
+import type { CaseStats } from '$lib/types/frontendTypes';
 
 
 interface NysCases {

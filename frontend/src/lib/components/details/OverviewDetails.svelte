@@ -1,15 +1,15 @@
 <script lang="ts">
-	import { formatMoney, formatNumber } from '$lib/utils';
-	import type { Judge, RaceOutcomesMap } from '$lib/types/types';
-	import { selectedCountyStore, selectedJudgeRaceOutcomesStore, selectedJudgeStore } from '$lib/stores/data';
-	import Close from '$lib/assets/Close.svelte';
-	import ScrollableList from '$lib/components/ScrollableList.svelte';
-	import ClickableListItem from '$lib/components/ClickableListItem.svelte';
-	import { LawCard } from '$lib/components/index';
-	import { setJudgeRaceOutcomes } from '$lib/api';
-	import Money from '$lib/components/Money.svelte';
-	import HoverableItem from '$lib/components/HoverableItem.svelte';
-	import { CloseButton } from '$components';
+	import { getJudgeOutcomes } from '$lib/api.js';
+	import LawCard from '$lib/components/cards/LawCard.svelte';
+	import ClickableListItem from '$lib/components/shared/ClickableListItem.svelte';
+	import HoverableItem from '$lib/components/shared/HoverableItem.svelte';
+	import Money from '$lib/components/shared/Money.svelte';
+	import ScrollableList from '$lib/components/shared/ScrollableList.svelte';
+	import { selectedJudgeOutcomesStore, selectedJudgeStore } from '$lib/stores/data.js';
+	import type { RaceOutcomesMap } from '$lib/types/index.js';
+	import type { Judge } from '$lib/types/index.js';
+	import { formatNumber, formatPercent } from '$lib/utils.js';
+
 
 	let selectedJudgeInfo: Judge | null;
 
@@ -29,25 +29,21 @@
 
 	const openRaceOutcomes = (judgeId: string | undefined) => {
 		if (!judgeId) return;
-		setJudgeRaceOutcomes({ fetch, judgeId });
+		getJudgeOutcomes({ fetch, judgeId });
 	};
 
 	let raceOutcomes: RaceOutcomesMap | null;
-	$: raceOutcomes = $selectedJudgeRaceOutcomesStore;
+	$: raceOutcomes = $selectedJudgeOutcomesStore;
+
+
 </script>
 
+
 <LawCard>
-	<div slot="menuBar">
-		<CloseButton store={selectedJudgeStore} />
-	</div>
-	<h4 slot="super-title">{selectedJudgeInfo?.name ? "The Honorable Judge" : ""}</h4>
-	<h2 slot="title">{selectedJudgeInfo?.name || "The Honorable Judge X"}
-	</h2>
-	<div slot="data">
+
+
+	<div>
 		<ScrollableList>
-			<ClickableListItem onClick={() => openRaceOutcomes(selectedJudgeInfo?.judgeUUID)}>
-				<h3 slot="title">Racial Breakdown</h3>
-			</ClickableListItem>
 			<ClickableListItem>
 				<h3 slot="title">Total cases:</h3>
 				<p slot="stat">{selectedJudgeInfo ? formatNumber(selectedJudgeInfo?.stats.caseCount) : '0'}</p>
@@ -65,7 +61,7 @@
 				<p slot="stat" class="text-red-600">
 					<HoverableItem
 						targetBool={hoveredStat === 'remand'}
-						valueWhenNotHovered={selectedJudgeInfo ? formatNumber(selectedJudgeInfo.stats.pct.remand * 100) + '%' : '0%'}
+						valueWhenNotHovered={selectedJudgeInfo ? formatPercent(selectedJudgeInfo.stats.pct.remand): '0%'}
 						valueWhenHovered={formatNumber(selectedJudgeInfo?.stats.raw.remand)}
 					/>
 				</p>
@@ -76,7 +72,7 @@
 				<p slot="stat" class="text-green-600">
 					<HoverableItem
 						targetBool={hoveredStat === 'release'}
-						valueWhenNotHovered={selectedJudgeInfo ? formatNumber(selectedJudgeInfo.stats.pct.release * 100) + '%' : '0%'}
+						valueWhenNotHovered={selectedJudgeInfo ? formatPercent(selectedJudgeInfo.stats.pct.release): '0%'}
 						valueWhenHovered={formatNumber(selectedJudgeInfo?.stats.raw.release)}
 					/>
 				</p>
@@ -87,7 +83,7 @@
 				<p slot="stat" class="text-yellow-300">
 					<HoverableItem
 						targetBool={hoveredStat === 'bail'}
-						valueWhenNotHovered={selectedJudgeInfo ? formatNumber(selectedJudgeInfo.stats.pct.bailSet * 100) + '%' : '0%'}
+						valueWhenNotHovered={selectedJudgeInfo ? formatPercent(selectedJudgeInfo.stats.pct.bailSet): '0%'}
 						valueWhenHovered={formatNumber(selectedJudgeInfo?.stats.raw.bailSet)}
 					/>
 				</p>
@@ -97,7 +93,7 @@
 				<p slot="stat" class="text-zinc-600">
 					<HoverableItem
 						targetBool={hoveredStat === 'unknown'}
-						valueWhenNotHovered={selectedJudgeInfo ? formatNumber(selectedJudgeInfo.stats.pct.unknown * 100) + '%' : '0%'}
+						valueWhenNotHovered={selectedJudgeInfo ? formatPercent(selectedJudgeInfo.stats.pct.unknown): '0%'}
 						valueWhenHovered={formatNumber(selectedJudgeInfo?.stats.raw.unknown)}
 					/>
 				</p>
