@@ -50,11 +50,11 @@
 
 <LawCard>
 
-	<h4 slot="super-title">Top Judges in </h4>
-	<h2 slot="title">New York State
+	<h4>Top Judges in </h4>
+	<h2>New York State
 		<SortBadge />
 	</h2>
-	<div slot="data">
+	<div>
 		{#await allJudgesPromise}
 			<p class="text-zinc-400">Fetching top counties...</p>
 		{:then allJudges}
@@ -62,7 +62,7 @@
 				<ScrollableList>
 					{#each allJudges.slice(0, 100) as judge, index}
 						<ClickableListSelector
-							onClick={() => selectedJudgeStore.set(judge)}
+							onClick={() => { selectedJudgeInfo?.name === judge.name ? selectedJudgeStore.set(null) : selectedJudgeStore.set(judge)}}
 							className="{judge.name === selectedJudgeInfo?.name ? 'selected' : ''}">
 							<p slot="title">{judge.name}</p>
 							<div slot="stat">

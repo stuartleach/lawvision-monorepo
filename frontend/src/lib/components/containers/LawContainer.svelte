@@ -1,5 +1,5 @@
-<div class="law-container transition ">
-	<div class="law-container-inner">
+<div class="law-container transition">
+	<div class="law-container-inner w-full">
 		<slot />
 	</div>
 </div>

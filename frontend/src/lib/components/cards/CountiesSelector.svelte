@@ -49,12 +49,12 @@
 
 
 <LawCard>
-	<h4 slot="super-title">Top Counties in </h4>
-	<h2 slot="title">New York State
+	<h4>Top Counties in </h4>
+	<h2>New York State
 		<SortBadge />
 	</h2>
 
-	<div slot="data">
+	<div>
 		{#await allCountiesPromise}
 			<p class="text-zinc-400">Fetching top counties...</p>
 		{:then allCounties}

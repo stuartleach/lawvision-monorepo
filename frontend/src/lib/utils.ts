@@ -1,11 +1,12 @@
-import type {
-	CaseStats,
-	County,
-	CountyWithGeoJSON, GeoJSONData,
-	GeoJSONFeature,
-	Judge,
-	JudgeOrCounty, JudgeOutcomes,
-	MinMax
+import { selectedCountyStore, selectedJudgeStore } from '$lib/stores/data';
+import {
+	type CaseStats,
+	type County,
+	type CountyWithGeoJSON, type GeoJSONData,
+	type GeoJSONFeature,
+	type Judge,
+	type JudgeOrCounty, type JudgeOutcomes,
+	type MinMax, SortOrder, SortTarget
 } from '$lib/types/frontendTypes';
 import type { CountyModel, JudgeModel, JudgeModelOrCountyModel } from '$lib/types/prismaTypes';
 
@@ -27,12 +28,15 @@ const formatNumber = (amount: number | undefined) => {
 
 const formatPercent = (amount: number) => {
 	// if amount is less than one, multiply by 100
-	if (amount < 1) {
+	if (amount <= 1) {
 		amount = amount * 100;
 	}
+	if (amount == 0) {
+		return '0.00';
+	}
 	amount = parseFloat(String(amount));
-	return amount.toFixed(2) + '%';
-}
+	return amount.toFixed(2);
+};
 
 
 function formatMoneyValue(value: number): [string, string] {
@@ -89,6 +93,36 @@ const mutateStats = (item: JudgeModelOrCountyModel): CaseStats => {
 
 
 	return calculateCasePercentages(stats);
+};
+
+export const sortListByTarget = (list: Judge[] | County[], target: SortTarget, order: SortOrder = SortOrder.desc) => {
+	selectedJudgeStore.set(null);
+	selectedCountyStore.set(null);
+	const compareValues = (a: JudgeOrCounty, b: JudgeOrCounty) => {
+		switch (target) {
+			case SortTarget.remandPct:
+				return a.stats.pct.remand - b.stats.pct.remand;
+			case SortTarget.releasePct:
+				return a.stats.pct.release - b.stats.pct.release;
+			case SortTarget.averageBail:
+				return a.stats.averageBailSet - b.stats.averageBailSet;
+			case SortTarget.caseCount:
+				return a.stats.caseCount - b.stats.caseCount;
+			case SortTarget.remandRaw:
+				return a.stats.raw.remand - b.stats.raw.remand;
+			case SortTarget.releaseRaw:
+				return a.stats.raw.release - b.stats.raw.release;
+			case SortTarget.bailSet:
+				return a.stats.raw.bailSet - b.stats.raw.bailSet;
+			case SortTarget.name:
+				return a.name.localeCompare(b.name);
+			default:
+				return 0;
+		}
+	};
+
+	const sortedList = list.sort((a, b) => (order === SortOrder.asc ? compareValues(a, b) : compareValues(b, a)));
+	return sortedList;
 };
 
 

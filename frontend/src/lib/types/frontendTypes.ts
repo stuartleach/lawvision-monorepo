@@ -52,6 +52,10 @@ export interface Judge {
 
 export type JudgeOrCounty = {
 	stats: CaseStats
+	counties?: string[]
+	judgeUUID?: string
+	countyUUID?: string
+	name: string
 }
 
 export interface CaseStats {
@@ -104,6 +108,29 @@ export type ChargeSeverityOutcomesMap = {
 	'I': PretrialOutcomes;
 	'UM': PretrialOutcomes;
 	'unknown': PretrialOutcomes;
+}
+
+
+export enum TypeOfTarget {
+	judges = 'judges',
+	counties = 'counties'
+}
+
+// Define the enum without quotes around the keys
+export enum SortTarget {
+	name = 'Name',
+	remandPct = 'Remand Percentage',
+	releasePct = 'Release Percentage',
+	averageBail = 'Average Bail',
+	caseCount = 'Total Cases',
+	remandRaw = 'Total Cases Remanded',
+	releaseRaw = 'Total Cases Released',
+	bailSet = 'Bail Set Frequency'
+}
+
+export enum SortOrder {
+	asc = 'asc',
+	desc = 'desc'
 }
 
 
