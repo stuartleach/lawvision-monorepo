@@ -1,5 +1,4 @@
 import { Request, Response, Router } from 'express';
-import { prisma } from '../prisma_client';
 import { getCaseByCaseId, getCases } from '../queries';
 
 const casesRouter = Router();

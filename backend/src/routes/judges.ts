@@ -1,9 +1,6 @@
 import { Request, Response, Router } from 'express';
 import { getJudges } from '../queries';
-// import { getCombinedPreTrialOutcomes } from '../queries/complexQueries.ts';
-import countiesRouter from './counties';
-import { getCombinedPreTrialOutcomes } from '../queries/complexQueries';
-import { getPretrialOutcomesForJudge } from '../queries/complexQueries';
+import { getCombinedPreTrialOutcomes, getPretrialOutcomesForJudge } from '../queries/complexQueries';
 
 const judgesRouter = Router();
 
@@ -37,8 +34,9 @@ judgesRouter.get('/:judge_id/outcomes', async (req, res) => {
 	const judgeId = req.params.judge_id;
 	try {
 		// const raceOutcomes = await getNumberOfCasesOfEachRace({ judgeName: countyName });
-		const raceOutcomes = await getPretrialOutcomesForJudge({ judgeId: judgeId });
-		return res.json(raceOutcomes);
+		const pretrialOutcomes = await getPretrialOutcomesForJudge({ judgeId: judgeId });
+		console.log("pretrialOutcomes", pretrialOutcomes);
+		return res.json(pretrialOutcomes);
 	} catch (error) {
 		console.error;
 		return res.status(500).json({ error: 'Internal Server Error' });

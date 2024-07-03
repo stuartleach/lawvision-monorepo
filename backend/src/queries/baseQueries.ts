@@ -8,7 +8,7 @@ const capitalize = (str: string) => str.slice(0, 1).toUpperCase() + str.slice(1)
 const getJudgeIdByJudgeName = async (judgeName: string) => {
 	try {
 		const judge = await prisma.judges.findUnique({ where: { judge_name: judgeName } });
-		return judge ? judge.judge_uuid : null;
+		return judge ? judge.judge_id : null;
 	} catch (error) {
 		console.error('Error fetching judge id by name:', error);
 		return null;
@@ -18,7 +18,7 @@ const getJudgeIdByJudgeName = async (judgeName: string) => {
 const getCountyIdByCountyName = async (countyName: string) => {
 	try {
 		const county = await prisma.counties.findUnique({ where: { county_name: capitalize(countyName) } });
-		return county ? county.county_uuid : null;
+		return county ? county.county_id : null;
 	} catch (error) {
 		console.error('Error fetching county id by name:', error);
 		return null;
@@ -27,7 +27,7 @@ const getCountyIdByCountyName = async (countyName: string) => {
 
 const getCountyNameByCountyId = async (countyId: string) => {
 	try {
-		const county = await prisma.counties.findUnique({ where: { county_uuid: countyId } });
+		const county = await prisma.counties.findUnique({ where: { county_id: countyId } });
 		return county ? county.county_name : null;
 	} catch (error) {
 		console.error('Error fetching county name by id:', error);
@@ -61,7 +61,7 @@ const getChargeSeverityByCaseId = async (caseId: string) => {
 	try {
 		const result = await prisma.cases.findUnique({
 			where: {
-				case_uuid: caseId
+				case_id: caseId
 			},
 			select: {
 				top_charge_weight_at_arraign: true
@@ -76,7 +76,7 @@ const getChargeSeverityByCaseId = async (caseId: string) => {
 
 const getCaseByCaseId = async (caseId: string) => {
 	try {
-		return await prisma.cases.findUnique({ where: { case_uuid: caseId } });
+		return await prisma.cases.findUnique({ where: { case_id: caseId } });
 	} catch (error) {
 		console.error('Error fetching case by id:', error);
 		return null;
@@ -127,26 +127,6 @@ const getCounties = async () => {
 	}
 };
 
-const getRaceIdByRaceName = async (raceName: string) => {
-	try {
-		const race = await prisma.races.findUnique({ where: { race: raceName } });
-		return race ? race.race_uuid : null;
-	} catch (error) {
-		console.error('Error fetching race id by name:', error);
-		return null;
-	}
-};
-
-const getRaceNameByRaceId = async (raceId: string) => {
-	try {
-		const race = await prisma.races.findUnique({ where: { race_uuid: raceId } });
-		return race ? race.race : null;
-	} catch (error) {
-		console.error('Error fetching race name by id:', error);
-		return null;
-	}
-};
-
 const getCountyByName = async (countyName: string) => {
 	try {
 		const county = await prisma.counties.findUnique({ where: { county_name: capitalize(countyName) } });
@@ -159,7 +139,7 @@ const getCountyByName = async (countyName: string) => {
 
 const getCountyById = async (countyId: string) => {
 	try {
-		const county = await prisma.counties.findUnique({ where: { county_uuid: countyId } });
+		const county = await prisma.counties.findUnique({ where: { county_id: countyId } });
 		return county || null;
 	} catch (error) {
 		console.error('Error fetching county by id:', error);
@@ -179,7 +159,7 @@ const getJudgeByName = async (judgeName: string) => {
 
 const getJudgeById = async (judgeId: string) => {
 	try {
-		const judge = await prisma.judges.findUnique({ where: { judge_uuid: judgeId } });
+		const judge = await prisma.judges.findUnique({ where: { judge_id: judgeId } });
 		return judge || null;
 	} catch (error) {
 		console.error('Error fetching judge by id:', error);
@@ -189,7 +169,7 @@ const getJudgeById = async (judgeId: string) => {
 
 const getJudgeNameByJudgeId = async (judgeId: string) => {
 	try {
-		const judge = await prisma.judges.findUnique({ where: { judge_uuid: judgeId } });
+		const judge = await prisma.judges.findUnique({ where: { judge_id: judgeId } });
 		return judge ? judge.judge_name : `No judge name found for id ${judgeId}`;
 	} catch (error) {
 		console.error('Error fetching judge name by id:', error);
@@ -222,8 +202,6 @@ export {
 	getCounties,
 	getCaseByCaseId,
 	getJudges,
-	getRaceIdByRaceName,
-	getRaceNameByRaceId,
 	getCountyIdByCountyName,
 	getCountyNameByCountyId,
 	getChargeSeverityByCaseId,

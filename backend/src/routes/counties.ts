@@ -1,9 +1,6 @@
 import { Router } from 'express';
 import { getCounties, getPreTrialOutcomesForEachChargeWeight } from '../queries';
 import { getCombinedPreTrialOutcomes } from '../queries/complexQueries';
-// import {
-// 	getCombinedPreTrialOutcomes
-// } from '../queries/complexQueries.ts';
 
 const countiesRouter = Router();
 

@@ -118,50 +118,63 @@ interface NysCases {
 
 
 export type CountyModel = {
-	county_uuid: string;
 	county_name: string;
-	average_bail_set?: number;
+	county_id: string;
 	case_count?: number;
-	median_income?: number;
-	median_id?: string;
-	cases_bail_set?: number;
-	cases_remand?: number;
-	cases_ror?: number;
-	cases_unknown?: number;
-	cases_nmr?: number;
+	remand_at_arraign?: number;
+	ror_at_arraign?: number;
+	nmr_at_arraign?: number;
+	release_at_arraign?: number;
+	bail_set_at_arraign?: number;
+	total_bail_set?: number;
+	average_bail_set?: number;
+	percent_ror?: number;
+	percent_nmr?: number;
+	percent_release?: number;
+	percent_remand?: number;
+	percent_bail_set?: number;
+	unknown_at_arraign?: number;
+	percent_unknown?: number;
+	judges?: JudgeModel;
 }
 
 export type JudgeModel = {
 	judge_name: string;
-	judge_uuid: string;
-	average_bail_set?: number;
-	unique_districts: string[];
+	judge_id: string;
 	case_count?: number;
-	counties: string[];
-	court_names: string[];
-	disposition_types: string[];
-	remand_to_jail_count?: number;
-	ror_count?: number;
-	bail_set_and_posted_count?: number;
-	bail_set_and_not_posted_count?: number;
-	supervision_conditions: string[];
-	average_sentence_severity?: number;
-	rearrest_rate?: number;
-	cases_bail_set?: number;
-	cases_remand?: number;
-	cases_ror?: number;
-	cases_unknown?: number;
-	cases_nmr?: number;
+	remand_at_arraign?: number;
+	ror_at_arraign?: number;
+	nmr_at_arraign?: number;
+	release_at_arraign?: number;
+	bail_set_at_arraign?: number;
+	total_bail_set?: number;
+	average_bail_set?: number;
+	percent_ror?: number;
+	percent_nmr?: number;
+	percent_release?: number;
+	percent_remand?: number;
+	percent_bail_set?: number;
+	unknown_at_arraign?: number;
+	percent_unknown?: number;
+	counties?: CountyModel;
 }
 
 export type JudgeModelOrCountyModel = {
-	average_bail_set?: number;
 	case_count?: number;
-	cases_bail_set?: number;
-	cases_remand?: number;
-	cases_ror?: number;
-	cases_unknown?: number;
-	cases_nmr?: number;
+	remand_at_arraign?: number;
+	ror_at_arraign?: number;
+	nmr_at_arraign?: number;
+	release_at_arraign?: number;
+	bail_set_at_arraign?: number;
+	total_bail_set?: number;
+	average_bail_set?: number;
+	percent_ror?: number;
+	percent_nmr?: number;
+	percent_release?: number;
+	percent_remand?: number;
+	percent_bail_set?: number;
+	unknown_at_arraign?: number;
+	percent_unknown?: number;
 }
 
 
@@ -276,22 +289,9 @@ export type CaseModel = {
 	case_uuid: string;
 	district_id?: string;
 	counties?: CountyModel;
-	courts?: CourtModel;
-	districts?: DistrictModel;
 	judges?: JudgeModel;
-	races?: RaceModel;
 	representation?: RepresentationModel;
 	crimes?: CrimeModel;
-}
-export type CourtModel = {
-	court_uuid: string;
-	court_name: string;
-	court_ori?: string;
-	district?: string;
-	region?: string;
-	court_type?: string;
-	average_bail_amount?: number;
-	number_of_cases?: number;
 }
 
 export type CrimeModel = {
@@ -299,26 +299,6 @@ export type CrimeModel = {
 	top_charge_at_arrest: string;
 	average_bail_amount?: number;
 	number_of_cases?: number;
-}
-
-export type DistrictModel = {
-	district_uuid: string;
-	district_name: string;
-	region?: string;
-	county_id?: string;
-}
-
-export type RaceModel = {
-	race_uuid: string;
-	race: string;
-	average_bail_amount?: number;
-	number_of_cases?: number;
-	average_known_days_in_custody?: number;
-	remanded_percentage?: number;
-	bail_set_percentage?: number;
-	disposed_at_arraign_percentage?: number;
-	ror_percentage?: number;
-	nonmonetary_release_percentage?: number;
 }
 
 export type RepresentationModel = {

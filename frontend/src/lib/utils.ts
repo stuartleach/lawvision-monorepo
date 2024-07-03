@@ -27,7 +27,6 @@ const formatNumber = (amount: number | undefined) => {
 };
 
 const formatPercent = (amount: number) => {
-	// if amount is less than one, multiply by 100
 	if (amount <= 1) {
 		amount = amount * 100;
 	}
@@ -60,7 +59,7 @@ export const calculateCasePercentages = (stats: CaseStats) => {
 const mutateCounty = (county: CountyModel): County => {
 	const result = {
 		medianIncome: county.median_income ?? 0,
-		countyUUID: county.county_uuid,
+		countyUUID: county.county_id,
 		name: county.county_name,
 		stats: mutateStats(county)
 	};
@@ -74,25 +73,25 @@ const mutateStats = (item: JudgeModelOrCountyModel): CaseStats => {
 		caseCount: item.case_count ?? 0,
 		totalBailSet: (item.average_bail_set ?? 0) * (item?.case_count ?? 0),
 		raw: {
-			ror: item.cases_ror ?? 0,
-			remand: item.cases_remand ?? 0,
-			bailSet: item.cases_bail_set ?? 0,
-			unknown: item.cases_unknown ?? 0,
-			nmr: item.cases_nmr ?? 0,
-			release: (item.cases_nmr ?? 0) + (item.cases_ror ?? 0)
+			ror: item.ror_at_arraign ?? 0,
+			remand: item.remand_at_arraign ?? 0,
+			bailSet: item.bail_set_at_arraign ?? 0,
+			unknown: item.unknown_at_arraign ?? 0,
+			nmr: item.nmr_at_arraign ?? 0,
+			release: (item.nmr_at_arraign ?? 0) + (item.ror_at_arraign ?? 0)
 		},
 		pct: {
-			ror: 0,
-			nmr: 0,
-			remand: 0,
-			bailSet: 0,
-			unknown: 0,
-			release: 0
+			ror: item.percent_ror ?? 0,
+			nmr: item.percent_nmr ?? 0,
+			remand: item.percent_remand ?? 0,
+			bailSet: item.percent_bail_set ?? 0,
+			unknown: item.percent_unknown ?? 0,
+			release: item.percent_release ?? 0
 		}
 	};
 
-
-	return calculateCasePercentages(stats);
+	return stats;
+	// return calculateCasePercentages(stats);
 };
 
 export const sortListByTarget = (list: Judge[] | County[], target: SortTarget, order: SortOrder = SortOrder.desc) => {
@@ -130,7 +129,7 @@ const mutateJudge = (judge: JudgeModel): Judge => {
 
 	return {
 		name: judge.judge_name,
-		judgeUUID: judge.judge_uuid,
+		judgeUUID: judge.judge_id,
 		stats: mutateStats(judge),
 		counties: judge.counties
 	};

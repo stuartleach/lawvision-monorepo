@@ -2,8 +2,6 @@ export {
 	getCases,
 	getJudges,
 	getCounties,
-	getRaceIdByRaceName,
-	getRaceNameByRaceId,
 	getCountyIdByCountyName,
 	getCountyNameByCountyId,
 	getJudgeByName,
