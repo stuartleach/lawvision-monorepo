@@ -4,7 +4,13 @@
 	import Paginator from '$lib/components/containers/Paginator.svelte';
 	import Money from '$lib/components/shared/Money.svelte';
 	import Percent from '$lib/components/shared/Percent.svelte';
-	import { allJudgesStore, selectedCountyStore, selectedJudgeStore } from '$lib/stores/data';
+	import {
+		allCountiesStore,
+		allJudgesStore,
+		selectedCountyStore,
+		selectedJudgeStore,
+		selectedMetricStore
+	} from '$lib/stores/data';
 	import { type Judge, SortOrder, SortTarget } from '$lib/types/frontendTypes';
 	import { formatNumber, sortListByTarget } from '$lib/utils';
 	import { Input } from 'flowbite-svelte';
@@ -36,7 +42,7 @@
 	};
 
 	$: sortedAndFilteredJudges = sortAndFilterJudges(judges, sortTargetValue, $sortOrder, $selectedCountyStore?.name as string);
-
+	$: counties = $allCountiesStore;
 
 	const resetPage = () => {
 		currentPage.set(1);
@@ -138,16 +144,18 @@
 <div class="bg-zinc-900 pb-5 rounded-lg py-16 inline-grid">
 	<div class="grid grid-cols-4 grid-flow-row-dense">
 		<div class="grid px-4 font-bold text-white sm:px-6 lg:px-8 text-4xl tracking-tight">
-			<h4 class="text-gray-500 leading-7 text-2xl">
+			<h4 class="text-gray-500 leading-7 text-2xl bg-clip-text text-transparent bg-gradient-to-bl from-red-700 to-yellow-500">
 				{$selectedCountyStore ? $selectedCountyStore.name : 'New York State'}
 			</h4>
-			<h2 class="text-left hover:text-zinc-400 transition">
+			<h2 class="text-left hover:text-zinc-400 transition bg-clip-text text-transparent bg-gradient-to-bl from-red-700 to-yellow-500">
 				Judges
 			</h2>
 		</div>
 
-		<CountyDropdown judges={sortedAndFilteredJudges} />
-		<div>
+		<div class="mx-2">
+			<CountyDropdown counties={counties} judges={sortedAndFilteredJudges} />
+		</div>
+		<div class="mx-2">
 			<label for="name" class="ml-px block pl-4 text-sm font-medium leading-6 text-gray-900">Name</label>
 
 			<Input type="text" name="name" id="name"
@@ -209,7 +217,7 @@
 		{#each sortedAndFilteredJudges.slice(($currentPage - 1) * itemsPerPage, $currentPage * itemsPerPage) as judge, i}
 			<tr class:bg-zinc-950={i % 2 === 0}
 					class:bg-zinc-800={judge === $selectedJudgeStore}
-					class="hover:bg-zinc-800 hover:text-white text-zinc-400 transition-all cursor-pointer
+					class="hover:bg-zinc-800 hover:text-white hover:bg-gradient-to-r hover:from-zinc-600  hover:to-black hover:bg-opacity-25 text-zinc-400 transition-all cursor-pointer
 {judge === $selectedJudgeStore ? 'scale-[101%] outline-zinc-500 outline outline-1' : ''}
 {$selectedJudgeStore  && judge !== $selectedJudgeStore && 'opacity-[15%] blur-xs filter transition-all'}
 "
@@ -219,7 +227,7 @@
 				</td>
 				<td class="py-4 pl-4 pr-8 sm:pl-6 lg:pl-8">
 					<div class="flex items-center gap-x-4">
-						<div class="truncate hover:text-gray-50 font-medium leading-6">{judge.name}</div>
+						<div class="truncate hover:text-gray-50 font-medium leading-6 ">{judge.name}</div>
 					</div>
 				</td>
 				<td class="hidden py-4 pl-0 pr-4 sm:table-cell sm:pr-8">

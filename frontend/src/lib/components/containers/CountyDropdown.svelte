@@ -3,12 +3,10 @@
 	import type { County, Judge } from '$lib/types';
 	import { onMount } from 'svelte';
 
-	let counties: County[];
-	export let judges: Judge[] = [];
+	export let counties: County[]
 	let isOpen = false;
 	let selectedCounty = 'Select a county';
 
-	$: counties = $allCountiesStore;
 
 	// alphabetize counties
 	$: counties = counties.sort((a, b) => a.name.localeCompare(b.name));
@@ -34,7 +32,7 @@
 	});
 </script>
 
-<div>
+<div class="-mt-2">
 	<label id="listbox-label" class="block text-sm font-medium leading-6 text-gray-900">County</label>
 	<div class="relative mt-2">
 		<button type="button" id="dropdown-button"
