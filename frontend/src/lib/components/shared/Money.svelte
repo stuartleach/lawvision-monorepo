@@ -7,12 +7,13 @@
 <div class="wrapper">
 	<span class="dollar-sign">$</span>
 	<span class="dollars">{formatMoneyValue(value)[0]}</span>
-<!--	<span class="cents">.{formatMoneyValue(value)[1]}</span>-->
+	<!--	<span class="cents">.{formatMoneyValue(value)[1]}</span>-->
 </div>
 
 <style>
     .wrapper {
-        @apply whitespace-nowrap flex space-x-1/* items-center*/;
+        @apply whitespace-nowrap flex space-x-1/* items-center*/
+        ;
     }
 
     .dollar-sign {
@@ -24,7 +25,8 @@
     }
 
     .cents {
-        @apply /*text-gray-500*/ flex tracking-tighter text-xs align-text-top;
+        @apply /*text-gray-500*/
+        flex tracking-tighter text-xs align-text-top;
     }
 
 </style>

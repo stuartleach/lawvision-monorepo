@@ -38,22 +38,22 @@ export const showCountyJudgesStore = writable<boolean>(true);
 export const sortSelectorStore = writable<'bail' | 'remand' | 'release'>('bail');
 
 export const stateBailCases = {
-	totalBailSetAmount: 4309524656,
-	bailSetCases: 125076,
-	remandCases: 31023,
-	rorCases: 522768,
-	nmrCases: 102121,
-	unknownCases: 110516,
-	totalCases: 891342,
-	averageBailAmount: 4834.87,
-	releaseCases: 624889
+	totalBailSet: 4309524656,
+	bailSet: 125076,
+	remand: 31023,
+	ror: 522768,
+	nmr: 102121,
+	unknown: 110516,
+	caseCount: 1100000,
+	averageBailSet: 4834.87,
+	release: 624889
 };
 
 export const stateBailCasesPct = {
-	bailSetCasesPct: stateBailCases.bailSetCases / stateBailCases.totalCases,
-	remandCasesPct: stateBailCases.remandCases / stateBailCases.totalCases,
-	rorCasesPct: stateBailCases.rorCases / stateBailCases.totalCases,
-	nmrCasesPct: stateBailCases.nmrCases / stateBailCases.totalCases,
-	unknownCasesPct: stateBailCases.unknownCases / stateBailCases.totalCases,
-	releasePct: stateBailCases.releaseCases / stateBailCases.totalCases
+	bailSet: stateBailCases.bailSet / stateBailCases.caseCount,
+	remand: stateBailCases.remand / stateBailCases.caseCount,
+	ror: stateBailCases.ror / stateBailCases.caseCount,
+	nmr: stateBailCases.nmr / stateBailCases.caseCount,
+	unknown: stateBailCases.unknown / stateBailCases.caseCount,
+	release: stateBailCases.release / stateBailCases.caseCount
 };

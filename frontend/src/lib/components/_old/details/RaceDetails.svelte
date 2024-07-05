@@ -1,5 +1,5 @@
 <script lang="ts">
-	import LawCard from '$lib/components/cards/LawCard.svelte';
+	import LawCard from '$lib/components/_old/cards/LawCard.svelte';
 	import ClickableListItem from '$lib/components/shared/ClickableListItem.svelte';
 	import CloseButton from '$lib/components/shared/CloseButton.svelte';
 	import ScrollableList from '$lib/components/shared/ScrollableList.svelte';

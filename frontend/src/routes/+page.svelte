@@ -1,22 +1,9 @@
 <script lang="ts">
-	import AllJudgesSelector from '$lib/components/cards/AllJudgesSelector.svelte';
-	import ChargeCard from '$lib/components/cards/ChargeCard.svelte';
-	import CountiesSelector from '$lib/components/cards/CountiesSelector.svelte';
-	import CountyDetails from '$lib/components/cards/CountyDetails.svelte';
-	import CountyJudges from '$lib/components/cards/CountyJudges.svelte';
-	import JudgeDetails from '$lib/components/cards/JudgeDetails.svelte';
-	import Map from '$lib/components/cards/Map.svelte';
-	import RaceCard from '$lib/components/cards/RaceCard.svelte';
-	import StateDetails from '$lib/components/cards/StateDetails.svelte';
-	import ContainerCounty from '$lib/components/containers/ContainerCounty.svelte';
-	import ContainerJudge from '$lib/components/containers/ContainerJudge.svelte';
-	import ContainerState from '$lib/components/containers/ContainerState.svelte';
 	import SelectorContainer from '$lib/components/containers/SelectorContainerJudge.svelte';
 	import Footer from '$lib/components/layout/Footer.svelte';
 
 	import Title from '$lib/components/shared/Title.svelte';
-	import { loadingStore, selectedCountyStore, selectedJudgeStore } from '$lib/stores/data';
-	import { TypeOfTarget } from '$lib/types/frontendTypes';
+	import { loadingStore } from '$lib/stores/data';
 </script>
 
 
@@ -34,28 +21,8 @@
 		</Title>
 	</section>
 	<div class="inner-container">
-		<!--		<MetricSelector />-->
 		<div class="middle-container my-10 gap-2">
-<!--			<ContainerJudge />-->
-			<SelectorContainer targetType={TypeOfTarget.judges} />
-<!--			<ContainerCounty />-->
-<!--			<SelectorContainer targetType={TypeOfTarget.counties} />
-			<ContainerState />-->
-			<!--<Map />
-			<StateDetails />
-			<AllJudgesSelector />
-			<CountiesSelector />
-			&lt;!&ndash;{#if $selectedCountyStore}&ndash;&gt;
-			<CountyDetails />
-			&lt;!&ndash;{/if}&ndash;&gt;
-			&lt;!&ndash;{#if $selectedCountyStore}&ndash;&gt;
-			<CountyJudges />
-			&lt;!&ndash;{/if}&ndash;&gt;
-			&lt;!&ndash;{#if $selectedJudgeStore}&ndash;&gt;
-			<JudgeDetails />
-			<ChargeCard />
-			<RaceCard />-->
-			<!--{/if}-->
+			<SelectorContainer />
 		</div>
 	</div>
 	<div class="footer-container">

@@ -4,6 +4,7 @@
 	import { onMount } from 'svelte';
 
 	export let counties: County[]
+	export let judges: Judge[]
 	let isOpen = false;
 	let selectedCounty = 'Select a county';
 

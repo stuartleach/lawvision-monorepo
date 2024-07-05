@@ -1,14 +1,18 @@
+import { countyJudgesStore, selectedJudgeOutcomesStore } from '$lib/stores/data';
 import type {
 	County,
-	CountyQuery, FetchFunction,
-	GeoJSONData, GeoJSONQuery,
+	CountyModel,
+	CountyQuery,
+	FetchFunction,
+	GeoJSONData,
+	GeoJSONQuery,
 	Judge,
-	JudgeQuery,
-	JudgeOutcomesQuery, RaceOutcomesMap, CombinedPreTrialOutcomes, JudgeOutcomes
+	JudgeModel,
+	JudgeOutcomes,
+	JudgeOutcomesQuery,
+	JudgeQuery
 } from '$lib/types';
-import type { CountyModel, JudgeModel } from '$lib/types';
 import { mutateCounty, mutateJudge } from '$lib/utils';
-import { allCountiesStore, countyJudgesStore, selectedJudgeOutcomesStore } from '$lib/stores/data';
 
 const fetchData = async <T>(fetch: FetchFunction, url: string, options?: RequestInit): Promise<T> => {
 	const response = await fetch(url, {

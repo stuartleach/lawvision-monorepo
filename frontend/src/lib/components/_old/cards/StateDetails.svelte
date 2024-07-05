@@ -1,5 +1,5 @@
 <script lang="ts">
-	import LawCard from '$lib/components/cards/LawCard.svelte';
+	import LawCard from '$lib/components/_old/cards/LawCard.svelte';
 	import HoverableItem from '$lib/components/shared/HoverableItem.svelte';
 	import Money from '$lib/components/shared/Money.svelte';
 	import ScrollableList from '$lib/components/shared/ScrollableList.svelte';
@@ -55,14 +55,14 @@
 			<StatItem>
 				<h3 slot="title">Number of cases:</h3>
 				<p slot="stat" class="font-bold text-right text-zinc-400 font-mono">
-					{formatNumber(stateBailCases.totalCases)}
+					{formatNumber(stateBailCases.caseCount)}
 				</p>
 			</StatItem>
 			<StatItem onMouseEnter={() => handleMouseEnter('amount')} onMouseLeave={handleMouseLeave}>
 				<h3 slot="title">{hoveredStat === 'amount' ? 'Total bail set:' : 'Average bail amount:'}</h3>
 				<p slot="stat">
 					<Money
-						value={hoveredStat === 'amount' ? stateBailCases.totalBailSetAmount : stateBailCases.averageBailAmount} />
+						value={hoveredStat === 'amount' ? stateBailCases.totalBailSet : stateBailCases.averageBailSet} />
 				</p>
 			</StatItem>
 			<StatItem onMouseEnter={() => handleMouseEnter('remand')} onMouseLeave={handleMouseLeave}
@@ -72,8 +72,8 @@
 				<p slot="stat" class="text-red-600">
 					<HoverableItem
 						targetBool={hoveredStat === 'remand'}
-						valueWhenNotHovered={formatNumber(stateBailCasesPct.remandCasesPct * 100) + '%'}
-						valueWhenHovered={formatNumber(stateBailCases.remandCases)}
+						valueWhenNotHovered={formatNumber(stateBailCasesPct.remand * 100) + '%'}
+						valueWhenHovered={formatNumber(stateBailCases.remand)}
 					/>
 				</p>
 			</StatItem>
@@ -84,8 +84,8 @@
 				<p slot="stat" class="text-green-600">
 					<HoverableItem
 						targetBool={hoveredStat === 'release'}
-						valueWhenNotHovered={formatNumber(stateBailCasesPct.releasePct * 100) + '%'}
-						valueWhenHovered={formatNumber(stateBailCases.releaseCases)}
+						valueWhenNotHovered={formatNumber(stateBailCasesPct.release * 100) + '%'}
+						valueWhenHovered={formatNumber(stateBailCases.release)}
 					/>
 				</p>
 			</StatItem>
@@ -96,8 +96,8 @@
 				<p slot="stat" class="text-yellow-300">
 					<HoverableItem
 						targetBool={hoveredStat === 'bail'}
-						valueWhenNotHovered={formatNumber(stateBailCasesPct.bailSetCasesPct * 100) + '%'}
-						valueWhenHovered={formatNumber(stateBailCases.bailSetCases)}
+						valueWhenNotHovered={formatNumber(stateBailCasesPct.bailSet * 100) + '%'}
+						valueWhenHovered={formatNumber(stateBailCases.bailSet)}
 					/>
 				</p>
 			</StatItem>
@@ -106,8 +106,8 @@
 				<p slot="stat" class="text-zinc-600">
 					<HoverableItem
 						targetBool={hoveredStat === 'unknown'}
-						valueWhenNotHovered={formatNumber(stateBailCasesPct.unknownCasesPct * 100) + '%'}
-						valueWhenHovered={formatNumber(stateBailCases.unknownCases)}
+						valueWhenNotHovered={formatNumber(stateBailCasesPct.unknown * 100) + '%'}
+						valueWhenHovered={formatNumber(stateBailCases.unknown)}
 					/>
 				</p>
 			</StatItem>

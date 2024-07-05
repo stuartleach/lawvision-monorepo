@@ -1,6 +1,6 @@
 <script>
 	import '../app.css';
-	import LawVisionIcon from '../lib/components/shared/Logo.svelte';
+	import LawVisionIcon from '$lib/components/assets/Logo.svelte';
 </script>
 <div class="flex-col">
 	<nav class="bg-zinc-900 shadow-md ">
@@ -26,7 +26,6 @@
 				</div>
 			</div>
 		</div>
-
 	</nav>
 	<div class="flex justify-center flex-row">
 		<div class="outer-container">
@@ -38,7 +37,8 @@
 
 <style>
     .outer-container {
-        @apply flex flex-col p-6 w-screen sm:w-screen lg:w-screen h-full justify-between;
+        @apply flex flex-col p-6 w-screen;
+        @apply h-full justify-between;
         background-color: rgba(39, 39, 42, 0.1);
     }
 </style>

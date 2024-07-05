@@ -1,12 +1,21 @@
 <script lang="ts">
-	import { formatPercent } from '$lib/utils';
+
+	function getOrdinalSuffix(n: number): string {
+		const s = ['th', 'st', 'nd', 'rd'],
+			v = n % 100;
+		return (s[(v - 20) % 10] || s[v] || s[0]);
+	}
 
 	export let value: number = 0;
+
+	$: valueInt = Math.floor(value)
+
+	$: valueSuffix = getOrdinalSuffix(valueInt);
 </script>
 
 <div class="wrapper">
-	<span class="left-of-decimal">{formatPercent(value).split('.')[0]}</span>
-	<span class="percent-sign">%</span>
+	<span>{valueInt}</span>
+	<span class="right-of-decimal align-top -ml-[0.25em] font-light text-xs">{valueSuffix}</span>
 </div>
 
 <style>

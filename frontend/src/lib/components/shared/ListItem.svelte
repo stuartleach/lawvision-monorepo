@@ -3,7 +3,6 @@
 	export let onMouseLeave: (() => void) | null = null;
 	export let onClick: (() => void) | null = null;
 
-	export let className: string = '';
 </script>
 
 <button class="

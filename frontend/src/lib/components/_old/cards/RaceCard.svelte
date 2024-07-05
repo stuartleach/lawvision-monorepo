@@ -1,30 +1,13 @@
 <script lang="ts">
-	import LawCard from '$lib/components/cards/LawCard.svelte';
+	import LawCard from '$lib/components/_old/cards/LawCard.svelte';
 	import ClickableListItem from '$lib/components/shared/ClickableListItem.svelte';
-	import CloseButton from '$lib/components/shared/CloseButton.svelte';
 	import ScrollableList from '$lib/components/shared/ScrollableList.svelte';
 	import { selectedJudgeOutcomesStore, selectedJudgeStore, selectedMetricStore } from '$lib/stores/data';
-	import type { CombinedPreTrialOutcomes, Judge, JudgeOutcomes } from '$lib/types/frontendTypes';
 	import { formatPercent } from '$lib/utils';
 
-	let selectedJudgeInfo: Judge | null;
 
 	$: selectedJudgeInfo = $selectedJudgeStore;
-
-	let hoveredStat: string | null = null;
-
-	const handleMouseEnter = (stat: string) => {
-		hoveredStat = stat;
-	};
-
-	const handleMouseLeave = () => {
-		hoveredStat = null;
-	};
-
-	$: judgeId = selectedJudgeInfo?.judgeUUID ?? '';
-	let judgeOutcomes: JudgeOutcomes | null;
 	$: judgeOutcomes = $selectedJudgeOutcomesStore;
-	let raceOutcomes: CombinedPreTrialOutcomes | null;
 
 
 	$: console.log(judgeOutcomes?.charges);

@@ -1,14 +1,11 @@
 <script lang="ts">
-	import { formatPercent } from '$lib/utils';
-	import type { CombinedPreTrialOutcomes, Judge, JudgeOutcomes } from '$lib/types/frontendTypes';
-	import { selectedJudgeOutcomesStore, selectedJudgeStore, selectedMetricStore } from '$lib/stores/data';
-	import Close from '../shared/CloseIcon.svelte';
-	import ScrollableList from '../shared/ScrollableList.svelte';
-	import ClickableListItem from '../shared/ClickableListItem.svelte';
-
 	import { getJudgeOutcomes } from '$lib/api';
-	import LawCard from '$lib/components/cards/LawCard.svelte';
-	import SortBadge from '$lib/components/shared/SortBadge.svelte';
+	import LawCard from '$lib/components/_old/cards/LawCard.svelte';
+	import { selectedJudgeOutcomesStore, selectedJudgeStore, selectedMetricStore } from '$lib/stores/data';
+	import type { CombinedPreTrialOutcomes, Judge, JudgeOutcomes } from '$lib/types/frontendTypes';
+	import { formatPercent } from '$lib/utils';
+	import ClickableListItem from '../../shared/ClickableListItem.svelte';
+	import ScrollableList from '../../shared/ScrollableList.svelte';
 
 	let selectedJudgeInfo: Judge | null;
 
@@ -36,15 +33,7 @@
 </script>
 
 <LawCard>
-	<div slot="menuBar" class="flex justify-end">
-		<button class="x-button mb-4 -mr-1 -mt-2 w-4" on:click={() => selectedJudgeStore.set(null)}>
-			<Close />
-		</button>
-	</div>
-	<h4 slot="super-title"
-			class="text-xl tracking-tight font-bold text-gray-500 mb-1">{selectedJudgeInfo?.name ? "Charge Breakdown" : ""}</h4>
-	<h2 slot="title">{selectedJudgeInfo?.name || "Judge X"} <SortBadge text="showing" /> </h2>
-	<div slot="data">
+	<div>
 		<ScrollableList>
 			<ClickableListItem>
 				<h3 slot="title">A Felony:</h3>

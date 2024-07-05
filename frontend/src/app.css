@@ -64,7 +64,16 @@ body {
 /* COLORS */
 /*****************/
 
-.bail-color {
+
+.caseCount-color {
+    @apply text-blue-500;
+}
+
+.averageBailSet-color {
+    @apply text-yellow-500;
+}
+
+.bailSet-color {
     @apply text-yellow-500;
 }
 

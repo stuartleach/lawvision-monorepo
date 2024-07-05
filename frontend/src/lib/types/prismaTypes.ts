@@ -118,9 +118,11 @@ interface NysCases {
 
 
 export type CountyModel = {
+	percentile_state_case_count: number;
 	county_name: string;
 	county_id: string;
 	case_count?: number;
+	median_income?: number;
 	remand_at_arraign?: number;
 	ror_at_arraign?: number;
 	nmr_at_arraign?: number;
@@ -135,10 +137,18 @@ export type CountyModel = {
 	percent_bail_set?: number;
 	unknown_at_arraign?: number;
 	percent_unknown?: number;
-	judges?: JudgeModel;
+	judges?: string[];
+	percentile_state_bail_amount?: number;
+	percentile_state_bail_set?: number;
+	percentile_state_remand?: number;
+	percentile_state_ror?: number;
+	percentile_state_nmr?: number;
+	percentile_state_release?: number;
+	percentile_state_unknown?: number;
 }
 
 export type JudgeModel = {
+	primary_county: string;
 	judge_name: string;
 	judge_id: string;
 	case_count?: number;
@@ -156,7 +166,23 @@ export type JudgeModel = {
 	percent_bail_set?: number;
 	unknown_at_arraign?: number;
 	percent_unknown?: number;
-	counties?: CountyModel;
+	counties?: string[];
+	percentile_county_bail_amount?: number;
+	percentile_county_bail_set?: number;
+	percentile_county_remand?: number;
+	percentile_county_ror?: number;
+	percentile_county_nmr?: number;
+	percentile_county_release?: number;
+	percentile_county_unknown?: number;
+	percentile_state_bail_amount?: number;
+	percentile_state_bail_set?: number;
+	percentile_state_remand?: number;
+	percentile_state_ror?: number;
+	percentile_state_nmr?: number;
+	percentile_state_release?: number;
+	percentile_state_unknown?: number;
+	percentile_state_case_count: number;
+	percentile_county_case_count: number;
 }
 
 export type JudgeModelOrCountyModel = {
@@ -175,6 +201,13 @@ export type JudgeModelOrCountyModel = {
 	percent_bail_set?: number;
 	unknown_at_arraign?: number;
 	percent_unknown?: number;
+	percentile_state_bail_amount?: number;
+	percentile_state_bail_set?: number;
+	percentile_state_remand?: number;
+	percentile_state_ror?: number;
+	percentile_state_nmr?: number;
+	percentile_state_release?: number;
+	percentile_state_unknown?: number;
 }
 
 

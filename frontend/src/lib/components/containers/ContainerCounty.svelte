@@ -16,15 +16,6 @@
 
 	let hoveredStat: string | null = null;
 
-	const handleMouseEnter = (stat: string) => {
-		hoveredStat = stat;
-	};
-
-	const handleMouseLeave = () => {
-		hoveredStat = null;
-	};
-
-	$: judgeId = selectedJudgeInfo?.judgeUUID ?? '';
 
 </script>
 

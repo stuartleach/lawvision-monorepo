@@ -1,16 +1,9 @@
 <script lang="ts">
 	import ContainerJudge from '$lib/components/containers/ContainerJudge.svelte';
 	import CountyDropdown from '$lib/components/containers/CountyDropdown.svelte';
-	import Paginator from '$lib/components/containers/Paginator.svelte';
 	import Money from '$lib/components/shared/Money.svelte';
 	import Percent from '$lib/components/shared/Percent.svelte';
-	import {
-		allCountiesStore,
-		allJudgesStore,
-		selectedCountyStore,
-		selectedJudgeStore,
-		selectedMetricStore
-	} from '$lib/stores/data';
+	import { allCountiesStore, allJudgesStore, selectedCountyStore, selectedJudgeStore } from '$lib/stores/data';
 	import { type Judge, SortOrder, SortTarget } from '$lib/types/frontendTypes';
 	import { formatNumber, sortListByTarget } from '$lib/utils';
 	import { Input } from 'flowbite-svelte';
@@ -29,8 +22,6 @@
 	$: sortTargetValue = $sortTarget;
 
 	const sortOrder = writable<SortOrder>(SortOrder.desc);
-	const currentPage = writable(1);
-	const itemsPerPage = 10;
 
 	const sortAndFilterJudges = (inputJudges: Judge[], sortTargetValue: SortTarget, sortOrder: SortOrder, county: string): Judge[] => {
 		let resultJudges: Judge[] = inputJudges;
@@ -44,21 +35,6 @@
 	$: sortedAndFilteredJudges = sortAndFilterJudges(judges, sortTargetValue, $sortOrder, $selectedCountyStore?.name as string);
 	$: counties = $allCountiesStore;
 
-	const resetPage = () => {
-		currentPage.set(1);
-	};
-
-	const nextPage = () => {
-		if ($currentPage < totalPages()) {
-			currentPage.update(n => n + 1);
-		}
-	};
-
-	const prevPage = () => {
-		if ($currentPage > 1) {
-			currentPage.update(n => n - 1);
-		}
-	};
 
 	const toggleSort = () => {
 		sortOrder.update(order => (order === SortOrder.asc ? SortOrder.desc : SortOrder.asc));
@@ -71,18 +47,8 @@
 			sortOrder.set(SortOrder.desc);
 			sortTarget.set(target);
 		}
-		resetPage();
 	};
 
-
-	const totalPages = () => Math.ceil(sortedAndFilteredJudges.length / itemsPerPage);
-
-	const setPage = (page: number) => {
-		if (page > 0 && page <= totalPages()) {
-			selectedJudgeStore.set(null);
-			currentPage.set(page);
-		}
-	};
 
 	const nextSortMetric = (): SortTarget => {
 		selectedJudgeStore.set(null);
@@ -102,26 +68,10 @@
 		}
 	};
 
-	const getPageNumbers = () => {
-		const total = totalPages();
-		const current = $currentPage;
-		const delta = 5;
-		let start = Math.max(1, current - delta);
-		let end = Math.min(total, current + delta);
-
-		if (current <= delta) {
-			end = Math.min(total, 10);
-		} else if (current + delta >= total) {
-			start = Math.max(1, total - 9);
-		}
-
-		return Array.from({ length: end - start + 1 }, (_, i) => start + i);
-	};
 
 	const search = (query: string) => {
 		const lowerQuery = query.toLowerCase();
 		judges = sortedAndFilteredJudges.filter(judge => judge.name.toLowerCase().includes(lowerQuery));
-		resetPage();
 	};
 
 	let query: string = '';
@@ -144,10 +94,12 @@
 <div class="bg-zinc-900 pb-5 rounded-lg py-16 inline-grid">
 	<div class="grid grid-cols-4 grid-flow-row-dense">
 		<div class="grid px-4 font-bold text-white sm:px-6 lg:px-8 text-4xl tracking-tight">
-			<h4 class="text-gray-500 leading-7 text-2xl bg-clip-text text-transparent bg-gradient-to-bl from-red-700 to-yellow-500">
+			<h4
+				class="text-gray-500 leading-7 text-2xl bg-clip-text text-transparent bg-gradient-to-bl from-red-700 to-yellow-500">
 				{$selectedCountyStore ? $selectedCountyStore.name : 'New York State'}
 			</h4>
-			<h2 class="text-left hover:text-zinc-400 transition bg-clip-text text-transparent bg-gradient-to-bl from-red-700 to-yellow-500">
+			<h2
+				class="text-left hover:text-zinc-400 transition bg-clip-text text-transparent bg-gradient-to-bl from-red-700 to-yellow-500">
 				Judges
 			</h2>
 		</div>
@@ -213,17 +165,16 @@
 			</th>
 		</tr>
 		</thead>
-		<tbody class="divide-y divide-white/5">
-		{#each sortedAndFilteredJudges.slice(($currentPage - 1) * itemsPerPage, $currentPage * itemsPerPage) as judge, i}
+		<tbody class="divide-y divide-white/5 flex-wrap ">
+		{#each sortedAndFilteredJudges as judge, i}
 			<tr class:bg-zinc-950={i % 2 === 0}
 					class:bg-zinc-800={judge === $selectedJudgeStore}
 					class="hover:bg-zinc-800 hover:text-white hover:bg-gradient-to-r hover:from-zinc-600  hover:to-black hover:bg-opacity-25 text-zinc-400 transition-all cursor-pointer
-{judge === $selectedJudgeStore ? 'scale-[101%] outline-zinc-500 outline outline-1' : ''}
-{$selectedJudgeStore  && judge !== $selectedJudgeStore && 'opacity-[15%] blur-xs filter transition-all'}
-"
+          {judge === $selectedJudgeStore ? 'scale-[101%] outline-zinc-500 outline outline-1' : ''}
+          {$selectedJudgeStore && judge !== $selectedJudgeStore && 'opacity-[15%] blur-xs filter transition-all'}"
 					on:click={() =>  { $selectedJudgeStore?.name === judge.name ? selectedJudgeStore.set(null) : selectedJudgeStore.set(judge)}}>
 				<td class="py-4 pl-4 pr-8 sm:pl-6 lg:pl-8 text-left font-mono">
-					{($currentPage - 1) * itemsPerPage + i + 1}
+					{i + 1}
 				</td>
 				<td class="py-4 pl-4 pr-8 sm:pl-6 lg:pl-8">
 					<div class="flex items-center gap-x-4">
@@ -260,12 +211,5 @@
 		{/each}
 		</tbody>
 	</table>
-	<Paginator
-		currentPage={$currentPage}
-		totalPages={totalPages}
-		prevPage={prevPage}
-		nextPage={nextPage}
-		setPage={setPage}
-		getPageNumbers={getPageNumbers}
-	/>
+
 </div>

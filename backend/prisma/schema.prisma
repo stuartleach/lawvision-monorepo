@@ -157,6 +157,8 @@ model counties {
   percentile_state_nmr         Decimal? @db.Decimal
   percentile_state_release     Decimal? @db.Decimal
   percentile_state_unknown     Decimal? @db.Decimal
+  median_income                Int?
+  percentile_state_case_count  Decimal? @db.Decimal
   cases                        cases[]
 
   @@schema("pretrial_slim")
@@ -196,6 +198,8 @@ model judges {
   percentile_state_unknown      Decimal? @db.Decimal
   percentile_county_unknown     Decimal? @db.Decimal
   primary_county                String?
+  percentile_county_case_count  Decimal? @db.Decimal
+  percentile_state_case_count   Decimal? @db.Decimal
   cases                         cases[]
 
   @@schema("pretrial_slim")

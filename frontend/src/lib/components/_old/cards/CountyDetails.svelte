@@ -2,7 +2,7 @@
 	import { formatNumber } from '$lib/utils';
 	import type { County, Judge } from '$lib/types';
 	import { selectedCountyStore } from '$lib/stores/data';
-	import LawCard from '$lib/components/cards/LawCard.svelte';
+	import LawCard from '$lib/components/_old/cards/LawCard.svelte';
 	import ScrollableList from '$lib/components/shared/ScrollableList.svelte';
 	import ClickableListItem from '$lib/components/shared/ClickableListItem.svelte';
 	import Money from '$lib/components/shared/Money.svelte';

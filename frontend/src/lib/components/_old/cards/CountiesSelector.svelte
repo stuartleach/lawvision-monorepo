@@ -9,7 +9,7 @@
 		countyJudgesStore,
 		countyJudgesPromiseStore
 	} from '$lib/stores/data';
-	import LawCard from '$lib/components/cards/LawCard.svelte';
+	import LawCard from '$lib/components/_old/cards/LawCard.svelte';
 	import SortBadge from '$lib/components/shared/SortBadge.svelte';
 	import ScrollableList from '$lib/components/shared/ScrollableList.svelte';
 	import ClickableListSelector from '$lib/components/shared/ClickableListSelector.svelte';

@@ -2,12 +2,12 @@
 	import { formatPercent } from '$lib/utils';
 	import type { CombinedPreTrialOutcomes, Judge, JudgeOutcomes } from '$lib/types/frontendTypes';
 	import { selectedJudgeOutcomesStore, selectedJudgeStore, selectedMetricStore } from '$lib/stores/data';
-	import Close from '../shared/CloseIcon.svelte';
-	import ScrollableList from '../shared/ScrollableList.svelte';
-	import ClickableListItem from '../shared/ClickableListItem.svelte';
+	import Close from '../../shared/CloseIcon.svelte';
+	import ScrollableList from '../../shared/ScrollableList.svelte';
+	import ClickableListItem from '../../shared/ClickableListItem.svelte';
 
 	import { getJudgeOutcomes } from '$lib/api';
-	import LawCard from '$lib/components/cards/LawCard.svelte';
+	import LawCard from '$lib/components/_old/cards/LawCard.svelte';
 	import SortBadge from '$lib/components/shared/SortBadge.svelte';
 
 	let selectedJudgeInfo: Judge | null;
@@ -36,7 +36,15 @@
 </script>
 
 <LawCard>
-	<div>
+	<div slot="menuBar" class="flex justify-end">
+		<button class="x-button mb-4 -mr-1 -mt-2 w-4" on:click={() => selectedJudgeStore.set(null)}>
+			<Close />
+		</button>
+	</div>
+	<h4 slot="super-title"
+			class="text-xl tracking-tight font-bold text-gray-500 mb-1">{selectedJudgeInfo?.name ? "Charge Breakdown" : ""}</h4>
+	<h2 slot="title">{selectedJudgeInfo?.name || "Judge X"} <SortBadge text="showing" /> </h2>
+	<div slot="data">
 		<ScrollableList>
 			<ClickableListItem>
 				<h3 slot="title">A Felony:</h3>

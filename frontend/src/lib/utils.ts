@@ -2,13 +2,16 @@ import { selectedCountyStore, selectedJudgeStore } from '$lib/stores/data';
 import {
 	type CaseStats,
 	type County,
-	type CountyWithGeoJSON, type GeoJSONData,
+	type CountyWithGeoJSON,
+	type GeoJSONData,
 	type GeoJSONFeature,
 	type Judge,
-	type JudgeOrCounty, type JudgeOutcomes,
-	type MinMax, SortOrder, SortTarget
+	type JudgeOrCounty,
+	type MinMax,
+	SortOrder,
+	SortTarget
 } from '$lib/types/frontendTypes';
-import type { CountyModel, JudgeModel, JudgeModelOrCountyModel } from '$lib/types/prismaTypes';
+import type { CountyModel, JudgeModel } from '$lib/types/prismaTypes';
 
 const formatMoney = (amount: number) => {
 	amount = parseFloat(String(amount));
@@ -42,32 +45,52 @@ function formatMoneyValue(value: number): [string, string] {
 	return formatMoney(value).split('.') as [string, string];
 }
 
-export const calculateCasePercentages = (stats: CaseStats) => {
-	const totalCases = stats.caseCount;
-
-	stats.pct.bailSet = stats.raw.bailSet / totalCases;
-	stats.pct.remand = stats.raw.remand / totalCases;
-	stats.pct.ror = stats.raw.ror / totalCases;
-	stats.pct.nmr = stats.raw.nmr / totalCases;
-	stats.pct.unknown = stats.raw.unknown / totalCases;
-	stats.pct.release = (stats.raw.ror + stats.raw.nmr) / totalCases;
-
-	return stats;
-};
-
 
 const mutateCounty = (county: CountyModel): County => {
 	const result = {
 		medianIncome: county.median_income ?? 0,
 		countyUUID: county.county_id,
 		name: county.county_name,
-		stats: mutateStats(county)
+		stats: mutateCountyStats(county)
 	};
-
 	return result;
 };
 
-const mutateStats = (item: JudgeModelOrCountyModel): CaseStats => {
+const mutateCountyStats = (item: CountyModel): CaseStats => {
+	return {
+		averageBailSet: item.average_bail_set ?? 0,
+		caseCount: item.case_count ?? 0,
+		totalBailSet: (item.average_bail_set ?? 0) * (item?.case_count ?? 0),
+		raw: {
+			ror: item.ror_at_arraign ?? 0,
+			remand: item.remand_at_arraign ?? 0,
+			bailSet: item.bail_set_at_arraign ?? 0,
+			unknown: item.unknown_at_arraign ?? 0,
+			nmr: item.nmr_at_arraign ?? 0,
+			release: (item.nmr_at_arraign ?? 0) + (item.ror_at_arraign ?? 0)
+		},
+		pct: {
+			ror: item.percent_ror ?? 0,
+			nmr: item.percent_nmr ?? 0,
+			remand: item.percent_remand ?? 0,
+			bailSet: item.percent_bail_set ?? 0,
+			unknown: item.percent_unknown ?? 0,
+			release: item.percent_release ?? 0
+		},
+		pctileState: {
+			caseCount: item.percentile_state_case_count ?? 0,
+			ror: item.percentile_state_ror ?? 0,
+			nmr: item.percentile_state_nmr ?? 0,
+			remand: item.percentile_state_remand ?? 0,
+			bailSet: item.percentile_state_bail_set ?? 0,
+			bailAmount: item.percentile_state_bail_amount ?? 0,
+			unknown: item.percentile_state_unknown ?? 0,
+			release: item.percentile_state_release ?? 0
+		}
+	};
+};
+
+const mutateJudgeStats = (item: JudgeModel): CaseStats => {
 	const stats: CaseStats = {
 		averageBailSet: item.average_bail_set ?? 0,
 		caseCount: item.case_count ?? 0,
@@ -87,11 +110,30 @@ const mutateStats = (item: JudgeModelOrCountyModel): CaseStats => {
 			bailSet: item.percent_bail_set ?? 0,
 			unknown: item.percent_unknown ?? 0,
 			release: item.percent_release ?? 0
+		},
+		pctileState: {
+			caseCount: item.percentile_state_case_count ?? 0,
+			ror: item.percentile_state_ror ?? 0,
+			nmr: item.percentile_state_nmr ?? 0,
+			remand: item.percentile_state_remand ?? 0,
+			bailSet: item.percentile_state_bail_set ?? 0,
+			bailAmount: item.percentile_state_bail_amount ?? 0,
+			unknown: item.percentile_state_unknown ?? 0,
+			release: item.percentile_state_release ?? 0
+		},
+		pctileCounty: {
+			caseCount: item.percentile_county_case_count ?? 0,
+			ror: item.percentile_county_ror ?? 0,
+			nmr: item.percentile_county_nmr ?? 0,
+			remand: item.percentile_county_remand ?? 0,
+			bailSet: item.percentile_county_bail_set ?? 0,
+			bailAmount: item.percentile_county_bail_amount ?? 0,
+			unknown: item.percentile_county_unknown ?? 0,
+			release: item.percentile_county_release ?? 0
 		}
 	};
 
 	return stats;
-	// return calculateCasePercentages(stats);
 };
 
 export const sortListByTarget = (list: Judge[] | County[], target: SortTarget, order: SortOrder = SortOrder.desc) => {
@@ -130,7 +172,8 @@ const mutateJudge = (judge: JudgeModel): Judge => {
 	return {
 		name: judge.judge_name,
 		judgeUUID: judge.judge_id,
-		stats: mutateStats(judge),
+		stats: mutateJudgeStats(judge),
+		primaryCounty: judge.primary_county,
 		counties: judge.counties
 	};
 };

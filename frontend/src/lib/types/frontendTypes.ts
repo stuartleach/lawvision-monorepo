@@ -47,12 +47,12 @@ export interface Judge {
 	judgeUUID: string;
 	name: string;
 	stats: CaseStats;
+	primaryCounty: string;
 	counties?: string[];
 }
 
 export type JudgeOrCounty = {
 	stats: CaseStats
-	counties?: string[]
 	judgeUUID?: string
 	countyUUID?: string
 	name: string
@@ -78,6 +78,26 @@ export interface CaseStats {
 		unknown: number;
 		release: number;
 	};
+	pctileState: {
+		bailAmount: number;
+		caseCount: number;
+		ror: number;
+		remand: number;
+		bailSet: number;
+		unknown: number;
+		nmr: number;
+		release: number;
+	},
+	pctileCounty?: { // not present in county stats
+		bailAmount: number;
+		caseCount: number;
+		ror: number;
+		remand: number;
+		bailSet: number;
+		unknown: number;
+		nmr: number;
+		release: number;
+	},
 }
 
 export type FetchFunction = (input: RequestInfo, init?: RequestInit) => Promise<Response>;
