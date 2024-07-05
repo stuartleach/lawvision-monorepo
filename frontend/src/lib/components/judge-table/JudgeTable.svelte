@@ -108,7 +108,6 @@
 		</div>
 		<div class="mx-2">
 			<label for="name" class="ml-px block pl-4 font-medium leading-6 text-gray-900">Name</label>
-
 			<Input type="text" name="name" id="name"
 						 class="block w-full bg-zinc-800 rounded-md border-0 px-4 py-1.5 text-gray-300 shadow-sm ring-1 ring-inset ring-gray-600 placeholder:text-gray-400 placeholder:opacity-25 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
 						 placeholder={"Ruth B. Ginsburg"}
@@ -121,17 +120,17 @@
 			<button
 				class="flex flex-row justify-end font-semibold text-right cursor-pointer hover:opacity-75 transition"
 				on:click={() => handleClick(nextSortMetric())}
-				class:text-red-700={sortTargetValue === SortTarget.remandPct}
-				class:text-green-700={sortTargetValue === SortTarget.releasePct}
-				class:text-yellow-500={sortTargetValue === SortTarget.averageBail}
-				class:text-zinc-400={sortTargetValue === SortTarget.caseCount || sortTargetValue === SortTarget.name}
+				class:remand-color={sortTargetValue === SortTarget.remandPct}
+				class:release-color={sortTargetValue === SortTarget.releasePct}
+				class:bailSet-color={sortTargetValue === SortTarget.bailSet}
+				class:averageBail-color={sortTargetValue === SortTarget.averageBail}
+				class:caseCount-color={sortTargetValue === SortTarget.caseCount || sortTargetValue === SortTarget.name}
 			>
 				{$sortTarget}
 			</button>
 		</div>
 	</div>
-	<div class="mt-6 overflow-x-auto flex -z-[0]">
-
+	<div class="mt-6 overflow-x-auto flex">
 		<table class="mt-6 whitespace-nowrap text-left w-full">
 			<colgroup class="">
 				<col class="lg:w-1/12">
@@ -188,29 +187,29 @@
 					</td>
 					<td class="py-4 pl-4 pr-8 sm:pl-6 lg:pl-8">
 						<div class="flex items-center gap-x-4">
-							<div class="truncate hover:text-gray-50  leading-6 ">{judge.name}</div>
+							<div class="truncate hover:text-gray-50 text-lg leading-6 {$sortTarget === SortTarget.caseCount ? 'font-bold' : ''}">{judge.name}</div>
 						</div>
 					</td>
 					<td class="hidden py-4 pl-0 pr-4 sm:table-cell sm:pr-8">
 						<div class="flex gap-x-3">
-							<div class="font-mono text-sm leading-6 caseCount-color">{formatNumber(judge.stats.caseCount)}</div>
+							<div class="font-mono leading-6 text-lg caseCount-color {$sortTarget === SortTarget.caseCount ? 'font-bold' : ''}">{formatNumber(judge.stats.caseCount)}</div>
 						</div>
 					</td>
 					<td class="py-4 pl-0 pr-4 text-sm leading-6 sm:pr-8 lg:pr-20">
 						<div class="flex items-center justify-end gap-x-2 sm:justify-start">
-							<div class="hidden sm:block averageBail-color text-right font-semibold font-mono">
+							<div class="hidden  text-lg  sm:block averageBail-color text-right font-mono {$sortTarget === SortTarget.averageBail ? 'font-bold' : ''}">
 								<Money value={judge.stats.averageBailSet} />
 							</div>
 						</div>
 					</td>
-					<td class="hidden py-4 pl-0 pr-8 text-sm leading-6 md:table-cell lg:pr-20 text-right bailSet-color font-mono">
+					<td class="hidden py-4 pl-0 pr-8 leading-6 md:table-cell text-lg lg:pr-20 text-right bailSet-color font-mono {$sortTarget === SortTarget.bailSet ? 'font-bold' : ''}">
 						<Percent value={judge.stats.pct.bailSet} />
 					</td>
-					<td class="hidden py-4 pl-0 pr-8 text-sm leading-6 md:table-cell lg:pr-20 text-right remand-color font-mono">
+					<td class="hidden py-4 pl-0 pr-8 text-lg leading-6 md:table-cell lg:pr-20 text-right remand-color font-mono {$sortTarget === SortTarget.remandPct ? 'font-bold' : ''}">
 						<Percent value={judge.stats.pct.remand} />
 					</td>
 					<td
-						class="hidden py-4 pl-0 pr-4 text-right text-sm leading-6 sm:table-cell sm:pr-6 lg:pr-8 release-color font-mono">
+						class="hidden py-4 pl-0 pr-4 text-right text-lg leading-6 sm:table-cell sm:pr-6 lg:pr-8 release-color font-mono {$sortTarget === SortTarget.releasePct ? 'font-bold' : ''}">
 						<Percent value={judge.stats.pct.release} />
 					</td>
 				</tr>

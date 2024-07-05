@@ -12,8 +12,7 @@
 
 <style>
     .wrapper {
-        @apply whitespace-nowrap flex space-x-1/* items-center*/
-        ;
+        @apply whitespace-nowrap flex space-x-1/* items-center*/;
     }
 
     .dollar-sign {

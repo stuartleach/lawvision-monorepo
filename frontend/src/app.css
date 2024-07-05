@@ -187,19 +187,19 @@ body {
 }
 
 .law-card h4 {
-    @apply text-xl tracking-tight font-bold text-gray-500;
+    @apply text-xl tracking-tight text-gray-500;
 }
 
 .law-card h6 {
-    @apply text-end tracking-tight font-bold text-gray-500;
+    @apply text-end tracking-tight text-gray-500;
 }
 
 .law-card .sort {
-    @apply float-right tracking-tight text-sm font-bold text-gray-500 -mt-2;
+    @apply float-right tracking-tight text-sm text-gray-500 -mt-2;
 }
 
 .law-card h2 {
-    @apply text-2xl font-semibold tracking-tight text-gray-50 mb-2;
+    @apply text-2xl  tracking-tight text-gray-50 mb-2;
 }
 
 /*****************/
@@ -211,7 +211,7 @@ body {
 }
 
 .item-stat h3 {
-    @apply text-zinc-300 font-bold text-lg;
+    @apply text-zinc-300  text-lg;
 }
 
 .item .case-count {
@@ -254,7 +254,7 @@ button.stat-item {
 }
 
 .stat-item h3 {
-    @apply text-zinc-300 font-bold text-lg text-left;
+    @apply text-zinc-300  text-lg text-left;
     @apply w-[10rem];
     font-size: 1rem /* 18px */;
     line-height: 1.25rem /* 28px */;
@@ -276,7 +276,7 @@ button.stat-item {
 }
 
 .stat-item .stat-container {
-    @apply font-bold text-zinc-400 text-right flex justify-end font-mono;
+    @apply  text-zinc-400 text-right flex justify-end font-mono;
     transition: transform 0.2s, box-shadow 0.2s, background-color 0.2s;
 }
 
@@ -311,12 +311,12 @@ button.list-item {
 }
 
 .list-item h3 {
-    @apply text-zinc-300 font-bold text-lg text-left;
+    @apply text-zinc-300 text-lg text-left;
     @apply w-[10rem];
 }
 
 .list-item .stat-container {
-    @apply font-bold text-zinc-400 text-right flex justify-end font-mono;
+    @apply text-zinc-400 text-right flex justify-end font-mono;
     transition: transform 0.2s, box-shadow 0.2s, background-color 0.2s;
 }
 

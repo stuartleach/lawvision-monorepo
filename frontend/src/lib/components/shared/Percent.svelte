@@ -20,7 +20,7 @@
 
     .left-of-decimal {
         /*@apply text-gray-300;*/
-        @apply -mr-[4px] font-bold;
+        @apply -mr-[4px];
     }
 
     .right-of-decimal {
