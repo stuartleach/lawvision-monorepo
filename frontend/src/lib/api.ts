@@ -50,7 +50,8 @@ const getJudges = async (query: JudgeQuery): Promise<Judge[]> => {
 	if (params.length) {
 		url += `?${params.join('&')}`;
 	}
-	const judges: JudgeModel[] = await fetchData<JudgeModel[]>(fetch, url);
+	let judges: JudgeModel[] = await fetchData<JudgeModel[]>(fetch, url);
+	judges = judges.filter(judge => judge.judge_name !== 'Judge/JHO/Hearing Examiner, Visiting' && judge.judge_name !== "Office, Clerk's")
 	return judges.map(mutateJudge);
 };
 

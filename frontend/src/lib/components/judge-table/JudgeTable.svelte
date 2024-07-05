@@ -90,8 +90,8 @@
 
 </script>
 
-<div class="bg-zinc-900 pb-5 pt-16 grid h-[97vh]">
-	<div class="grid grid-cols-4 grid-flow-row-dense sticky">
+<div class="bg-zinc-900 pb-5 pt-16 grid h-[97vh] ">
+	<div class="grid grid-cols-4 grid-flow-row-dense sticky z-[100]">
 		<div class="grid px-4 font-bold text-white sm:px-6 lg:px-8 text-4xl tracking-tight sticky">
 			<h4
 				class="text-gray-500 leading-7 text-2xl bg-clip-text text-transparent bg-gradient-to-bl from-red-700 to-yellow-500">
@@ -103,7 +103,7 @@
 			</h2>
 		</div>
 
-		<div class="mx-2">
+		<div class="mx-2 z-[10000]">
 			<CountyDropdown counties={counties} judges={sortedAndFilteredJudges} />
 		</div>
 		<div class="mx-2">
@@ -130,7 +130,7 @@
 			</button>
 		</div>
 	</div>
-	<div class="mt-6 overflow-x-auto flex flex-grow">
+	<div class="mt-6 overflow-x-auto flex flex-grow -z-[0]">
 
 		<table class="mt-6 whitespace-nowrap text-left w-full">
 			<colgroup class="">

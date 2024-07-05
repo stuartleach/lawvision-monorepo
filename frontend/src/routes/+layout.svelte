@@ -1,7 +1,7 @@
 <script>
 	import '../app.css';
 	import LawVisionIcon from '$lib/components/assets/Logo.svelte';
-	export const prerender = true;
+	// export const prerender = true;
 </script>
 <div class="">
 	<nav class="bg-zinc-950 shadow-md fixed w-full mb-[100px]">
@@ -16,25 +16,20 @@
 						</div>
 					</div>
 					<div class="hidden md:block">
-						<div class="ml-10 flex items-baseline space-x-4">
-							<a href="/" class="transition rounded-md bg-zinc-950 px-3 py-2 text-sm font-medium text-white">Demo</a>
-							<a href="about"
-								 class="transition rounded-md px-3 py-2 text-sm font-medium text-zinc-300 hover:bg-zinc-700 hover:text-white">About</a>
-							<a href="contact"
-								 class="transition rounded-md px-3 py-2 text-sm font-medium text-zinc-300 hover:bg-zinc-700 hover:text-white">Contact</a>
+						<div class="ml-10 grid grid-cols-2 space-x-4">
+							<a href="/" class="transition rounded-md bg-zinc-950 px-3 py-2 text-sm font-medium text-white">Home</a>
+							<a href="mailto:jstuartleach@gmail.com"
+								 class="transition rounded-md bg-zinc-950 px-3 py-2 text-sm font-medium text-white">Contact</a>
+
 						</div>
 					</div>
 				</div>
 			</div>
 		</div>
 	</nav>
-<!--	<div class="flex justify-center flex-row">-->
-<!--		<div class="outer-container">-->
 	<div class="pt-8">
-			<slot />
-		</div>
-<!--		</div>-->
-<!--	</div>-->
+		<slot />
+	</div>
 </div>
 
 

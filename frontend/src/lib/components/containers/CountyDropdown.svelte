@@ -33,7 +33,7 @@
 	});
 </script>
 
-<div class="-mt-2">
+<div class="-mt-2 z-50">
 	<label id="listbox-label" class="block text-sm font-medium leading-6 text-gray-900">County</label>
 	<div class="relative mt-2">
 		<button type="button" id="dropdown-button"
@@ -51,10 +51,10 @@
 
 		{#if isOpen}
 			<ul
-				class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm"
+				class="absolute z-[1000000] mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm"
 				tabindex="-1" role="listbox" aria-labelledby="listbox-label" aria-activedescendant="listbox-option-3">
 				{#each counties as county}
-					<li class="relative cursor-default select-none py-2 pl-3 pr-9 text-gray-900" id="listbox-option-0"
+					<li class="z-[100000] relative cursor-default select-none py-2 pl-3 pr-9 text-gray-900" id="listbox-option-0"
 							role="option" on:click={() => selectCounty(county)}>
 						<span class="block truncate font-normal">{county.name}</span>
 						{#if selectedCounty === county.name}
