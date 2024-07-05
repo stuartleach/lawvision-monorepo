@@ -91,7 +91,7 @@
 
 </script>
 
-<div class="bg-zinc-900 pb-5 rounded-lg py-16 inline-grid">
+<div class="bg-zinc-900 pb-5 pt-16 grid h-screen">
 	<div class="grid grid-cols-4 grid-flow-row-dense">
 		<div class="grid px-4 font-bold text-white sm:px-6 lg:px-8 text-4xl tracking-tight">
 			<h4
@@ -99,7 +99,7 @@
 				{$selectedCountyStore ? $selectedCountyStore.name : 'New York State'}
 			</h4>
 			<h2
-				class="text-left hover:text-zinc-400 transition bg-clip-text text-transparent bg-gradient-to-bl from-red-700 to-yellow-500">
+				class="text-left hover:text-zinc-400 transition bg-clip-text text-transparent bg-gradient-to-bl from-red-700 to-yellow-500 pb-2">
 				Judges
 			</h2>
 		</div>
@@ -131,85 +131,91 @@
 			</button>
 		</div>
 	</div>
-	<table class="mt-6 whitespace-nowrap text-left w-[65vw]">
-		<colgroup>
-			<col class="lg:w-1/12">
-			<col class="lg:w-3/12">
-			<col class="lg:w-2/12">
-			<col class="lg:w-2/12">
-			<col class="lg:w-1/12">
-		</colgroup>
-		<thead class="border-b border-white/10 text-sm leading-6 text-zinc-400">
-		<tr>
-			<th scope="col" class="py-2 pl-4 pr-8 font-semibold sm:pl-6 lg:pl-8 text-left">#</th>
-			<th class:text-zinc-200={$sortTarget === SortTarget.name} on:click={() => handleClick(SortTarget.name)}
-					scope="col" class="cursor-pointer py-2 pl-4 pr-8 font-semibold sm:pl-6 lg:pl-8">Judge
-			</th>
-			<th class:text-zinc-200={$sortTarget === SortTarget.caseCount} on:click={() => handleClick(SortTarget.caseCount)}
-					scope="col" class="cursor-pointer hidden py-2 pl-0 pr-8 font-semibold sm:table-cell">Total Cases
-			</th>
-			<th class:text-zinc-200={$sortTarget === SortTarget.averageBail}
-					on:click={() => handleClick(SortTarget.averageBail)}
-					scope="col" class="cursor-pointer py-2 pl-0 pr-4 font-semibold sm:pr-8 lg:pr-20">
-				Average Bail
-			</th>
-			<th class:text-zinc-200={$sortTarget === SortTarget.remandPct} on:click={() => handleClick(SortTarget.remandPct)}
-					scope="col" class="cursor-pointer hidden py-2 pl-0 pr-8 font-semibold md:table-cell lg:pr-20">Remand
-				Percentage
-			</th>
-			<th class:text-zinc-200={$sortTarget === SortTarget.releasePct}
-					on:click={() => handleClick(SortTarget.releasePct)}
-					scope="col"
-					class="cursor-pointer hidden py-2 pl-0 pr-4 text-right font-semibold sm:table-cell sm:pr-6 lg:pr-8">Release
-				Percentage
-			</th>
-		</tr>
-		</thead>
-		<tbody class="divide-y divide-white/5 flex-wrap ">
-		{#each sortedAndFilteredJudges as judge, i}
-			<tr class:bg-zinc-950={i % 2 === 0}
-					class:bg-zinc-800={judge === $selectedJudgeStore}
-					class="hover:bg-zinc-800 hover:text-white hover:bg-gradient-to-r hover:from-zinc-600  hover:to-black hover:bg-opacity-25 text-zinc-400 transition-all cursor-pointer
+	<div class="mt-6 overflow-x-auto flex flex-grow">
+
+		<table class="mt-6 whitespace-nowrap text-left w-full">
+			<colgroup class="">
+				<col class="lg:w-1/12">
+				<col class="lg:w-3/12">
+				<col class="lg:w-2/12">
+				<col class="lg:w-2/12">
+				<col class="lg:w-1/12">
+			</colgroup>
+			<thead class=" text-sm leading-6 text-zinc-400 sticky top-0 bg-zinc-900 mb-4">
+			<tr>
+				<th scope="col" class="py-2 pl-4 pr-8 font-semibold sm:pl-6 lg:pl-8 text-left">#</th>
+				<th class:text-zinc-200={$sortTarget === SortTarget.name} on:click={() => handleClick(SortTarget.name)}
+						scope="col" class="cursor-pointer py-2 pl-4 pr-8 font-semibold sm:pl-6 lg:pl-8">Judge
+				</th>
+				<th class:text-zinc-200={$sortTarget === SortTarget.caseCount}
+						on:click={() => handleClick(SortTarget.caseCount)}
+						scope="col" class="cursor-pointer hidden py-2 pl-0 pr-8 font-semibold sm:table-cell">Total Cases
+				</th>
+				<th class:text-zinc-200={$sortTarget === SortTarget.averageBail}
+						on:click={() => handleClick(SortTarget.averageBail)}
+						scope="col" class="cursor-pointer py-2 pl-0 pr-4 font-semibold sm:pr-8 lg:pr-20">
+					Average Bail
+				</th>
+				<th class:text-zinc-200={$sortTarget === SortTarget.remandPct}
+						on:click={() => handleClick(SortTarget.remandPct)}
+						scope="col" class="cursor-pointer hidden py-2 pl-0 pr-8 font-semibold md:table-cell lg:pr-20">Remand
+					Percentage
+				</th>
+				<th class:text-zinc-200={$sortTarget === SortTarget.releasePct}
+						on:click={() => handleClick(SortTarget.releasePct)}
+						scope="col"
+						class="cursor-pointer hidden py-2 pl-0 pr-4 text-right font-semibold sm:table-cell sm:pr-6 lg:pr-8">Release
+					Percentage
+				</th>
+			</tr>
+			<div class="border-white/10 border-b-2 mb-2 w-screen bg-zinc-900 absolute"></div>
+			</thead>
+			<tbody class="divide-y divide-white/5 ">
+			{#each sortedAndFilteredJudges as judge, i}
+				<tr class:bg-zinc-950={i % 2 === 0}
+						class:bg-zinc-800={judge === $selectedJudgeStore}
+						class="hover:bg-zinc-800 hover:text-white text-zinc-400 transition-all cursor-pointer
           {judge === $selectedJudgeStore ? 'scale-[101%] outline-zinc-500 outline outline-1' : ''}
           {$selectedJudgeStore && judge !== $selectedJudgeStore && 'opacity-[15%] blur-xs filter transition-all'}"
-					on:click={() =>  { $selectedJudgeStore?.name === judge.name ? selectedJudgeStore.set(null) : selectedJudgeStore.set(judge)}}>
-				<td class="py-4 pl-4 pr-8 sm:pl-6 lg:pl-8 text-left font-mono">
-					{i + 1}
-				</td>
-				<td class="py-4 pl-4 pr-8 sm:pl-6 lg:pl-8">
-					<div class="flex items-center gap-x-4">
-						<div class="truncate hover:text-gray-50 font-medium leading-6 ">{judge.name}</div>
-					</div>
-				</td>
-				<td class="hidden py-4 pl-0 pr-4 sm:table-cell sm:pr-8">
-					<div class="flex gap-x-3">
-						<div class="font-mono text-sm leading-6">{formatNumber(judge.stats.caseCount)}</div>
-					</div>
-				</td>
-				<td class="py-4 pl-0 pr-4 text-sm leading-6 sm:pr-8 lg:pr-20">
-					<div class="flex items-center justify-end gap-x-2 sm:justify-start">
-						<div class="hidden sm:block text-right font-semibold font-mono">
-							<Money value={judge.stats.averageBailSet} />
+						on:click={() =>  { $selectedJudgeStore?.name === judge.name ? selectedJudgeStore.set(null) : selectedJudgeStore.set(judge)}}>
+					<td class="py-4 pl-4 pr-8 sm:pl-6 lg:pl-8 text-left font-mono">
+						{i + 1}
+					</td>
+					<td class="py-4 pl-4 pr-8 sm:pl-6 lg:pl-8">
+						<div class="flex items-center gap-x-4">
+							<div class="truncate hover:text-gray-50 font-medium leading-6 ">{judge.name}</div>
 						</div>
-					</div>
-				</td>
-				<td class="hidden py-4 pl-0 pr-8 text-sm leading-6 md:table-cell lg:pr-20 text-right remand-color font-mono">
-					<Percent value={judge.stats.pct.remand} />
-				</td>
-				<td
-					class="hidden py-4 pl-0 pr-4 text-right text-sm leading-6 sm:table-cell sm:pr-6 lg:pr-8 release-color font-mono">
-					<Percent value={judge.stats.pct.release} />
-				</td>
-			</tr>
-			{#if judge === $selectedJudgeStore}
-				<tr>
-					<td colspan="6" class="p-4 border-b-4 border-zinc-500">
-						<ContainerJudge />
+					</td>
+					<td class="hidden py-4 pl-0 pr-4 sm:table-cell sm:pr-8">
+						<div class="flex gap-x-3">
+							<div class="font-mono text-sm leading-6">{formatNumber(judge.stats.caseCount)}</div>
+						</div>
+					</td>
+					<td class="py-4 pl-0 pr-4 text-sm leading-6 sm:pr-8 lg:pr-20">
+						<div class="flex items-center justify-end gap-x-2 sm:justify-start">
+							<div class="hidden sm:block text-right font-semibold font-mono">
+								<Money value={judge.stats.averageBailSet} />
+							</div>
+						</div>
+					</td>
+					<td class="hidden py-4 pl-0 pr-8 text-sm leading-6 md:table-cell lg:pr-20 text-right remand-color font-mono">
+						<Percent value={judge.stats.pct.remand} />
+					</td>
+					<td
+						class="hidden py-4 pl-0 pr-4 text-right text-sm leading-6 sm:table-cell sm:pr-6 lg:pr-8 release-color font-mono">
+						<Percent value={judge.stats.pct.release} />
 					</td>
 				</tr>
-			{/if}
-		{/each}
-		</tbody>
-	</table>
+				{#if judge === $selectedJudgeStore}
+					<tr>
+						<td colspan="6" class="p-4 border-b-1 border-zinc-500">
+							<ContainerJudge />
+						</td>
+					</tr>
+				{/if}
+			{/each}
+			</tbody>
+		</table>
+	</div>
 
 </div>

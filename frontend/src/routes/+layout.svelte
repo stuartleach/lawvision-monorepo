@@ -3,7 +3,7 @@
 	import LawVisionIcon from '$lib/components/assets/Logo.svelte';
 </script>
 <div class="flex-col">
-	<nav class="bg-zinc-900 shadow-md ">
+	<nav class="bg-zinc-950 shadow-md sticky">
 		<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 			<div class="flex h-[4rem] items-center justify-between">
 				<div class="flex items-center">
@@ -27,18 +27,18 @@
 			</div>
 		</div>
 	</nav>
-	<div class="flex justify-center flex-row">
-		<div class="outer-container">
+<!--	<div class="flex justify-center flex-row">-->
+<!--		<div class="outer-container">-->
 			<slot></slot>
-		</div>
-	</div>
+<!--		</div>-->
+<!--	</div>-->
 </div>
 
 
 <style>
-    .outer-container {
-        @apply flex flex-col p-6 w-screen;
-        @apply h-full justify-between;
-        background-color: rgba(39, 39, 42, 0.1);
-    }
+    /*.outer-container {*/
+    /*    @apply flex flex-col p-6 w-screen;*/
+    /*    @apply h-full justify-between;*/
+    /*    background-color: rgba(39, 39, 42, 0.1);*/
+    /*}*/
 </style>

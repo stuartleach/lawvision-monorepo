@@ -39,7 +39,6 @@
 								stateValue={selectedJudgeInfo?.stats?.pctileState?.bailAmount} />
 							<StatCard
 								metric="bailSet"
-
 								title={hoveredStat === 'bail' ? 'Bail set total' : 'Bail Set Frequency'}
 								judgeValue={selectedJudgeInfo?.stats?.pct?.bailSet}
 								countyValue={selectedJudgeInfo?.stats?.pctileCounty?.bailSet}

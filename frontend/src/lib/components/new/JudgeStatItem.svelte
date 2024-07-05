@@ -11,17 +11,18 @@
 	export let isHoverable = false;
 	export let isMoney = false;
 	export let hoveredStat: string | null = null;
+	export let metric = 'bailSet';
 	export let handleMouseEnter: (stat: string) => void;
 	export let handleMouseLeave: () => void;
 
 	const hoverKey = label.toLowerCase().replace(/ /g, '');
 </script>
 
-<div class="bg-zinc-950 rounded px-4 mx-2 py-6 sm:px-6 lg:px-8 grid-rows-2 grid">
-	<div class="border-b border-dotted pb-4 border-zinc-700 grid ">
-		<p class="text-sm font-medium leading-6 text-zinc-400">{label}</p>
+<div class="bg-zinc-950/50 rounded-md px-4 mx-2 py-6 sm:px-6 lg:px-8 grid-rows-2 grid">
+	<div class="border-b text-white/50 border-dotted pb-4 border-zinc-700 grid ">
+		<p class="text-sm font-medium leading-6 ">{label}</p>
 		<p class="mt-2 flex items-baseline w-max gap-x-2 ">
-    <span class="text-4xl font-semibold tracking-tight text-white ">
+    <span class="text-4xl font-semibold tracking-tight {metric}-color  ">
       {#if isHoverable}
         <HoverableItem
 					on:mouseenter={() => handleMouseEnter(hoverKey)}
@@ -38,9 +39,9 @@
     </span>
 		</p></div>
 
-	<div class="PERCENTILES rank text-sm text-gray-500 font-sans tracking-tight">
+	<div class="rank text-sm text-zinc-400 font-sans tracking-tight">
 		<div class="flex-col pt-2 mt-2  border-zinc-700">
-			<h6 class="text-zinc-400 text-left underline-offset-4 font-semibold tracking-normal pb-1 border-zinc-700">
+			<h6 class="text-left underline-offset-4 font-semibold tracking-normal pb-1 border-zinc-700">
 				Percentile
 			</h6>
 			<div>

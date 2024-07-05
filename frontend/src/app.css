@@ -69,8 +69,8 @@ body {
     @apply text-blue-500;
 }
 
-.averageBailSet-color {
-    @apply text-yellow-500;
+.averageBail-color {
+    @apply text-orange-500;
 }
 
 .bailSet-color {

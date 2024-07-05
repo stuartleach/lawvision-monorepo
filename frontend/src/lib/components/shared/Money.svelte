@@ -17,7 +17,7 @@
     }
 
     .dollar-sign {
-        @apply text-green-600;
+        /*@apply text-green-600;*/
     }
 
     .dollars {
