@@ -85,15 +85,6 @@ importers:
       prisma:
         specifier: ^5.14.0
         version: 5.15.1
-      svelte-accordion:
-        specifier: 0.0.0-development
-        version: 0.0.0-development
-      svelte-chartjs:
-        specifier: ^3.1.5
-        version: 3.1.5(chart.js@4.4.3)(svelte@4.2.18)
-      svelte-collapsible:
-        specifier: ^0.3.0
-        version: 0.3.0
     devDependencies:
       '@playwright/test':
         specifier: ^1.28.1
@@ -2459,26 +2450,11 @@ packages:
     resolution: {integrity: sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==}
     engines: {node: '>= 0.4'}
 
-  svelte-accordion@0.0.0-development:
-    resolution: {integrity: sha512-G/I5WgeQJ6DaDLxlg+Ic0h23fHkx6AeKP8IVL+nrnjt28NKyhoOfKcHWZqDgDthB4a6T9m+9wkd6QXioyf9Z9Q==}
-
-  svelte-chartjs@3.1.5:
-    resolution: {integrity: sha512-ka2zh7v5FiwfAX1oMflZ0HkNkgjHjFqANgRyC+vNYXfxtx2ku68Zo+2KgbKeBH2nS1ThDqkIACPzGxy4T0UaoA==}
-    peerDependencies:
-      chart.js: ^3.5.0 || ^4.0.0
-      svelte: ^4.0.0
-
   svelte-check@3.8.1:
     resolution: {integrity: sha512-KlQ0TRVe01mdvh49Ylkr9FQxO/UWbQOtaIrccl3gjgkvby1TxY41VkT7ijCl6i29FjaJPE4m6YGmhdqov0MfkA==}
     hasBin: true
     peerDependencies:
       svelte: ^3.55.0 || ^4.0.0-next.0 || ^4.0.0 || ^5.0.0-next.0
-
-  svelte-collapse@0.1.2:
-    resolution: {integrity: sha512-0ZCbT6V/stHFxe4isKbduvZxnIIdktXeE8KQHtHyocx1bqEMbW1cCrbWiGBvbWp8yVVS58/33hQE5GzgQxby5w==}
-
-  svelte-collapsible@0.3.0:
-    resolution: {integrity: sha512-dLiVnNhuckqGt17tG63y4WoCaPiHJT86qjlFftmrP3Bel4WB0ehG/sf55AEJDZDrsC35ZjrWeYBVJEETwMWcFw==}
 
   svelte-eslint-parser@0.39.1:
     resolution: {integrity: sha512-0VR9gq2TOdSrJW94Qf2F3XrzXRQomXQtRZGFS3FEUr3G4J8DcpqXfBF1HJyOa3dACyGsKiBbOPF56pBgYaqXBA==}
@@ -5149,13 +5125,6 @@ snapshots:
 
   supports-preserve-symlinks-flag@1.0.0: {}
 
-  svelte-accordion@0.0.0-development: {}
-
-  svelte-chartjs@3.1.5(chart.js@4.4.3)(svelte@4.2.18):
-    dependencies:
-      chart.js: 4.4.3
-      svelte: 4.2.18
-
   svelte-check@3.8.1(postcss-load-config@4.0.2(postcss@8.4.38)(ts-node@10.9.2(@types/node@20.14.7)(typescript@5.5.2)))(postcss@8.4.38)(svelte@4.2.18):
     dependencies:
       '@jridgewell/trace-mapping': 0.3.25
@@ -5177,12 +5146,6 @@ snapshots:
       - sass
       - stylus
       - sugarss
-
-  svelte-collapse@0.1.2: {}
-
-  svelte-collapsible@0.3.0:
-    dependencies:
-      svelte-collapse: 0.1.2
 
   svelte-eslint-parser@0.39.1(svelte@4.2.18):
     dependencies:
