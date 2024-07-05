@@ -19,7 +19,7 @@
 	function selectCounty(county: County) {
 		selectedCounty = county.name;
 		selectedCountyStore.set(county);
-		// judges = judges.filter((judge) => judge.counties?.includes(county.name));
+		judges = judges.filter((judge) => judge.counties?.includes(county.name));
 		isOpen = false;
 	}
 
@@ -37,7 +37,7 @@
 	<label id="listbox-label" class="block text-sm font-medium leading-6 text-gray-900">County</label>
 	<div class="relative mt-2">
 		<button type="button" id="dropdown-button"
-						class="relative bg-zinc-700 text-zinc-400  w-full cursor-default rounded-md py-1.5 pl-3 pr-10 text-left  shadow-sm ring-1 ring-inset ring-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6"
+						class="relative bg-zinc-700 text-zinc-400 w-full cursor-default rounded-md py-1.5 pl-3 pr-10 text-left  shadow-sm ring-1 ring-inset ring-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6"
 						aria-haspopup="listbox" aria-expanded={isOpen} aria-labelledby="listbox-label" on:click={toggleDropdown}>
 			<span class="block truncate">{selectedCounty}</span>
 			<span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
