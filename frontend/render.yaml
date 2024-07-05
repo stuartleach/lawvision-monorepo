@@ -1,0 +1,14 @@
+# Exported from Render on 2024-07-05T19:09:23Z
+services:
+- type: web
+  name: lawvision-monorepo
+  runtime: static
+  repo: https://github.com/stuartleach/lawvision-monorepo
+  branch: prod
+  buildCommand: npm install; npm run build
+  staticPublishPath: build
+  domains:
+  - www.law.vision
+  - law.vision
+  rootDir: ./frontend
+version: "1"
