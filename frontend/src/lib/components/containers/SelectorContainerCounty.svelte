@@ -151,7 +151,6 @@
 	const handleSearch = () => {
 		selectedJudgeStore.set(null);
 		selectedCountyStore.set(null);
-		console.log(query);
 		clearTimeout(searchTimeout);
 		searchTimeout = setTimeout(() => {
 			if (query === '') {

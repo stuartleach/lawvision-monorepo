@@ -5,7 +5,6 @@
 	export let judgeValue: number | undefined;
 	export let countyValue: number | undefined;
 	export let stateValue: number | undefined;
-	console.log('StatCard', title, judgeValue, countyValue, stateValue);
 </script>
 
 <div class="px-4 py-6 sm:px-6 lg:px-8">

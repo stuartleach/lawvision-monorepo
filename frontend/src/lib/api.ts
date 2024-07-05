@@ -33,12 +33,13 @@ const fetchData = async <T>(fetch: FetchFunction, url: string, options?: Request
 
 const getGeoJson = async (query: GeoJSONQuery): Promise<GeoJSONData> => {
 	const { fetch } = query;
-	return fetchData<GeoJSONData>(fetch, '/ny-counties.json');
+	return fetchData<GeoJSONData>(fetch, '/ny-counties-geojson.json');
 };
 
 const getJudges = async (query: JudgeQuery): Promise<Judge[]> => {
 	const { fetch, countyId, limit } = query;
-	let url = `/api/judges`;
+	// let url = `/api/judges`;
+	let url = `/judges.json`;
 	const params: string[] = [];
 	if (countyId) {
 		params.push(`county=${encodeURIComponent(countyId)}`);
@@ -66,8 +67,8 @@ const getJudgeOutcomes = async (query: JudgeOutcomesQuery): Promise<void> => {
 const getCounties = async (query: CountyQuery): Promise<County[]> => {
 	const { fetch } = query;
 
-	let url = '/api/counties';
-
+	// let url = '/api/counties';
+	let url = '/counties.json';
 	const counties: CountyModel[] = await fetchData<CountyModel[]>(fetch, url);
 	return counties.map(mutateCounty);
 };
