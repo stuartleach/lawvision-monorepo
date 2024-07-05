@@ -1,7 +1,6 @@
 <script>
 	import '../app.css';
 	import LawVisionIcon from '$lib/components/assets/Logo.svelte';
-	// export const prerender = true;
 </script>
 <div class="">
 	<nav class="bg-zinc-950 shadow-md fixed w-full mb-[100px]">

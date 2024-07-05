@@ -130,7 +130,7 @@
 			</button>
 		</div>
 	</div>
-	<div class="mt-6 overflow-x-auto flex flex-grow -z-[0]">
+	<div class="mt-6 overflow-x-auto flex -z-[0]">
 
 		<table class="mt-6 whitespace-nowrap text-left w-full">
 			<colgroup class="">
