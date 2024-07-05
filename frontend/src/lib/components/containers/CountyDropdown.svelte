@@ -2,7 +2,7 @@
 	import CloseButton from '$lib/components/shared/CloseButton.svelte';
 	import { selectedCountyStore } from '$lib/stores/data';
 	import type { County, Judge } from '$lib/types';
-	import { Button, Label, Li } from 'flowbite-svelte';
+	import { Button, Label } from 'flowbite-svelte';
 	import { onMount } from 'svelte';
 
 	export let counties: County[];
@@ -19,7 +19,7 @@
 	function selectCounty(county: County) {
 		selectedCountyName = county.name;
 		selectedCountyStore.set(county);
-		judges = judges.filter(judge => judge.counties?.includes(county.name));
+		judges = judges.filter((judge) => judge.counties?.includes(county.name));
 		isOpen = false;
 	}
 
@@ -85,7 +85,7 @@
 							type="button"
 							class="w-full text-left"
 							on:click={() => selectCounty(county)}
-							on:keydown={(e) => e.key === 'Enter' || e.key === ' ' ? selectCounty(county) : null}
+							on:keydown={() => selectCounty(county)}
 						>
 							<span class="block truncate font-normal">{county.name}</span>
 							{#if selectedCountyName === county.name}
