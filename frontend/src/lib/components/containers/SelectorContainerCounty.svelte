@@ -1,5 +1,5 @@
 <script lang="ts">
-	import ContainerJudge from '$lib/components/containers/ContainerJudge.svelte';
+	import ContainerJudge from '$lib/components/judge-focus/ContainerJudge.svelte';
 	import CountyDropdown from '$lib/components/containers/CountyDropdown.svelte';
 	import Paginator from '$lib/components/containers/Paginator.svelte';
 	import Money from '$lib/components/shared/Money.svelte';

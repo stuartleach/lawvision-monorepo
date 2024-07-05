@@ -2,8 +2,8 @@
 	import '../app.css';
 	import LawVisionIcon from '$lib/components/assets/Logo.svelte';
 </script>
-<div class="flex-col">
-	<nav class="bg-zinc-950 shadow-md sticky">
+<div class="">
+	<nav class="bg-zinc-950 shadow-md fixed w-full mb-[100px]">
 		<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 			<div class="flex h-[4rem] items-center justify-between">
 				<div class="flex items-center">
@@ -29,7 +29,9 @@
 	</nav>
 <!--	<div class="flex justify-center flex-row">-->
 <!--		<div class="outer-container">-->
-			<slot></slot>
+	<div class="pt-8">
+			<slot />
+		</div>
 <!--		</div>-->
 <!--	</div>-->
 </div>

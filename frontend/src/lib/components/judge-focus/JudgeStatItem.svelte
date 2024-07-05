@@ -19,10 +19,10 @@
 </script>
 
 <div class="bg-zinc-950/50 rounded-md px-4 mx-2 py-6 sm:px-6 lg:px-8 grid-rows-2 grid">
-	<div class="border-b text-white/50 border-dotted pb-4 border-zinc-700 grid ">
+	<div class="border-b text-white/50 border-dotted pb-4 text-center border-zinc-700 ">
 		<p class="text-sm font-medium leading-6 ">{label}</p>
-		<p class="mt-2 flex items-baseline w-max gap-x-2 ">
-    <span class="text-4xl font-semibold tracking-tight {metric}-color  ">
+		<p class="mt-2 w-full px-4 py-3 bg-zinc-800/20 rounded">
+    <span class="text-4xl font-semibold tracking-tight {metric}-color">
       {#if isHoverable}
         <HoverableItem
 					on:mouseenter={() => handleMouseEnter(hoverKey)}
@@ -62,5 +62,4 @@
 			</div>
 		</div>
 	</div>
-	<!--	<slot />-->
 </div>

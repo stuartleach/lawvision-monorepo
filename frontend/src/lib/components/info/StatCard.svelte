@@ -5,7 +5,6 @@
 	export let judgeValue: number | undefined;
 	export let countyValue: number | undefined;
 	export let stateValue: number | undefined;
-	export let metric: string;
 	console.log('StatCard', title, judgeValue, countyValue, stateValue);
 </script>
 

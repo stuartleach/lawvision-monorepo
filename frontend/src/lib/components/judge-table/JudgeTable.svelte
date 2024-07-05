@@ -1,5 +1,5 @@
 <script lang="ts">
-	import ContainerJudge from '$lib/components/containers/ContainerJudge.svelte';
+	import ContainerJudge from '$lib/components/judge-focus/ContainerJudge.svelte';
 	import CountyDropdown from '$lib/components/containers/CountyDropdown.svelte';
 	import Money from '$lib/components/shared/Money.svelte';
 	import Percent from '$lib/components/shared/Percent.svelte';
@@ -91,15 +91,15 @@
 
 </script>
 
-<div class="bg-zinc-900 pb-5 pt-16 grid h-screen">
-	<div class="grid grid-cols-4 grid-flow-row-dense">
-		<div class="grid px-4 font-bold text-white sm:px-6 lg:px-8 text-4xl tracking-tight">
+<div class="bg-zinc-900 pb-5 pt-16 grid h-[97vh]">
+	<div class="grid grid-cols-4 grid-flow-row-dense sticky">
+		<div class="grid px-4 font-bold text-white sm:px-6 lg:px-8 text-4xl tracking-tight sticky">
 			<h4
 				class="text-gray-500 leading-7 text-2xl bg-clip-text text-transparent bg-gradient-to-bl from-red-700 to-yellow-500">
 				{$selectedCountyStore ? $selectedCountyStore.name : 'New York State'}
 			</h4>
 			<h2
-				class="text-left hover:text-zinc-400 transition bg-clip-text text-transparent bg-gradient-to-bl from-red-700 to-yellow-500 pb-2">
+				class="text-left transition bg-clip-text text-transparent bg-gradient-to-bl from-red-700 to-yellow-500 pb-2">
 				Judges
 			</h2>
 		</div>
@@ -217,5 +217,4 @@
 			</tbody>
 		</table>
 	</div>
-
 </div>

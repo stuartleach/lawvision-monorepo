@@ -69,7 +69,7 @@
 		// Select the chart container and remove existing SVG
 		d3.select(`#${chartContainerId}`).select('svg').remove();
 
-		// Create new SVG element and append
+		// Create judge-focus SVG element and append
 		svg = d3.select(`#${chartContainerId}`)
 			.append('svg')
 			.attr('width', width)
