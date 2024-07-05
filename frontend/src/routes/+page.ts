@@ -22,7 +22,6 @@ export const load: PageLoad = async ({ fetch, params }) => {
 		const newYorkGeoJson: GeoJSONData = await getGeoJson({ fetch });
 		const counties: County[] = await getCounties({ fetch });
 		const judges = await getJudges({ fetch, countyId: '', limit: 2000 });
-		console.log('judges', judges.slice(0,100).map(j => j?.stats));
 
 		geoJSONStore.set(newYorkGeoJson);
 		allCountiesStore.set(counties);
