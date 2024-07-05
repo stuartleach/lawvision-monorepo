@@ -6,10 +6,11 @@
 	export let className: string = '';
 </script>
 
-<button class={className + " stat-item"}
-				on:click={onClick ? onClick : undefined}
-				on:mouseenter={onMouseEnter ? onMouseEnter : undefined}
-				on:mouseleave={onMouseLeave ? onMouseLeave : undefined}
+<button
+	class={className + ' stat-item'}
+	on:click={onClick ? onClick : undefined}
+	on:mouseenter={onMouseEnter ? onMouseEnter : undefined}
+	on:mouseleave={onMouseLeave ? onMouseLeave : undefined}
 >
 	<h3>
 		<slot name="title" />
@@ -18,4 +19,3 @@
 		<slot name="stat" />
 	</div>
 </button>
-

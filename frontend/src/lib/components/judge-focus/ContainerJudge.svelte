@@ -1,5 +1,4 @@
 <script lang="ts">
-
 	import JudgeInfoHeader from '$lib/components/judge-focus/JudgeInfoHeader.svelte';
 	import JudgeStatsGrid from '$lib/components/judge-focus/JudgeStatsGrid.svelte';
 	import { allCountiesStore, selectedJudgeStore } from '$lib/stores/data';
@@ -11,7 +10,7 @@
 	// Reactive assignments
 	$: selectedJudgeInfo = $selectedJudgeStore;
 	$: countyName = selectedJudgeInfo?.primaryCounty;
-	$: county = $allCountiesStore.find(c => c.name === countyName);
+	$: county = $allCountiesStore.find((c) => c.name === countyName);
 
 	const handleMouseEnter = (stat: string) => {
 		hoveredStat = stat;
@@ -20,11 +19,15 @@
 	const handleMouseLeave = () => {
 		hoveredStat = null;
 	};
-
-
 </script>
 
 <div>
-	<JudgeInfoHeader selectedJudgeInfo={selectedJudgeInfo} />
-	<JudgeStatsGrid {selectedJudgeInfo} {county} {hoveredStat} {handleMouseEnter} {handleMouseLeave} />
+	<JudgeInfoHeader {selectedJudgeInfo} />
+	<JudgeStatsGrid
+		{selectedJudgeInfo}
+		{county}
+		{hoveredStat}
+		{handleMouseEnter}
+		{handleMouseLeave}
+	/>
 </div>

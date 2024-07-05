@@ -10,22 +10,21 @@
 </div>
 
 <style>
-    .wrapper {
-        /*@apply whitespace-nowrap flex space-x-1 items-center;*/
-    }
+	.wrapper {
+		/*@apply whitespace-nowrap flex space-x-1 items-center;*/
+	}
 
-    .percent-sign {
-        /*@apply text-green-600;*/
-    }
+	.percent-sign {
+		/*@apply text-green-600;*/
+	}
 
-    .left-of-decimal {
-        /*@apply text-gray-300;*/
-        @apply -mr-[4px];
-    }
+	.left-of-decimal {
+		/*@apply text-gray-300;*/
+		@apply -mr-[4px];
+	}
 
-    .right-of-decimal {
-        /*@apply flex tracking-tighter text-xs align-super;*/
-        /*@apply opacity-75 text-xs align-text-top;*/
-    }
-
+	.right-of-decimal {
+		/*@apply flex tracking-tighter text-xs align-super;*/
+		/*@apply opacity-75 text-xs align-text-top;*/
+	}
 </style>

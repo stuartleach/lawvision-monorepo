@@ -10,7 +10,7 @@
 </div>
 
 <style>
-    .wrapper {
-        @apply whitespace-nowrap flex space-x-1;
-    }
+	.wrapper {
+		@apply flex space-x-1 whitespace-nowrap;
+	}
 </style>

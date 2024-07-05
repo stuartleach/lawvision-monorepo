@@ -18,47 +18,48 @@
 	const hoverKey = label.toLowerCase().replace(/ /g, '');
 </script>
 
-<div class="bg-zinc-950/50 rounded-md px-4 mx-2 py-6 sm:px-6 lg:px-8 grid-rows-2 grid">
-	<div class="border-b text-white/50 border-dotted pb-4 text-center border-zinc-700 ">
-		<p class="text-sm font-medium leading-6 ">{label}</p>
-		<p class="mt-2 w-full px-4 py-3 bg-zinc-800/20 rounded">
-    <span class="text-4xl font-semibold tracking-tight {metric}-color">
-      {#if isHoverable}
-        <HoverableItem
-					on:mouseenter={() => handleMouseEnter(hoverKey)}
-					on:mouseleave={handleMouseLeave}
-					targetBool={hoveredStat === hoverKey}
-					valueWhenNotHovered={formatPercent(value) + '%'}
-					valueWhenHovered={formatNumber(value)}
-				/>
-      {:else if isMoney}
-        <Money value={value} />
-      {:else}
-        {formatNumber(value)}
-      {/if}
-    </span>
-		</p></div>
+<div class="mx-2 grid grid-rows-2 rounded-md bg-zinc-950/50 px-4 py-6 sm:px-6 lg:px-8">
+	<div class="border-b border-dotted border-zinc-700 pb-4 text-center text-white/50">
+		<p class="text-sm font-medium leading-6">{label}</p>
+		<p class="mt-2 w-full rounded bg-zinc-800/20 px-4 py-3">
+			<span class="text-4xl font-semibold tracking-tight {metric}-color">
+				{#if isHoverable}
+					<HoverableItem
+						on:mouseenter={() => handleMouseEnter(hoverKey)}
+						on:mouseleave={handleMouseLeave}
+						targetBool={hoveredStat === hoverKey}
+						valueWhenNotHovered={formatPercent(value) + '%'}
+						valueWhenHovered={formatNumber(value)}
+					/>
+				{:else if isMoney}
+					<Money {value} />
+				{:else}
+					{formatNumber(value)}
+				{/if}
+			</span>
+		</p>
+	</div>
 
-	<div class="rank text-sm text-zinc-400 font-sans tracking-tight">
-		<div class="flex-col pt-2 mt-2  border-zinc-700">
-			<h6 class="text-left underline-offset-4 font-semibold tracking-normal pb-1 border-zinc-700">
+	<div class="rank font-sans text-sm tracking-tight text-zinc-400">
+		<div class="mt-2 flex-col border-zinc-700 pt-2">
+			<h6 class="border-zinc-700 pb-1 text-left font-semibold tracking-normal underline-offset-4">
 				Percentile
 			</h6>
 			<div>
-        <span class="text-gray-300 flex flex-row justify-between">
-          <span class="text-left text-gray-500">County:</span>
-          <span class="text-right">
-            <Percentile value={percentileCounty} />
-          </span>
-        </span>
+				<span class="flex flex-row justify-between text-gray-300">
+					<span class="text-left text-gray-500">County:</span>
+					<span class="text-right">
+						<Percentile value={percentileCounty} />
+					</span>
+				</span>
 			</div>
 			<div>
-        <span class="text-gray-300 flex flex-row justify-between">
-          <span class="text-left text-gray-500">State:</span>
-          <span class="text-right">
-            <Percentile value={percentileState} />
-          </span>
-        </span>
+				<span class="flex flex-row justify-between text-gray-300">
+					<span class="text-left text-gray-500">State:</span>
+					<span class="text-right">
+						<Percentile value={percentileState} />
+					</span>
+				</span>
 			</div>
 		</div>
 	</div>

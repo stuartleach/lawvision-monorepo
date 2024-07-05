@@ -2,25 +2,25 @@
 	export let onMouseEnter: (() => void) | null = null;
 	export let onMouseLeave: (() => void) | null = null;
 	export let onClick: (() => void) | null = null;
-
 </script>
 
-<button class="
-				flex-row items-center justify-between min-w-full flex
-				text-zinc-400 mb-2
-				py-2 px-4
-				border-b-2 last:border-b-0
-        hover:bg-zinc-700 hover:shadow-2xl
-        transition-all outline-none
-				cursor-pointer"
-				on:click={onClick ? onClick : undefined}
-				on:mouseenter={onMouseEnter ? onMouseEnter : undefined}
-				on:mouseleave={onMouseLeave ? onMouseLeave : undefined}
+<button
+	class="
+				mb-2 flex min-w-full cursor-pointer flex-row
+				items-center justify-between
+				border-b-2 px-4
+				py-2 text-zinc-400
+        outline-none transition-all
+        last:border-b-0 hover:bg-zinc-700
+				hover:shadow-2xl"
+	on:click={onClick ? onClick : undefined}
+	on:mouseenter={onMouseEnter ? onMouseEnter : undefined}
+	on:mouseleave={onMouseLeave ? onMouseLeave : undefined}
 >
-	<h3 class="text-zinc-300 font-bold text-lg text-left w-[10rem]">
+	<h3 class="w-[10rem] text-left text-lg font-bold text-zinc-300">
 		<slot name="title" />
 	</h3>
-	<div class="font-bold text-zinc-400 text-right flex justify-end font-mono">
+	<div class="flex justify-end text-right font-mono font-bold text-zinc-400">
 		<slot name="stat" />
 	</div>
 </button>

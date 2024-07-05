@@ -1,6 +1,5 @@
 import type { CaseStats } from '$lib/types/frontendTypes';
 
-
 interface NysCases {
 	internal_case_id: string;
 	gender?: string | null;
@@ -116,7 +115,6 @@ interface NysCases {
 	arr_cycle_id?: string | null;
 }
 
-
 export type CountyModel = {
 	percentile_state_case_count: number;
 	county_name: string;
@@ -145,7 +143,7 @@ export type CountyModel = {
 	percentile_state_nmr?: number;
 	percentile_state_release?: number;
 	percentile_state_unknown?: number;
-}
+};
 
 export type JudgeModel = {
 	primary_county: string;
@@ -183,7 +181,7 @@ export type JudgeModel = {
 	percentile_state_unknown?: number;
 	percentile_state_case_count: number;
 	percentile_county_case_count: number;
-}
+};
 
 export type JudgeModelOrCountyModel = {
 	case_count?: number;
@@ -208,8 +206,7 @@ export type JudgeModelOrCountyModel = {
 	percentile_state_nmr?: number;
 	percentile_state_release?: number;
 	percentile_state_unknown?: number;
-}
-
+};
 
 export type CaseModel = {
 	internal_case_id: string;
@@ -325,14 +322,14 @@ export type CaseModel = {
 	judges?: JudgeModel;
 	representation?: RepresentationModel;
 	crimes?: CrimeModel;
-}
+};
 
 export type CrimeModel = {
 	crime_uuid: string;
 	top_charge_at_arrest: string;
 	average_bail_amount?: number;
 	number_of_cases?: number;
-}
+};
 
 export type RepresentationModel = {
 	representation_uuid: string;
@@ -345,4 +342,4 @@ export type RepresentationModel = {
 	disposed_at_arraign_percentage?: number;
 	ror_percentage?: number;
 	nonmonetary_release_percentage?: number;
-}
+};

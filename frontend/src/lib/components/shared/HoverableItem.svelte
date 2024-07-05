@@ -2,7 +2,6 @@
 	export let targetBool = false;
 	export let valueWhenNotHovered = '';
 	export let valueWhenHovered = '';
-
 </script>
 
 <span>

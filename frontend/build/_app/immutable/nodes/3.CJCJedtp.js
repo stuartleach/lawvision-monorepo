@@ -1,4 +1,17 @@
-import{s as r,n as i}from"../chunks/scheduler.DUZ9pEMT.js";import{S as n,i as o,e as u,c as m,g as c,a as d,b as p,d as g}from"../chunks/index.B2RTt-ug.js";function v(t){let e,s=`<div class="mx-auto max-w-3xl text-base leading-7 text-gray-200"><p class="text-base font-semibold leading-7 text-indigo-600">Introducing</p> <h1 class="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">JavaScript for Beginners</h1> <p class="mt-6 text-xl leading-8">Aliquet nec orci mattis amet quisque ullamcorper neque, nibh sem. At arcu, sit dui
+import { s as r, n as i } from '../chunks/scheduler.DUZ9pEMT.js';
+import {
+	S as n,
+	i as o,
+	e as u,
+	c as m,
+	g as c,
+	a as d,
+	b as p,
+	d as g
+} from '../chunks/index.B2RTt-ug.js';
+function v(t) {
+	let e,
+		s = `<div class="mx-auto max-w-3xl text-base leading-7 text-gray-200"><p class="text-base font-semibold leading-7 text-indigo-600">Introducing</p> <h1 class="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">JavaScript for Beginners</h1> <p class="mt-6 text-xl leading-8">Aliquet nec orci mattis amet quisque ullamcorper neque, nibh sem. At arcu, sit dui
 			mi, nibh dui, diam eget aliquam. Quisque id at vitae feugiat egestas ac. Diam nulla orci at in viverra scelerisque
 			eget. Eleifend egestas fringilla sapien.</p> <div class="mt-10 max-w-2xl"><p>Faucibus commodo massa rhoncus, volutpat. Dignissim sed eget risus enim. Mattis mauris semper sed amet vitae
 				sed turpis id. Id dolor praesent donec est. Odio penatibus risus viverra tellus varius sit neque erat velit.
@@ -18,4 +31,33 @@ import{s as r,n as i}from"../chunks/scheduler.DUZ9pEMT.js";import{S as n,i as o,
 				Gravida quis fringilla amet eget dui tempor dignissim. Facilisis auctor venenatis varius nunc, congue erat ac.
 				Cras fermentum convallis quam.</p> <p class="mt-8">Faucibus commodo massa rhoncus, volutpat. Dignissim sed eget risus enim. Mattis mauris semper sed
 				amet vitae sed turpis id. Id dolor praesent donec est. Odio penatibus risus viverra tellus varius sit neque erat
-				velit.</p></div></div>`;return{c(){e=u("div"),e.innerHTML=s,this.h()},l(a){e=m(a,"DIV",{class:!0,"data-svelte-h":!0}),c(e)!=="svelte-azqkg7"&&(e.innerHTML=s),this.h()},h(){d(e,"class","px-6 py-32 lg:px-8 bg-zinc-900")},m(a,l){p(a,e,l)},p:i,i,o:i,d(a){a&&g(e)}}}class h extends n{constructor(e){super(),o(this,e,null,v,r,{})}}export{h as component};
+				velit.</p></div></div>`;
+	return {
+		c() {
+			(e = u('div')), (e.innerHTML = s), this.h();
+		},
+		l(a) {
+			(e = m(a, 'DIV', { class: !0, 'data-svelte-h': !0 })),
+				c(e) !== 'svelte-azqkg7' && (e.innerHTML = s),
+				this.h();
+		},
+		h() {
+			d(e, 'class', 'px-6 py-32 lg:px-8 bg-zinc-900');
+		},
+		m(a, l) {
+			p(a, e, l);
+		},
+		p: i,
+		i,
+		o: i,
+		d(a) {
+			a && g(e);
+		}
+	};
+}
+class h extends n {
+	constructor(e) {
+		super(), o(this, e, null, v, r, {});
+	}
+}
+export { h as component };

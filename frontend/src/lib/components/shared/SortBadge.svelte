@@ -8,7 +8,6 @@
 	};
 
 	export let text = 'sorted by';
-
 </script>
 
 <div class={`sort text-right`}>

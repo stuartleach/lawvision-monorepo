@@ -6,10 +6,11 @@
 	export let className: string = '';
 </script>
 
-<button class={className + " list-item"}
-				on:click={onClick ? onClick : undefined}
-				on:mouseenter={onMouseEnter ? onMouseEnter : undefined}
-				on:mouseleave={onMouseLeave ? onMouseLeave : undefined}
+<button
+	class={className + ' list-item'}
+	on:click={onClick ? onClick : undefined}
+	on:mouseenter={onMouseEnter ? onMouseEnter : undefined}
+	on:mouseleave={onMouseLeave ? onMouseLeave : undefined}
 >
 	<h3>
 		<slot name="title" />

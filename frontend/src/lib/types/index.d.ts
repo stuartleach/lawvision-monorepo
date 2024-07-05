@@ -1,2 +1,2 @@
-export * from './prismaTypes'
-export * from './frontendTypes'
+export * from './prismaTypes';
+export * from './frontendTypes';

@@ -1,7 +1,13 @@
 // $lib/stores/data.ts
 import { writable } from 'svelte/store';
-import type { County, CountyWithGeoJSON, GeoJSONData, Judge, JudgeOutcomes, MinMax } from '$lib/types';
-
+import type {
+	County,
+	CountyWithGeoJSON,
+	GeoJSONData,
+	Judge,
+	JudgeOutcomes,
+	MinMax
+} from '$lib/types';
 
 // Styling //
 export const darkMode = writable<boolean>(true);
@@ -19,17 +25,18 @@ export const countyJudgesStore = writable<Judge[]>([]);
 export const judgesStateMinMax = writable<MinMax>();
 export const countyJudgesPromiseStore = writable<Promise<Judge[]> | null>(null);
 
-
 // Bail //
 export const bailAmountsStore = writable<number[]>([]);
 export const bailMinMaxStore = writable<[number, number]>([0, 0]);
-
 
 // Stateful //
 export const loadingStore = writable<boolean>(true);
 export const selectedCountyStore = writable<County | null>(null);
 export const selectedMetricStore = writable<'bail' | 'remand' | 'release'>('bail');
-export const mapDimensionsStore = writable<{ width: number; height: number }>({ width: 1000, height: 1000 });
+export const mapDimensionsStore = writable<{ width: number; height: number }>({
+	width: 1000,
+	height: 1000
+});
 export const selectedJudgeStore = writable<Judge | null>(null);
 export const selectedJudgeOutcomesStore = writable<JudgeOutcomes | null>(null);
 export const selectedJudgeOutcomesPromiseStore = writable<Promise<JudgeOutcomes> | null>(null);

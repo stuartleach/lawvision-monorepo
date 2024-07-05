@@ -38,7 +38,6 @@
 			break;
 	}
 
-
 	let data = [
 		{ name: 'Judge', value: judgeValue },
 		{ name: 'County', value: countyValue },
@@ -46,7 +45,7 @@
 	];
 
 	let svg;
-	let container: HTMLDivElement;  // Declare the container variable
+	let container: HTMLDivElement; // Declare the container variable
 	let margin = { top: 0, right: 0, bottom: 0, left: 0 };
 	let width;
 	let height = 100 - margin.top - margin.bottom;
@@ -57,7 +56,8 @@
 		createChart();
 	});
 
-	afterUpdate(() => { // Call createChart after each update
+	afterUpdate(() => {
+		// Call createChart after each update
 		createChart();
 	});
 
@@ -70,24 +70,28 @@
 		d3.select(`#${chartContainerId}`).select('svg').remove();
 
 		// Create judge-focus SVG element and append
-		svg = d3.select(`#${chartContainerId}`)
+		svg = d3
+			.select(`#${chartContainerId}`)
 			.append('svg')
 			.attr('width', width)
 			.attr('height', height)
 			.append('g')
 			.attr('transform', `translate(${margin.left},${margin.top})`);
 
-		let x = d3.scaleBand()
-			.domain(data.map(d => d.name))
+		let x = d3
+			.scaleBand()
+			.domain(data.map((d) => d.name))
 			.range([0, width])
 			.padding(0.1);
 
-		let y = d3.scaleLinear()
-			.domain([0, d3.max(data, d => d.value) as number])
+		let y = d3
+			.scaleLinear()
+			.domain([0, d3.max(data, (d) => d.value) as number])
 			.nice()
 			.range([height, 0]);
 
-		svg.append('g')
+		svg
+			.append('g')
 			.attr('class', 'axis axis--x')
 			.attr('transform', `translate(0,${height})`)
 			.call(d3.axisBottom(x))
@@ -96,22 +100,25 @@
 			.style('text-anchor', 'end');
 		svg.selectAll('.axis--x .domain').remove();
 
-		svg.append('g')
+		svg
+			.append('g')
 			.attr('class', 'axis axis--y')
 			.call(d3.axisLeft(y).ticks(5, 's'))
 			.selectAll('text')
 			.style('font-size', '10px');
 		svg.selectAll('.axis--y .domain').remove();
 
-		svg.selectAll('.bar')
+		svg
+			.selectAll('.bar')
 			.data(data)
-			.enter().append('rect')
+			.enter()
+			.append('rect')
 			.attr('class', 'bar')
-			.attr('x', d => x(d.name)!)
+			.attr('x', (d) => x(d.name)!)
 			.attr('width', x.bandwidth())
-			.attr('y', d => y(d.value))
-			.attr('height', d => height - y(d.value))
-			.attr('fill', d => {
+			.attr('y', (d) => y(d.value))
+			.attr('height', (d) => height - y(d.value))
+			.attr('fill', (d) => {
 				if (d.name === 'Judge') return '#FFEB3B';
 				if (d.name === 'County') return '#FFC107';
 				return '#FBC02D';

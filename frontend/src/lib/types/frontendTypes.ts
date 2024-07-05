@@ -52,11 +52,11 @@ export interface Judge {
 }
 
 export type JudgeOrCounty = {
-	stats: CaseStats
-	judgeUUID?: string
-	countyUUID?: string
-	name: string
-}
+	stats: CaseStats;
+	judgeUUID?: string;
+	countyUUID?: string;
+	name: string;
+};
 
 export interface CaseStats {
 	averageBailSet: number;
@@ -87,8 +87,9 @@ export interface CaseStats {
 		unknown: number;
 		nmr: number;
 		release: number;
-	},
-	pctileCounty?: { // not present in county stats
+	};
+	pctileCounty?: {
+		// not present in county stats
 		bailAmount: number;
 		caseCount: number;
 		ror: number;
@@ -97,7 +98,7 @@ export interface CaseStats {
 		unknown: number;
 		nmr: number;
 		release: number;
-	},
+	};
 }
 
 export type FetchFunction = (input: RequestInfo, init?: RequestInit) => Promise<Response>;
@@ -106,30 +107,29 @@ export type JudgeQuery = {
 	fetch: FetchFunction;
 	countyId: string;
 	limit: number;
-}
+};
 
 export type JudgeOutcomesQuery = {
 	fetch: FetchFunction;
 	judgeId: string;
-}
+};
 
 export type CombinedPreTrialOutcomes = {
-	[chargeWeight: string]: RaceOutcomesMap
+	[chargeWeight: string]: RaceOutcomesMap;
 };
 
 export type ChargeSeverityOutcomesMap = {
-	'AF': PretrialOutcomes;
-	'BF': PretrialOutcomes;
-	'CF': PretrialOutcomes;
-	'DF': PretrialOutcomes;
-	'EF': PretrialOutcomes;
-	'AM': PretrialOutcomes;
-	'BM': PretrialOutcomes;
-	'I': PretrialOutcomes;
-	'UM': PretrialOutcomes;
-	'unknown': PretrialOutcomes;
-}
-
+	AF: PretrialOutcomes;
+	BF: PretrialOutcomes;
+	CF: PretrialOutcomes;
+	DF: PretrialOutcomes;
+	EF: PretrialOutcomes;
+	AM: PretrialOutcomes;
+	BM: PretrialOutcomes;
+	I: PretrialOutcomes;
+	UM: PretrialOutcomes;
+	unknown: PretrialOutcomes;
+};
 
 export enum TypeOfTarget {
 	judges = 'judges',
@@ -153,37 +153,36 @@ export enum SortOrder {
 	desc = 'desc'
 }
 
-
 export type RaceOutcomesMap = {
-	'White': PretrialOutcomes;
-	'Black': PretrialOutcomes;
+	White: PretrialOutcomes;
+	Black: PretrialOutcomes;
 	'American Indian/Alaska Native': PretrialOutcomes;
 	'Asian/Pacific Islander': PretrialOutcomes;
-	'Other': PretrialOutcomes;
-	'Unknown': PretrialOutcomes;
-}
+	Other: PretrialOutcomes;
+	Unknown: PretrialOutcomes;
+};
 
 export type JudgeOutcomes = {
 	charges: ChargeSeverityOutcomesMap;
 	races: RaceOutcomesMap;
-}
+};
 
 export type PretrialOutcomeTypes = {
-	'bail': number;
-	'release': number;
-	'unknown': number;
-	'remand': number;
-}
+	bail: number;
+	release: number;
+	unknown: number;
+	remand: number;
+};
 
 export type PretrialOutcomes = {
 	raw: PretrialOutcomeTypes;
 	pct: PretrialOutcomeTypes;
-}
+};
 
 export type CountyQuery = {
 	fetch: FetchFunction;
-}
+};
 
 export type GeoJSONQuery = {
-	fetch: FetchFunction
-}
+	fetch: FetchFunction;
+};

@@ -9,9 +9,8 @@
 		store?.set(null);
 		hide?.set(false);
 	};
-
 </script>
 
-<button class="x-button mb-4 -mr-1 -mt-2 w-4" on:click={handleClick}>
+<button class="x-button -mr-1 w-4" on:click={handleClick}>
 	<CloseIcon />
 </button>

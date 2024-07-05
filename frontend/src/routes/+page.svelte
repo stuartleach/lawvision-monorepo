@@ -6,7 +6,6 @@
 	import { loadingStore } from '$lib/stores/data';
 </script>
 
-
 {#if $loadingStore}
 	<div class="loading">Loading...</div>
 {:else}
@@ -14,5 +13,4 @@
 {/if}
 
 <style>
-
 </style>

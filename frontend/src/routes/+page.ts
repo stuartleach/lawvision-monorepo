@@ -17,7 +17,6 @@ import type { PageLoad } from './$types';
 export const load: PageLoad = async ({ fetch, params }) => {
 	loadingStore.set(true);
 
-
 	try {
 		const newYorkGeoJson: GeoJSONData = await getGeoJson({ fetch });
 		const counties: County[] = await getCounties({ fetch });
@@ -36,4 +35,3 @@ export const load: PageLoad = async ({ fetch, params }) => {
 		loadingStore.set(false);
 	}
 };
-

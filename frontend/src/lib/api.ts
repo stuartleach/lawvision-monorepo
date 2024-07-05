@@ -14,7 +14,11 @@ import type {
 } from '$lib/types';
 import { mutateCounty, mutateJudge } from '$lib/utils';
 
-const fetchData = async <T>(fetch: FetchFunction, url: string, options?: RequestInit): Promise<T> => {
+const fetchData = async <T>(
+	fetch: FetchFunction,
+	url: string,
+	options?: RequestInit
+): Promise<T> => {
 	const response = await fetch(url, {
 		headers: {
 			'Content-Type': 'application/json',
@@ -51,12 +55,15 @@ const getJudges = async (query: JudgeQuery): Promise<Judge[]> => {
 		url += `?${params.join('&')}`;
 	}
 	let judges: JudgeModel[] = await fetchData<JudgeModel[]>(fetch, url);
-	judges = judges.filter(judge => judge.judge_name !== 'Judge/JHO/Hearing Examiner, Visiting' && judge.judge_name !== "Office, Clerk's")
+	judges = judges.filter(
+		(judge) =>
+			judge.judge_name !== 'Judge/JHO/Hearing Examiner, Visiting' &&
+			judge.judge_name !== "Office, Clerk's"
+	);
 	return judges.map(mutateJudge);
 };
 
 const getJudgeOutcomes = async (query: JudgeOutcomesQuery): Promise<void> => {
-
 	const { fetch, judgeId } = query;
 
 	const result = await fetchData<JudgeOutcomes>(fetch, `/api/judges/${judgeId}/outcomes`);
@@ -64,12 +71,11 @@ const getJudgeOutcomes = async (query: JudgeOutcomesQuery): Promise<void> => {
 	selectedJudgeOutcomesStore.set(result);
 };
 
-
 const getCounties = async (query: CountyQuery): Promise<County[]> => {
 	const { fetch } = query;
 
 	// let url = '/api/counties';
-	let url = '/counties.json';
+	const url = '/counties.json';
 	const counties: CountyModel[] = await fetchData<CountyModel[]>(fetch, url);
 	return counties.map(mutateCounty);
 };
