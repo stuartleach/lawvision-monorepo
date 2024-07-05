@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "concurrently \"pnpm run --dir ./backend dev\" \"pnpm run --dir ./frontend dev\"",
     "build": "pnpm --filter './*' build",
-    "start": "pnpm --filter ./backend start"
+    "buildFrontend": "cd frontend && pnpm build",
+    "start": "pnpm --filter ./frontend start"
   },
   "devDependencies": {
     "concurrently": "^6.4.0"
