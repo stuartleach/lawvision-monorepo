@@ -45,13 +45,12 @@ function formatMoneyValue(value: number): [string, string] {
 }
 
 const mutateCounty = (county: CountyModel): County => {
-	const result = {
+	return {
 		medianIncome: county.median_income ?? 0,
 		countyUUID: county.county_id,
 		name: county.county_name,
 		stats: mutateCountyStats(county)
 	};
-	return result;
 };
 
 const mutateCountyStats = (item: CountyModel): CaseStats => {
@@ -89,7 +88,7 @@ const mutateCountyStats = (item: CountyModel): CaseStats => {
 };
 
 const mutateJudgeStats = (item: JudgeModel): CaseStats => {
-	const stats: CaseStats = {
+	return {
 		averageBailSet: item.average_bail_set ?? 0,
 		caseCount: item.case_count ?? 0,
 		totalBailSet: (item.average_bail_set ?? 0) * (item?.case_count ?? 0),
@@ -130,8 +129,6 @@ const mutateJudgeStats = (item: JudgeModel): CaseStats => {
 			release: item.percentile_county_release ?? 0
 		}
 	};
-
-	return stats;
 };
 
 export const sortListByTarget = (
@@ -164,10 +161,7 @@ export const sortListByTarget = (
 		}
 	};
 
-	const sortedList = list.sort((a, b) =>
-		order === SortOrder.asc ? compareValues(a, b) : compareValues(b, a)
-	);
-	return sortedList;
+	return list.sort((a, b) => (order === SortOrder.asc ? compareValues(a, b) : compareValues(b, a)));
 };
 
 const mutateJudge = (judge: JudgeModel): Judge => {
@@ -220,52 +214,6 @@ const getMinMax = (targets: JudgeOrCounty[]): MinMax => {
 	}, initialMinMax);
 };
 
-const sortBy = (
-	targets: County[] | Judge[],
-	metric: 'bail' | 'remand' | 'release'
-): County[] | Judge[] => {
-	if (targets.length === 0) {
-		return [];
-	}
-	if (targets[0].hasOwnProperty('judgeUUID')) {
-		targets = targets as Judge[];
-
-		if (metric === 'bail') {
-			targets = targets.filter((judge) => judge.stats?.raw.bailSet > 5);
-		}
-
-		if (metric === 'release') {
-			targets = targets.filter((judge) => judge.stats?.raw.release > 5);
-		}
-
-		if (metric === 'remand') {
-			targets = targets.filter((judge) => judge.stats?.raw.remand > 5);
-		}
-
-		return targets.sort((a, b) => {
-			targets = targets as Judge[];
-			if (metric === 'bail') {
-				return b.stats.averageBailSet - a.stats.averageBailSet;
-			} else if (metric === 'release') {
-				return b.stats.pct.ror + b.stats.pct.nmr - (a.stats.pct.ror + a.stats.pct.nmr);
-			} else {
-				return b.stats.pct.remand - a.stats.pct.remand;
-			}
-		});
-	}
-
-	return targets.sort((a, b) => {
-		targets = targets as County[];
-		if (metric === 'bail') {
-			return b.stats.averageBailSet - a.stats.averageBailSet;
-		} else if (metric === 'release') {
-			return b.stats.pct.ror + b.stats.pct.nmr - (a.stats.pct.ror + a.stats.pct.nmr);
-		} else {
-			return b.stats.pct.remand - a.stats.pct.remand;
-		}
-	});
-};
-
 export function combineCountiesWithGeoJSON(
 	counties: County[],
 	geoJsonData: GeoJSONData
@@ -291,7 +239,6 @@ export {
 	formatMoney,
 	formatNumber,
 	formatMoneyValue,
-	sortBy,
 	getMinMax,
 	mutateJudge,
 	mutateCounty,

@@ -12,27 +12,7 @@
 	$: valueSuffix = getOrdinalSuffix(valueInt);
 </script>
 
-<div class="wrapper">
+<div>
 	<span>{valueInt}</span>
-	<span class="right-of-decimal -ml-[0.25em] align-top text-xs font-light">{valueSuffix}</span>
+	<span class="-ml-[0.25em] align-top text-xs font-light">{valueSuffix}</span>
 </div>
-
-<style>
-	.wrapper {
-		/*@apply whitespace-nowrap flex space-x-1 items-center;*/
-	}
-
-	.percent-sign {
-		/*@apply text-green-600;*/
-	}
-
-	.left-of-decimal {
-		/*@apply text-gray-300;*/
-		@apply -mr-[4px] font-bold;
-	}
-
-	.right-of-decimal {
-		/*@apply flex tracking-tighter text-xs align-super;*/
-		/*@apply opacity-75 text-xs align-text-top;*/
-	}
-</style>

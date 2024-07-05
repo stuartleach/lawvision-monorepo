@@ -1,9 +1,8 @@
 <script lang="ts">
-	import type { County, Judge } from '$lib/types';
+	import type { Judge } from '$lib/types';
 	import JudgeStatItem from './JudgeStatItem.svelte';
 
 	export let selectedJudgeInfo: Judge | null;
-	export let county: County | undefined;
 	export let hoveredStat: string | null;
 	export let handleMouseEnter: (stat: string) => void;
 	export let handleMouseLeave: () => void;

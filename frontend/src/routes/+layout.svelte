@@ -37,11 +37,3 @@
 		<slot />
 	</div>
 </div>
-
-<style>
-	/*.outer-container {*/
-	/*    @apply flex flex-col p-6 w-screen;*/
-	/*    @apply h-full justify-between;*/
-	/*    background-color: rgba(39, 39, 42, 0.1);*/
-	/*}*/
-</style>

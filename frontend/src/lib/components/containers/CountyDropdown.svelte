@@ -2,47 +2,45 @@
 	import CloseButton from '$lib/components/shared/CloseButton.svelte';
 	import { selectedCountyStore } from '$lib/stores/data';
 	import type { County, Judge } from '$lib/types';
-	import { Label, Li } from 'flowbite-svelte';
+	import { Button, Label, Li } from 'flowbite-svelte';
 	import { onMount } from 'svelte';
 
 	export let counties: County[];
 	export let judges: Judge[];
 	let isOpen = false;
-	let selectedCounty = 'Select a county';
+	let selectedCountyName = $selectedCountyStore ?? 'Select a county';
 
-	// alphabetize counties
-	$: counties = counties.sort((a, b) => a.name.localeCompare(b.name));
+	$: sortedCounties = [...counties].sort((a, b) => a.name.localeCompare(b.name));
 
 	function toggleDropdown() {
 		isOpen = !isOpen;
 	}
 
 	function selectCounty(county: County) {
-		// if county was already selected, deselect it
-		if (selectedCounty === county.name) {
-			selectedCounty = 'Select a county';
-			selectedCountyStore.set(null);
-		}
-		selectedCounty = county.name;
+		selectedCountyName = county.name;
 		selectedCountyStore.set(county);
-		judges = judges.filter((judge) => judge.counties?.includes(county.name));
+		judges = judges.filter(judge => judge.counties?.includes(county.name));
 		isOpen = false;
 	}
 
 	onMount(() => {
-		document.addEventListener('click', (event) => {
+		const handleClickOutside = (event: MouseEvent) => {
 			const dropdown = document.getElementById('dropdown-button');
 			if (dropdown && !dropdown.contains(event.target as Node)) {
 				isOpen = false;
 			}
-		});
+		};
+		document.addEventListener('click', handleClickOutside);
+		return () => {
+			document.removeEventListener('click', handleClickOutside);
+		};
 	});
 </script>
 
 <div class="z-50 -mt-2">
 	<Label id="listbox-label" class="block text-sm font-medium leading-6 text-gray-900">County</Label>
 	<div class="relative mt-2 flex flex-row align-middle">
-		<button
+		<Button
 			type="button"
 			id="dropdown-button"
 			class="relative w-full cursor-default rounded-md bg-zinc-700 py-1.5 pl-3 pr-10 text-left text-zinc-400 shadow-sm ring-1 ring-inset ring-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6"
@@ -51,7 +49,7 @@
 			aria-labelledby="listbox-label"
 			on:click={toggleDropdown}
 		>
-			<span class="block truncate">{selectedCounty}</span>
+			<span class="block truncate">{selectedCountyName}</span>
 			<span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
 				<svg
 					class="h-5 w-5 text-gray-400"
@@ -66,7 +64,7 @@
 					/>
 				</svg>
 			</span>
-		</button>
+		</Button>
 
 		{#if isOpen}
 			<ul
@@ -76,26 +74,33 @@
 				aria-labelledby="listbox-label"
 				aria-activedescendant="listbox-option-3"
 			>
-				{#each counties as county}
-					<Li
+				{#each sortedCounties as county}
+					<li
 						class="relative z-[100000] cursor-default select-none py-2 pl-3 pr-9 text-gray-900"
 						id="listbox-option-0"
 						role="option"
-						on:click={() => selectCounty(county)}
+						aria-selected="true"
 					>
-						<span class="block truncate font-normal">{county.name}</span>
-						{#if selectedCounty === county.name}
-							<span class="absolute inset-y-0 right-0 flex items-center pr-4 text-indigo-600">
-								<svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-									<path
-										fill-rule="evenodd"
-										d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z"
-										clip-rule="evenodd"
-									/>
-								</svg>
-							</span>
-						{/if}
-					</Li>
+						<button
+							type="button"
+							class="w-full text-left"
+							on:click={() => selectCounty(county)}
+							on:keydown={(e) => e.key === 'Enter' || e.key === ' ' ? selectCounty(county) : null}
+						>
+							<span class="block truncate font-normal">{county.name}</span>
+							{#if selectedCountyName === county.name}
+								<span class="absolute inset-y-0 right-0 flex items-center pr-4 text-indigo-600">
+									<svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+										<path
+											fill-rule="evenodd"
+											d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z"
+											clip-rule="evenodd"
+										/>
+									</svg>
+								</span>
+							{/if}
+						</button>
+					</li>
 				{/each}
 			</ul>
 		{/if}

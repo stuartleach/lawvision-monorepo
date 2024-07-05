@@ -1,20 +1,18 @@
-import type { County, GeoJSONData } from '$lib/types/frontendTypes';
-import { getGeoJson, getCounties, getJudges } from '$lib/api';
+import { getCounties, getGeoJson, getJudges } from '$lib/api';
 import {
 	allCountiesStore,
-	loadingStore,
+	allCountiesWithGeoJSONStore,
 	allJudgesStore,
 	countiesMinMaxStore,
-	judgesStateMinMax,
 	geoJSONStore,
-	allCountiesWithGeoJSONStore,
-	countyJudgesStore,
-	selectedCountyStore
+	judgesStateMinMax,
+	loadingStore
 } from '$lib/stores/data';
+import type { County, GeoJSONData } from '$lib/types/frontendTypes';
 import { combineCountiesWithGeoJSON, getMinMax } from '$lib/utils';
 import type { PageLoad } from './$types';
 
-export const load: PageLoad = async ({ fetch, params }) => {
+export const load: PageLoad = async ({ fetch }) => {
 	loadingStore.set(true);
 
 	try {

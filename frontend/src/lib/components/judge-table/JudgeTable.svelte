@@ -85,6 +85,7 @@
 		return sortedAndFilteredJudges.filter((judge) => judge.name.toLowerCase().includes(lowerQuery));
 	};
 
+	let searchTimeout: ReturnType<typeof setTimeout>;
 	let query: string = '';
 	const handleSearch = () => {
 		clearTimeout(searchTimeout);
@@ -96,8 +97,6 @@
 			}
 		}, 150);
 	};
-
-	let searchTimeout: NodeJS.Timeout;
 </script>
 
 <div class="grid max-h-[97vh] bg-zinc-900 pb-5 pt-16">
@@ -219,9 +218,11 @@
 							judge !== $selectedJudgeStore &&
 							'blur-xs opacity-[15%] filter transition-all'}"
 						on:click={() => {
-							$selectedJudgeStore?.name === judge.name
-								? selectedJudgeStore.set(null)
-								: selectedJudgeStore.set(judge);
+							if ($selectedJudgeStore?.name === judge.name) {
+								selectedJudgeStore.set(null);
+							} else {
+								selectedJudgeStore.set(judge);
+							}
 						}}
 					>
 						<td class="py-4 pl-4 pr-8 text-left font-mono sm:pl-6 lg:pl-8">

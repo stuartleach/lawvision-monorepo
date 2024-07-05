@@ -57,9 +57,6 @@
 		"geojson": "^0.5.0",
 		"globals": "^15.8.0",
 		"node-fetch": "^3.3.2",
-		"prisma": "^5.14.0",
-		"svelte-accordion": "0.0.0-development",
-		"svelte-chartjs": "^3.1.5",
-		"svelte-collapsible": "^0.3.0"
+		"prisma": "^5.14.0"
 	}
 }
