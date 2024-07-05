@@ -107,7 +107,7 @@
 			<CountyDropdown counties={counties} judges={sortedAndFilteredJudges} />
 		</div>
 		<div class="mx-2">
-			<label for="name" class="ml-px block pl-4 text-sm font-medium leading-6 text-gray-900">Name</label>
+			<label for="name" class="ml-px block pl-4 font-medium leading-6 text-gray-900">Name</label>
 
 			<Input type="text" name="name" id="name"
 						 class="block w-full bg-zinc-800 rounded-md border-0 px-4 py-1.5 text-gray-300 shadow-sm ring-1 ring-inset ring-gray-600 placeholder:text-gray-400 placeholder:opacity-25 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
@@ -137,10 +137,11 @@
 				<col class="lg:w-1/12">
 				<col class="lg:w-3/12">
 				<col class="lg:w-2/12">
-				<col class="lg:w-2/12">
+				<col class="lg:w-1/12">
+				<col class="lg:w-1/12">
 				<col class="lg:w-1/12">
 			</colgroup>
-			<thead class=" text-sm leading-6 text-zinc-400 sticky top-0 bg-zinc-900 mb-4">
+			<thead class="text-base leading-6 text-zinc-400 sticky top-0 bg-zinc-900 mb-4">
 			<tr>
 				<th scope="col" class="py-2 pl-4 pr-8 font-semibold sm:pl-6 lg:pl-8 text-left">#</th>
 				<th class:text-zinc-200={$sortTarget === SortTarget.name} on:click={() => handleClick(SortTarget.name)}
@@ -154,6 +155,11 @@
 						on:click={() => handleClick(SortTarget.averageBail)}
 						scope="col" class="cursor-pointer py-2 pl-0 pr-4 font-semibold sm:pr-8 lg:pr-20">
 					Average Bail
+				</th>
+				<th class:text-zinc-200={$sortTarget === SortTarget.bailSet}
+						on:click={() => handleClick(SortTarget.bailSet)}
+						scope="col" class="cursor-pointer hidden py-2 pl-0 pr-8 font-semibold md:table-cell lg:pr-20">Bail-Set
+					Percentage
 				</th>
 				<th class:text-zinc-200={$sortTarget === SortTarget.remandPct}
 						on:click={() => handleClick(SortTarget.remandPct)}
@@ -169,11 +175,11 @@
 			</tr>
 			<div class="border-white/10 border-b-2 mb-2 w-screen bg-zinc-900 absolute"></div>
 			</thead>
-			<tbody class="divide-y divide-white/5 ">
+			<tbody class="divide-y divide-white/5">
 			{#each sortedAndFilteredJudges as judge, i}
 				<tr class:bg-zinc-950={i % 2 === 0}
 						class:bg-zinc-800={judge === $selectedJudgeStore}
-						class="hover:bg-zinc-800 hover:text-white text-zinc-400 transition-all cursor-pointer
+						class="hover:bg-zinc-800 hover:text-white text-zinc-400 transition-all cursor-pointer font-medium hover:font-bold
           {judge === $selectedJudgeStore ? 'scale-[101%] outline-zinc-500 outline outline-1' : ''}
           {$selectedJudgeStore && judge !== $selectedJudgeStore && 'opacity-[15%] blur-xs filter transition-all'}"
 						on:click={() =>  { $selectedJudgeStore?.name === judge.name ? selectedJudgeStore.set(null) : selectedJudgeStore.set(judge)}}>
@@ -182,20 +188,23 @@
 					</td>
 					<td class="py-4 pl-4 pr-8 sm:pl-6 lg:pl-8">
 						<div class="flex items-center gap-x-4">
-							<div class="truncate hover:text-gray-50 font-medium leading-6 ">{judge.name}</div>
+							<div class="truncate hover:text-gray-50  leading-6 ">{judge.name}</div>
 						</div>
 					</td>
 					<td class="hidden py-4 pl-0 pr-4 sm:table-cell sm:pr-8">
 						<div class="flex gap-x-3">
-							<div class="font-mono text-sm leading-6">{formatNumber(judge.stats.caseCount)}</div>
+							<div class="font-mono text-sm leading-6 caseCount-color">{formatNumber(judge.stats.caseCount)}</div>
 						</div>
 					</td>
 					<td class="py-4 pl-0 pr-4 text-sm leading-6 sm:pr-8 lg:pr-20">
 						<div class="flex items-center justify-end gap-x-2 sm:justify-start">
-							<div class="hidden sm:block text-right font-semibold font-mono">
+							<div class="hidden sm:block averageBail-color text-right font-semibold font-mono">
 								<Money value={judge.stats.averageBailSet} />
 							</div>
 						</div>
+					</td>
+					<td class="hidden py-4 pl-0 pr-8 text-sm leading-6 md:table-cell lg:pr-20 text-right bailSet-color font-mono">
+						<Percent value={judge.stats.pct.bailSet} />
 					</td>
 					<td class="hidden py-4 pl-0 pr-8 text-sm leading-6 md:table-cell lg:pr-20 text-right remand-color font-mono">
 						<Percent value={judge.stats.pct.remand} />
@@ -207,7 +216,7 @@
 				</tr>
 				{#if judge === $selectedJudgeStore}
 					<tr>
-						<td colspan="6" class="p-4 border-b-1 border-zinc-500">
+						<td colspan="7" class="p-4 border-b-1 border-zinc-500">
 							<ContainerJudge />
 						</td>
 					</tr>
