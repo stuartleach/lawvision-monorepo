@@ -5,27 +5,12 @@
 </script>
 
 <div class="wrapper">
-	<span class="dollar-sign">$</span>
-	<span class="dollars">{formatMoneyValue(value)[0]}</span>
-	<!--	<span class="cents">.{formatMoneyValue(value)[1]}</span>-->
+	<span>$</span>
+	<span>{formatMoneyValue(value)[0]}</span>
 </div>
 
 <style>
     .wrapper {
-        @apply whitespace-nowrap flex space-x-1/* items-center*/;
+        @apply whitespace-nowrap flex space-x-1;
     }
-
-    .dollar-sign {
-        /*@apply text-green-600;*/
-    }
-
-    .dollars {
-        /*@apply text-gray-300;*/
-    }
-
-    .cents {
-        @apply /*text-gray-500*/
-        flex tracking-tighter text-xs align-text-top;
-    }
-
 </style>
