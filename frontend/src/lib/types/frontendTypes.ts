@@ -131,11 +131,6 @@ export type ChargeSeverityOutcomesMap = {
 	unknown: PretrialOutcomes;
 };
 
-export enum TypeOfTarget {
-	judges = 'judges',
-	counties = 'counties'
-}
-
 // Define the enum without quotes around the keys
 export enum SortTarget {
 	name = 'Name',
