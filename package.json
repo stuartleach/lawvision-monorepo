@@ -1,7 +1,7 @@
 {
   "name": "lawvision-monorepo",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.0.1",
   "type": "module",
   "scripts": {
     "dev": "concurrently \"pnpm run --dir ./backend dev\" \"pnpm run --dir ./frontend dev\"",
