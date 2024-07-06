@@ -115,8 +115,7 @@
 			</h2>
 		</div>
 
-		<div
-			class="sm:flex-row flex-col h-full align-middle sm:w-full w-1/2 grid grid-rows-2 grid-cols-1 justify-self-center">
+		<div class="flex flex-col sm:flex-row sm:space-x-4 space-y-4 sm:space-y-0 sm:w-full">
 			<div class="w-full">
 				<CountyDropdown {counties} judges={sortedAndFilteredJudges} />
 			</div>
@@ -133,10 +132,8 @@
 			</div>
 		</div>
 
-		<div
-			class="flex flex-row sm:flex-col px-4 text-right sm:text-2xl text-2xl justify-around w-3/5 justify-self-center sm:justify-self-right leading-7 tracking-tight text-zinc-500 sm:px-6 lg:px-8"
-		>
-			<h2 class="-mr-4 px-4 text-right sm:text-2xl  font-bold text-zinc-500">sorted by</h2>
+		<div class="flex flex-col sm:items-end text-right text-zinc-500 text-2xl leading-7 tracking-tight">
+			<h2 class="-mr-4 sm:mr-0">sorted by</h2>
 			<button
 				class="flex cursor-pointer flex-row justify-end text-right font-semibold transition hover:opacity-75"
 				on:click={() => handleClick(nextSortMetric())}
@@ -152,15 +149,16 @@
 		</div>
 	</div>
 
-	<div class="table-container mt-6 overflow-x-auto">
-		<table class="mt-6 w-full whitespace-nowrap text-left">
+	<div class="table-container mt-6 overflow-x-auto flex-grow">
+		<table class="min-w-full whitespace-nowrap text-left">
 			<colgroup>
-				<col class="lg:w-1/12" />
-				<col class="lg:w-3/12" />
-				<col class="lg:w-2/12" />
-				<col class="lg:w-1/12" />
-				<col class="lg:w-1/12" />
-				<col class="lg:w-1/12" />
+				<col class="w-16" />
+				<col />
+				<col />
+				<col class="hidden md:table-cell" />
+				<col class="hidden md:table-cell" />
+				<col class="hidden md:table-cell" />
+				<col class="hidden sm:table-cell" />
 			</colgroup>
 			<thead class="sticky top-0 bg-zinc-900 text-base leading-6 text-zinc-400">
 			<tr>
@@ -192,21 +190,21 @@
 					on:click={() => handleClick(SortTarget.bailSet)}
 					scope="col"
 					class="hidden cursor-pointer py-2 pl-0 pr-8 font-semibold md:table-cell lg:pr-20"
-				>Bail-Set Percentage
+				>Bail-Set %
 				</th>
 				<th
 					class:text-zinc-200={$sortTarget === SortTarget.remandPct}
 					on:click={() => handleClick(SortTarget.remandPct)}
 					scope="col"
 					class="hidden cursor-pointer py-2 pl-0 pr-8 font-semibold md:table-cell lg:pr-20"
-				>Remand Percentage
+				>Remand %
 				</th>
 				<th
 					class:text-zinc-200={$sortTarget === SortTarget.releasePct}
 					on:click={() => handleClick(SortTarget.releasePct)}
 					scope="col"
 					class="hidden cursor-pointer py-2 pl-0 pr-4 text-right font-semibold sm:table-cell sm:pr-6 lg:pr-8"
-				>Release Percentage
+				>Release %
 				</th>
 			</tr>
 			</thead>
@@ -297,11 +295,3 @@
 		</table>
 	</div>
 </div>
-
-<style>
-    /* Add some styles to ensure the table container has a height and can scroll */
-    .table-container {
-        height: 100vh; /* Set this to whatever height you need */
-        overflow-y: auto;
-    }
-</style>
