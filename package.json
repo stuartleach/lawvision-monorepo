@@ -7,6 +7,7 @@
     "dev": "concurrently \"pnpm run --dir ./backend dev\" \"pnpm run --dir ./frontend dev\"",
     "build": "pnpm --filter './*' build",
     "buildFrontend": "cd frontend && pnpm build",
+    "lint:fix": "concurrently \"pnpm run --dir ./backend lint:fix\" \"pnpm run --dir ./frontend lint:fix\"",
     "start": "pnpm --filter ./frontend start"
   },
   "devDependencies": {

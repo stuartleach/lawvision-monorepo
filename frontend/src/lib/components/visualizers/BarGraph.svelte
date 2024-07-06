@@ -2,7 +2,7 @@
 	import { stateBailCasesPct, stateBailCases } from '$lib/stores/data';
 	import type { County, Judge } from '$lib/types';
 	import * as d3 from 'd3';
-	import { onMount, afterUpdate } from 'svelte'; // Import afterUpdate
+	import { onMount, afterUpdate } from 'svelte';
 
 	export let judge: Judge | null;
 	export let county: County | undefined;
@@ -10,7 +10,6 @@
 	let statePct = stateBailCasesPct;
 	let stateRaw = stateBailCases;
 
-	// Calculate Judge's Data
 	let judgeValue: number = 0;
 	let countyValue: number = 0;
 	let stateValue: number = 0;
@@ -62,14 +61,10 @@
 	});
 
 	function createChart() {
-		// Select container and get width
 		const chartContainer = document.getElementById(chartContainerId);
 		width = chartContainer ? chartContainer.clientWidth - margin.left - margin.right : 200;
-
-		// Select the chart container and remove existing SVG
 		d3.select(`#${chartContainerId}`).select('svg').remove();
-
-		// Create judge-focus SVG element and append
+		
 		svg = d3
 			.select(`#${chartContainerId}`)
 			.append('svg')
