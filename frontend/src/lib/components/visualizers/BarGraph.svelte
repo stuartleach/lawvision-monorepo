@@ -56,7 +56,6 @@
 	});
 
 	afterUpdate(() => {
-		// Call createChart after each update
 		createChart();
 	});
 
@@ -64,9 +63,8 @@
 		const chartContainer = document.getElementById(chartContainerId);
 		width = chartContainer ? chartContainer.clientWidth - margin.left - margin.right : 200;
 		d3.select(`#${chartContainerId}`).select('svg').remove();
-		
-		svg = d3
-			.select(`#${chartContainerId}`)
+
+		svg = d3.select(`#${chartContainerId}`)
 			.append('svg')
 			.attr('width', width)
 			.attr('height', height)
@@ -85,26 +83,25 @@
 			.nice()
 			.range([height, 0]);
 
-		svg
-			.append('g')
+		svg.append('g')
 			.attr('class', 'axis axis--x')
 			.attr('transform', `translate(0,${height})`)
 			.call(d3.axisBottom(x))
 			.selectAll('text')
 			.attr('transform', 'rotate(-45)')
 			.style('text-anchor', 'end');
+
 		svg.selectAll('.axis--x .domain').remove();
 
-		svg
-			.append('g')
+		svg.append('g')
 			.attr('class', 'axis axis--y')
 			.call(d3.axisLeft(y).ticks(5, 's'))
 			.selectAll('text')
 			.style('font-size', '10px');
+
 		svg.selectAll('.axis--y .domain').remove();
 
-		svg
-			.selectAll('.bar')
+		svg.selectAll('.bar')
 			.data(data)
 			.enter()
 			.append('rect')
