@@ -7,7 +7,6 @@
 	let county: County | undefined;
 	let hoveredStat: string | null = null;
 
-	// Reactive assignments
 	$: selectedJudgeInfo = $selectedJudgeStore;
 	$: countyName = selectedJudgeInfo?.primaryCounty;
 	$: county = $allCountiesStore.find((c) => c.name === countyName);
@@ -25,7 +24,6 @@
 	<JudgeInfoHeader {selectedJudgeInfo} />
 	<JudgeStatsGrid
 		{selectedJudgeInfo}
-		{county}
 		{hoveredStat}
 		{handleMouseEnter}
 		{handleMouseLeave}
