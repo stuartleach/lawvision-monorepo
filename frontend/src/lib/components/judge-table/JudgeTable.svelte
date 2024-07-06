@@ -100,10 +100,11 @@
 </script>
 
 <div class="grid bg-zinc-900 pb-5 pt-16">
-	<div class="sticky z-[100] grid grid-flow-row-dense grid-cols-4">
-		<div class="sticky grid px-4 text-4xl font-bold tracking-tight text-white sm:px-6 lg:px-8">
+	<div class="sticky grid grid-cols-1 sm:grid-cols-3 space-y-4 sm:space-y-0 items-baseline ">
+		<div
+			class="sticky sm:grid flex flex-row  px-4 text-2xl grid-rows-1 justify-self-center h-fit sm:grid-cols-1 sm:text-4xl w-3/5 justify-around sm:w-full font-bold items-baseline tracking-tight text-zinc-400 sm:px-6 lg:px-8">
 			<h4
-				class="bg-gradient-to-bl from-red-700 to-yellow-500 bg-clip-text text-2xl leading-7 text-gray-500 text-transparent"
+				class="bg-clip-text text-2xl sm:text-2xl text-zinc-500"
 			>
 				{$selectedCountyStore ? $selectedCountyStore.name : 'New York State'}
 			</h4>
@@ -114,26 +115,28 @@
 			</h2>
 		</div>
 
-		<div class="z-[10000] mx-2">
-			<CountyDropdown {counties} judges={sortedAndFilteredJudges} />
-		</div>
-		<div class="mx-2">
-			<label for="name" class="ml-px block pl-4 font-medium leading-6 text-gray-900">Name</label>
-			<Input
-				type="text"
-				name="name"
-				id="name"
-				class="block w-full rounded-md border-0 bg-zinc-800 px-4 py-1.5 text-gray-300 shadow-sm ring-1 ring-inset ring-gray-600 placeholder:text-gray-400 placeholder:opacity-25 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-				placeholder={'Ruth B. Ginsburg'}
-				bind:value={query}
-				on:input={handleSearch}
-			/>
+		<div
+			class="sm:flex-row flex-col h-full align-middle sm:w-full w-1/2 grid grid-rows-2 grid-cols-1 justify-self-center">
+			<div class="w-full">
+				<CountyDropdown {counties} judges={sortedAndFilteredJudges} />
+			</div>
+			<div class="w-full">
+				<Input
+					type="text"
+					name="name"
+					id="name"
+					class="block w-full rounded-md border-0 bg-zinc-800 px-4 py-1.5 text-gray-300 shadow-sm ring-1 ring-inset ring-gray-600 placeholder:text-gray-400 placeholder:opacity-25 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+					placeholder={'Ruth B. Ginsburg'}
+					bind:value={query}
+					on:input={handleSearch}
+				/>
+			</div>
 		</div>
 
 		<div
-			class="flex flex-col px-4 text-right text-2xl leading-7 tracking-tight text-zinc-500 sm:px-6 lg:px-8"
+			class="flex flex-row sm:flex-col px-4 text-right sm:text-2xl text-2xl justify-around w-3/5 justify-self-center sm:justify-self-right leading-7 tracking-tight text-zinc-500 sm:px-6 lg:px-8"
 		>
-			<h2 class="-mr-4 px-4 text-right text-2xl font-bold text-zinc-500">sorted by</h2>
+			<h2 class="-mr-4 px-4 text-right sm:text-2xl  font-bold text-zinc-500">sorted by</h2>
 			<button
 				class="flex cursor-pointer flex-row justify-end text-right font-semibold transition hover:opacity-75"
 				on:click={() => handleClick(nextSortMetric())}
@@ -160,145 +163,145 @@
 				<col class="lg:w-1/12" />
 			</colgroup>
 			<thead class="sticky top-0 bg-zinc-900 text-base leading-6 text-zinc-400">
-				<tr>
-					<th scope="col" class="py-2 pl-4 pr-8 text-left font-semibold sm:pl-6 lg:pl-8">#</th>
-					<th
-						class:text-zinc-200={$sortTarget === SortTarget.name}
-						on:click={() => handleClick(SortTarget.name)}
-						scope="col"
-						class="cursor-pointer py-2 pl-4 pr-8 font-semibold sm:pl-6 lg:pl-8"
-						>Judge
-					</th>
-					<th
-						class:text-zinc-200={$sortTarget === SortTarget.caseCount}
-						on:click={() => handleClick(SortTarget.caseCount)}
-						scope="col"
-						class="hidden cursor-pointer py-2 pl-0 pr-8 font-semibold sm:table-cell"
-						>Total Cases
-					</th>
-					<th
-						class:text-zinc-200={$sortTarget === SortTarget.averageBail}
-						on:click={() => handleClick(SortTarget.averageBail)}
-						scope="col"
-						class="cursor-pointer py-2 pl-0 pr-4 font-semibold sm:pr-8 lg:pr-20"
-					>
-						Average Bail
-					</th>
-					<th
-						class:text-zinc-200={$sortTarget === SortTarget.bailSet}
-						on:click={() => handleClick(SortTarget.bailSet)}
-						scope="col"
-						class="hidden cursor-pointer py-2 pl-0 pr-8 font-semibold md:table-cell lg:pr-20"
-						>Bail-Set Percentage
-					</th>
-					<th
-						class:text-zinc-200={$sortTarget === SortTarget.remandPct}
-						on:click={() => handleClick(SortTarget.remandPct)}
-						scope="col"
-						class="hidden cursor-pointer py-2 pl-0 pr-8 font-semibold md:table-cell lg:pr-20"
-						>Remand Percentage
-					</th>
-					<th
-						class:text-zinc-200={$sortTarget === SortTarget.releasePct}
-						on:click={() => handleClick(SortTarget.releasePct)}
-						scope="col"
-						class="hidden cursor-pointer py-2 pl-0 pr-4 text-right font-semibold sm:table-cell sm:pr-6 lg:pr-8"
-						>Release Percentage
-					</th>
-				</tr>
+			<tr>
+				<th scope="col" class="py-2 pl-4 pr-8 text-left font-semibold sm:pl-6 lg:pl-8">#</th>
+				<th
+					class:text-zinc-200={$sortTarget === SortTarget.name}
+					on:click={() => handleClick(SortTarget.name)}
+					scope="col"
+					class="cursor-pointer py-2 pl-4 pr-8 font-semibold sm:pl-6 lg:pl-8"
+				>Judge
+				</th>
+				<th
+					class:text-zinc-200={$sortTarget === SortTarget.caseCount}
+					on:click={() => handleClick(SortTarget.caseCount)}
+					scope="col"
+					class="hidden cursor-pointer py-2 pl-0 pr-8 font-semibold sm:table-cell"
+				>Total Cases
+				</th>
+				<th
+					class:text-zinc-200={$sortTarget === SortTarget.averageBail}
+					on:click={() => handleClick(SortTarget.averageBail)}
+					scope="col"
+					class="cursor-pointer py-2 pl-0 pr-4 font-semibold sm:pr-8 lg:pr-20"
+				>
+					Average Bail
+				</th>
+				<th
+					class:text-zinc-200={$sortTarget === SortTarget.bailSet}
+					on:click={() => handleClick(SortTarget.bailSet)}
+					scope="col"
+					class="hidden cursor-pointer py-2 pl-0 pr-8 font-semibold md:table-cell lg:pr-20"
+				>Bail-Set Percentage
+				</th>
+				<th
+					class:text-zinc-200={$sortTarget === SortTarget.remandPct}
+					on:click={() => handleClick(SortTarget.remandPct)}
+					scope="col"
+					class="hidden cursor-pointer py-2 pl-0 pr-8 font-semibold md:table-cell lg:pr-20"
+				>Remand Percentage
+				</th>
+				<th
+					class:text-zinc-200={$sortTarget === SortTarget.releasePct}
+					on:click={() => handleClick(SortTarget.releasePct)}
+					scope="col"
+					class="hidden cursor-pointer py-2 pl-0 pr-4 text-right font-semibold sm:table-cell sm:pr-6 lg:pr-8"
+				>Release Percentage
+				</th>
+			</tr>
 			</thead>
 			<tbody class="divide-y divide-white/5">
-				{#each sortedAndFilteredJudges as judge, i}
-					<tr
-						class:bg-zinc-950={i % 2 === 0}
-						class:bg-zinc-800={judge === $selectedJudgeStore}
-						class="cursor-pointer font-medium text-zinc-400 transition-all hover:bg-zinc-800 hover:font-bold hover:text-white
+			{#each sortedAndFilteredJudges as judge, i}
+				<tr
+					class:bg-zinc-950={i % 2 === 0}
+					class:bg-zinc-800={judge === $selectedJudgeStore}
+					class="cursor-pointer font-medium text-zinc-400 transition-all hover:bg-zinc-800 hover:font-bold hover:text-white
 							{judge === $selectedJudgeStore ? 'outline outline-1 outline-zinc-500' : ''}
 							{$selectedJudgeStore &&
 							judge !== $selectedJudgeStore &&
 							'blur-xs opacity-[15%] filter transition-all'}"
-						on:click={() => {
+					on:click={() => {
 							if ($selectedJudgeStore?.name === judge.name) {
 								selectedJudgeStore.set(null);
 							} else {
 								selectedJudgeStore.set(judge);
 							}
 						}}
-					>
-						<td class="py-4 pl-4 pr-8 text-left font-mono sm:pl-6 lg:pl-8">
-							{i + 1}
-						</td>
-						<td class="py-4 pl-4 pr-8 sm:pl-6 lg:pl-8">
-							<div class="flex items-center gap-x-4">
-								<div class="truncate text-lg leading-6 hover:text-gray-50">{judge.name}</div>
-							</div>
-						</td>
-						<td class="hidden py-4 pl-0 pr-4 sm:table-cell sm:pr-8">
-							<div class="flex gap-x-3">
-								<div
-									class="caseCount-color font-mono text-lg leading-6 {$sortTarget ===
+				>
+					<td class="py-4 pl-4 pr-8 text-left font-mono sm:pl-6 lg:pl-8">
+						{i + 1}
+					</td>
+					<td class="py-4 pl-4 pr-8 sm:pl-6 lg:pl-8">
+						<div class="flex items-center gap-x-4">
+							<div class="truncate text-lg leading-6 hover:text-gray-50">{judge.name}</div>
+						</div>
+					</td>
+					<td class="hidden py-4 pl-0 pr-4 sm:table-cell sm:pr-8">
+						<div class="flex gap-x-3">
+							<div
+								class="caseCount-color font-mono text-lg leading-6 {$sortTarget ===
 									SortTarget.caseCount
 										? 'font-bold'
 										: ''}"
-								>
-									{formatNumber(judge.stats.caseCount)}
-								</div>
+							>
+								{formatNumber(judge.stats.caseCount)}
 							</div>
-						</td>
-						<td class="py-4 pl-0 pr-4 text-sm leading-6 sm:pr-8 lg:pr-20">
-							<div class="flex items-center justify-end gap-x-2 sm:justify-start">
-								<div
-									class="averageBail-color hidden text-right font-mono text-lg sm:block {$sortTarget ===
+						</div>
+					</td>
+					<td class="py-4 pl-0 pr-4 text-sm leading-6 sm:pr-8 lg:pr-20">
+						<div class="flex items-center justify-end gap-x-2 sm:justify-start">
+							<div
+								class="averageBail-color hidden text-right font-mono text-lg sm:block {$sortTarget ===
 									SortTarget.averageBail
 										? 'font-bold'
 										: ''}"
-								>
-									<Money value={judge.stats.averageBailSet} />
-								</div>
+							>
+								<Money value={judge.stats.averageBailSet} />
 							</div>
-						</td>
-						<td
-							class="bailSet-color hidden py-4 pl-0 pr-8 text-right font-mono text-lg leading-6 md:table-cell lg:pr-20 {$sortTarget ===
+						</div>
+					</td>
+					<td
+						class="bailSet-color hidden py-4 pl-0 pr-8 text-right font-mono text-lg leading-6 md:table-cell lg:pr-20 {$sortTarget ===
 							SortTarget.bailSet
 								? 'font-bold'
 								: ''}"
-						>
-							<Percent value={judge.stats.pct.bailSet} />
-						</td>
-						<td
-							class="remand-color hidden py-4 pl-0 pr-8 text-right font-mono text-lg leading-6 md:table-cell lg:pr-20 {$sortTarget ===
+					>
+						<Percent value={judge.stats.pct.bailSet} />
+					</td>
+					<td
+						class="remand-color hidden py-4 pl-0 pr-8 text-right font-mono text-lg leading-6 md:table-cell lg:pr-20 {$sortTarget ===
 							SortTarget.remandPct
 								? 'font-bold'
 								: ''}"
-						>
-							<Percent value={judge.stats.pct.remand} />
-						</td>
-						<td
-							class="release-color hidden py-4 pl-0 pr-4 text-right font-mono text-lg leading-6 sm:table-cell sm:pr-6 lg:pr-8 {$sortTarget ===
+					>
+						<Percent value={judge.stats.pct.remand} />
+					</td>
+					<td
+						class="release-color hidden py-4 pl-0 pr-4 text-right font-mono text-lg leading-6 sm:table-cell sm:pr-6 lg:pr-8 {$sortTarget ===
 							SortTarget.releasePct
 								? 'font-bold'
 								: ''}"
-						>
-							<Percent value={judge.stats.pct.release} />
+					>
+						<Percent value={judge.stats.pct.release} />
+					</td>
+				</tr>
+				{#if judge === $selectedJudgeStore}
+					<tr>
+						<td colspan="7" class="border-b-1 border-zinc-500 p-4">
+							<ContainerJudge />
 						</td>
 					</tr>
-					{#if judge === $selectedJudgeStore}
-						<tr>
-							<td colspan="7" class="border-b-1 border-zinc-500 p-4">
-								<ContainerJudge />
-							</td>
-						</tr>
-					{/if}
-				{/each}
+				{/if}
+			{/each}
 			</tbody>
 		</table>
 	</div>
 </div>
 
 <style>
-	/* Add some styles to ensure the table container has a height and can scroll */
-	.table-container {
-		height: 100vh; /* Set this to whatever height you need */
-		overflow-y: auto;
-	}
+    /* Add some styles to ensure the table container has a height and can scroll */
+    .table-container {
+        height: 100vh; /* Set this to whatever height you need */
+        overflow-y: auto;
+    }
 </style>

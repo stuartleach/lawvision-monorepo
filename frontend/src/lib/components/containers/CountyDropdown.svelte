@@ -37,9 +37,8 @@
 	});
 </script>
 
-<div class="z-50 -mt-2">
-	<Label id="listbox-label" class="block text-sm font-medium leading-6 text-gray-900">County</Label>
-	<div class="relative mt-2 flex flex-row align-middle">
+<div>
+	<div class="relative flex flex-row align-middle">
 		<Button
 			type="button"
 			id="dropdown-button"
@@ -68,7 +67,7 @@
 
 		{#if isOpen}
 			<ul
-				class="absolute z-[1000000] mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm"
+				class="absolute z-[1000000] max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm"
 				tabindex="-1"
 				role="listbox"
 				aria-labelledby="listbox-label"
@@ -104,8 +103,5 @@
 				{/each}
 			</ul>
 		{/if}
-		<div class="align-center flex justify-center px-4">
-			<CloseButton store={selectedCountyStore} />
-		</div>
 	</div>
 </div>
