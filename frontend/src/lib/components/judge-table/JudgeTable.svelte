@@ -83,7 +83,7 @@
 
 	const search = (query: string) => {
 		const lowerQuery = query.toLowerCase();
-		return sortedAndFilteredJudges.filter((judge) => judge.name.toLowerCase().includes(lowerQuery));
+		return judges.filter((judge) => judge.name.toLowerCase().includes(lowerQuery));
 	};
 
 	let searchTimeout: ReturnType<typeof setTimeout>;
@@ -122,22 +122,27 @@
 		}
 	};
 
+	$: selectedCountyName = $selectedCountyStore?.name;
+	$: console.log('selectedCountyName', selectedCountyName);
+
 	onMount(() => {
 		window.addEventListener('resize', updateVisibleJudges);
 		updateVisibleJudges();
 	});
 </script>
 
-<div class=" grid grid-flow-row-dense bg-zinc-900 pb-5 pt-16">
-	<div class="px-8  space-y-4 sm:space-y-4 ">
+<div class=" grid grid-flow-row-dense bg-zinc-900 pb-1 pt-4">
+	<div class="px-8 space-y-4 sm:space-y-4">
 		<div
-			class=" flex flex-row px-4 text-2xl grid-rows-1 justify-self-center h-fit sm:text-4xl w-3/5 justify-around sm:w-full font-bold items-baseline tracking-tight text-zinc-400 sm:px-6 lg:px-8">
-			<h4 class="bg-clip-text text-2xl sm:text-2xl text-zinc-500">
-				{$selectedCountyStore ? $selectedCountyStore.name : 'New York State'}
-			</h4>
-			<h2 class="bg-gradient-to-bl from-red-700 to-yellow-500 bg-clip-text pb-2 text-left text-transparent transition">
+			class="flex flex-row px-4 text-2xl grid-rows-1 h-fit sm:text-4xl w-3/5 sm:w-full font-bold items-baseline tracking-tight text-zinc-400 sm:px-6 lg:px-8">
+
+			<h4 class="text-4xl text-zinc-500 w-full text-left sm:text-center">
+				<span class="text-zinc-400"> New York State</span>
+
+				<!--			</h4>-->
+				<!--			<h2 class="bg-gradient-to-bl from-red-700 to-yellow-500 bg-clip-text pb-2 text-left text-transparent transition">-->
 				Judges
-			</h2>
+			</h4>
 		</div>
 
 		<div class="flex flex-col sm:flex-row sm:space-x-4 space-y-4 sm:space-y-0 sm:w-full">
@@ -149,7 +154,7 @@
 					type="text"
 					name="name"
 					id="name"
-					class="block w-full rounded-md border-0 bg-zinc-800 px-4 py-1.5 text-gray-300 shadow-sm ring-1 ring-inset ring-gray-600 placeholder:text-gray-400 placeholder:opacity-25 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+					class="block h-12 w-full rounded-md border-0 bg-zinc-800 px-4 py-1.5 text-gray-300 shadow-sm ring-1 ring-inset ring-gray-600 placeholder:text-gray-400 placeholder:opacity-25 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
 					placeholder={'Ruth B. Ginsburg'}
 					bind:value={query}
 					on:input={handleSearch}
@@ -158,7 +163,7 @@
 		</div>
 
 		<div class="flex flex-col sm:items-end text-right text-zinc-500 text-2xl leading-7 tracking-tight">
-			<h2 class="-mr-4 sm:mr-0">sorted by</h2>
+			<h2 class="">sorted by</h2>
 			<button
 				class="flex cursor-pointer flex-row justify-end text-right font-semibold transition hover:opacity-75"
 				on:click={() => handleClick(nextSortMetric())}
@@ -329,16 +334,20 @@
 				</p>
 			</div>
 			<div class="flex flex-1 justify-between sm:justify-end">
-				<Button
-					on:click={handlePrevious}
-					class="transition relative inline-flex items-center rounded-md bg-white/10 px-3 py-2 text-sm font-semibold text-gray-200 ring-1 ring-inset ring-gray-300/30 hover:bg-gray-50/50 focus-visible:outline-offset-0">
-					Previous
-				</Button>
-				<Button
-					on:click={handleNext}
-					class="transition relative ml-3 inline-flex items-center rounded-md bg-white/10 px-3 py-2 text-sm font-semibold text-gray-200 ring-1 ring-inset ring-gray-300/30 hover:bg-gray-50/50 focus-visible:outline-offset-0">
-					Next
-				</Button>
+				<div class:hidden={!(judgeRangeStart > 0)}>
+					<Button
+						on:click={handlePrevious}
+						class="transition relative inline-flex items-center rounded-md bg-white/10 px-3 py-2 text-sm font-semibold text-gray-200 ring-1 ring-inset ring-gray-300/30 hover:bg-gray-50/50 focus-visible:outline-offset-0">
+						Previous
+					</Button>
+				</div>
+				<div class:hidden={!(judgeRangeStart + visibleJudgeCount < sortedAndFilteredJudges.length)}>
+					<Button
+						on:click={handleNext}
+						class="transition relative ml-3 inline-flex items-center rounded-md bg-white/10 px-3 py-2 text-sm font-semibold text-gray-200 ring-1 ring-inset ring-gray-300/30 hover:bg-gray-50/50 focus-visible:outline-offset-0">
+						Next
+					</Button>
+				</div>
 			</div>
 		</nav>
 	</div>

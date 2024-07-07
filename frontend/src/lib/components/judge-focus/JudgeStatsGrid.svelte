@@ -15,7 +15,7 @@
 		<div class="bg-zinc-900">
 			<div class="mx-auto max-w-7xl">
 				{#if selectedJudgeInfo}
-					<div class="grid grid-cols-2 w-full rounded-md gap-x-2 sm:gap-x-0 gap-y-2 sm:grid-cols-2 lg:grid-cols-4">
+					<div class="grid grid-cols-2 w-full rounded-md gap-x-2 sm:gap-x-0.5 gap-y-2 sm:grid-cols-2 lg:grid-cols-4">
 						<JudgeStatItem
 							label="Average Bail Amount"
 							metric="averageBail"

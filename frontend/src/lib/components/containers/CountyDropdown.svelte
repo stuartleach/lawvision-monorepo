@@ -38,7 +38,7 @@
 </script>
 
 <div>
-	<div class="relative flex flex-row align-middle">
+	<div class="relative flex flex-row align-middle h-12">
 		<Button
 			type="button"
 			id="dropdown-button"
