@@ -18,11 +18,11 @@
 	const hoverKey = label.toLowerCase().replace(/ /g, '');
 </script>
 
-<div class="mx-2 grid grid-rows-2 rounded-md bg-zinc-950/50 w-full justify-center px-6 py-6 sm:px-6 lg:px-8">
+<div class="mx-2 grid grid-rows-2 sm:rounded-none first:rounded-l-2xl last:rounded-r-2xl rounded-2xl bg-zinc-950/50 w-full justify-center px-6 py-6 sm:px-6 lg:px-8">
 	<div class="border-b border-dotted border-zinc-700 w-full pb-4 text-center text-white/50">
 		<p class="text-sm font-medium leading-6">{label}</p>
-		<p class="mt-2 w-full rounded bg-zinc-800/20 px-4 py-3">
-			<span class="text-4xl font-semibold tracking-tight {metric}-color">
+		<p class="mt-2 w-full rounded px-4 py-3">
+			<span class="text-4xl font-semibold tracking-tight -mx-4 px-4 {metric}-color">
 				{#if isHoverable}
 					<HoverableItem
 						on:mouseenter={() => handleMouseEnter(hoverKey)}
@@ -40,7 +40,7 @@
 		</p>
 	</div>
 
-	<div class="rank font-sans text-sm tracking-tight text-zinc-400">
+	<div class="rank font-sans text-sm tracking-tight text-zinc-400 px-4">
 		<div class="mt-2 flex-col border-zinc-700 pt-2">
 			<h6 class="border-zinc-700 pb-1 text-left font-semibold tracking-normal underline-offset-4">
 				Percentile

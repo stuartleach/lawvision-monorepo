@@ -1,11 +1,13 @@
 <script>
 	import '../app.css';
 	import LawVisionIcon from '$lib/components/assets/Logo.svelte';
+	import InfoBanner from '$lib/components/containers/InfoBanner.svelte';
 	import Header from '$lib/components/layout/Header.svelte';
 </script>
 
 <div class="">
 	<nav class="sticky w-full bg-zinc-950 shadow-md">
+
 		<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 			<div class="flex h-[4rem] items-center justify-between">
 				<div class="flex items-center">
@@ -35,6 +37,7 @@
 		</div>
 	</nav>
 	<div>
+		<InfoBanner />
 		<slot />
 	</div>
 </div>
