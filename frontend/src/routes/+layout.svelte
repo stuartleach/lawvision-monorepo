@@ -1,10 +1,11 @@
 <script>
 	import '../app.css';
 	import LawVisionIcon from '$lib/components/assets/Logo.svelte';
+	import Header from '$lib/components/layout/Header.svelte';
 </script>
 
 <div class="">
-	<nav class="fixed mb-[100px] w-full bg-zinc-950 shadow-md">
+	<nav class="sticky w-full bg-zinc-950 shadow-md">
 		<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 			<div class="flex h-[4rem] items-center justify-between">
 				<div class="flex items-center">
@@ -20,12 +21,12 @@
 							<a
 								href="/"
 								class="rounded-md bg-zinc-950 px-3 py-2 text-sm font-medium text-white transition"
-								>Home</a
+							>Home</a
 							>
 							<a
 								href="mailto:jstuartleach@gmail.com"
 								class="rounded-md bg-zinc-950 px-3 py-2 text-sm font-medium text-white transition"
-								>Contact</a
+							>Contact</a
 							>
 						</div>
 					</div>
@@ -33,7 +34,7 @@
 			</div>
 		</div>
 	</nav>
-	<div class="pt-8">
+	<div>
 		<slot />
 	</div>
 </div>

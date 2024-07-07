@@ -15,17 +15,17 @@
 		<div class="bg-zinc-900">
 			<div class="mx-auto max-w-7xl">
 				{#if selectedJudgeInfo}
-					<div class="grid grid-cols-1 items-stretch gap-px sm:grid-cols-2 lg:grid-cols-5">
-						<JudgeStatItem
-							label="Total Cases"
-							metric="caseCount"
-							value={stats?.caseCount || 0}
-							percentileCounty={stats?.pctileCounty?.caseCount || 0}
-							percentileState={stats?.pctileState?.caseCount || 0}
-							{hoveredStat}
-							{handleMouseEnter}
-							{handleMouseLeave}
-						/>
+					<div class="grid grid-cols-2 w-full items-stretch gap-x-2 gap-y-2 sm:grid-cols-2 lg:grid-cols-4">
+<!--						<JudgeStatItem-->
+<!--							label="Total Cases"-->
+<!--							metric="caseCount"-->
+<!--							value={stats?.caseCount || 0}-->
+<!--							percentileCounty={stats?.pctileCounty?.caseCount || 0}-->
+<!--							percentileState={stats?.pctileState?.caseCount || 0}-->
+<!--							{hoveredStat}-->
+<!--							{handleMouseEnter}-->
+<!--							{handleMouseLeave}-->
+<!--						/>-->
 						<JudgeStatItem
 							label="Average Bail Amount"
 							metric="averageBail"

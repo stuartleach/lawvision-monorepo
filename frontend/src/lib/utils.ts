@@ -134,7 +134,7 @@ const mutateJudgeStats = (item: JudgeModel): CaseStats => {
 export const sortListByTarget = (
 	list: Judge[] | County[],
 	target: SortTarget,
-	order: SortOrder = SortOrder.desc
+	order: SortOrder = SortOrder.desc,
 ) => {
 	selectedJudgeStore.set(null);
 	selectedCountyStore.set(null);

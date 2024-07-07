@@ -4,13 +4,11 @@
 	export let value: number = 0;
 </script>
 
-<div class="wrapper">
+<!--<div class="wrapper">-->
 	<span>$</span>
 	<span>{formatMoneyValue(value)[0]}</span>
-</div>
+<!--</div>-->
 
 <style>
-	.wrapper {
-		@apply flex space-x-1 whitespace-nowrap;
-	}
+
 </style>

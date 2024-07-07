@@ -18,8 +18,8 @@
 	const hoverKey = label.toLowerCase().replace(/ /g, '');
 </script>
 
-<div class="mx-2 grid grid-rows-2 rounded-md bg-zinc-950/50 px-4 py-6 sm:px-6 lg:px-8">
-	<div class="border-b border-dotted border-zinc-700 pb-4 text-center text-white/50">
+<div class="mx-2 grid grid-rows-2 rounded-md bg-zinc-950/50 w-full justify-center px-6 py-6 sm:px-6 lg:px-8">
+	<div class="border-b border-dotted border-zinc-700 w-full pb-4 text-center text-white/50">
 		<p class="text-sm font-medium leading-6">{label}</p>
 		<p class="mt-2 w-full rounded bg-zinc-800/20 px-4 py-3">
 			<span class="text-4xl font-semibold tracking-tight {metric}-color">

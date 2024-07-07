@@ -1,5 +1,6 @@
 <script lang="ts">
 	import SelectorContainer from '$lib/components/judge-table/JudgeTable.svelte';
+	import Header from '$lib/components/layout/Header.svelte';
 	import { loadingStore } from '$lib/stores/data';
 </script>
 

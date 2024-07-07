@@ -11,14 +11,15 @@
 	} from '$lib/stores/data';
 	import { type Judge, SortOrder, SortTarget } from '$lib/types/frontendTypes';
 	import { formatNumber, sortListByTarget } from '$lib/utils';
-	import { Input } from 'flowbite-svelte';
+	import { Button, Input } from 'flowbite-svelte';
 	import { onMount } from 'svelte';
 	import { get, writable } from 'svelte/store';
 
 	let judges: Judge[] | never = [];
 
 	onMount(() => {
-		judges = get(allJudgesStore);
+		judges = get(allJudgesStore).filter(judge => judge.stats.caseCount > 9);
+		updateVisibleJudges();
 	});
 
 	const sortTarget = writable<SortTarget>(SortTarget.caseCount);
@@ -97,20 +98,44 @@
 			}
 		}, 150);
 	};
+
+	let judgeRangeStart: number = 0;
+	let visibleJudgeCount: number = 10; // Default number of judges to display
+	const rowHeight = 50; // Estimate the height of each row
+
+	const updateVisibleJudges = () => {
+		const windowInnerHeight = window.innerHeight;
+		const clientHeight = document.querySelector('.sticky').clientHeight;
+		const availableHeight = windowInnerHeight - clientHeight - (clientHeight * 2.7);
+		visibleJudgeCount = Math.floor(availableHeight / rowHeight);
+	};
+
+	const handlePrevious = () => {
+		if (judgeRangeStart > 0) {
+			judgeRangeStart -= visibleJudgeCount;
+		}
+	};
+
+	const handleNext = () => {
+		if (judgeRangeStart + visibleJudgeCount < sortedAndFilteredJudges.length) {
+			judgeRangeStart += visibleJudgeCount;
+		}
+	};
+
+	onMount(() => {
+		window.addEventListener('resize', updateVisibleJudges);
+		updateVisibleJudges();
+	});
 </script>
 
-<div class="grid bg-zinc-900 pb-5 pt-16">
-	<div class="sticky grid grid-cols-1 sm:grid-cols-3 space-y-4 sm:space-y-0 items-baseline ">
+<div class=" grid grid-flow-row-dense bg-zinc-900 pb-5 pt-16">
+	<div class="px-8  space-y-4 sm:space-y-4 ">
 		<div
-			class="sticky sm:grid flex flex-row  px-4 text-2xl grid-rows-1 justify-self-center h-fit sm:grid-cols-1 sm:text-4xl w-3/5 justify-around sm:w-full font-bold items-baseline tracking-tight text-zinc-400 sm:px-6 lg:px-8">
-			<h4
-				class="bg-clip-text text-2xl sm:text-2xl text-zinc-500"
-			>
+			class=" flex flex-row px-4 text-2xl grid-rows-1 justify-self-center h-fit sm:text-4xl w-3/5 justify-around sm:w-full font-bold items-baseline tracking-tight text-zinc-400 sm:px-6 lg:px-8">
+			<h4 class="bg-clip-text text-2xl sm:text-2xl text-zinc-500">
 				{$selectedCountyStore ? $selectedCountyStore.name : 'New York State'}
 			</h4>
-			<h2
-				class="bg-gradient-to-bl from-red-700 to-yellow-500 bg-clip-text pb-2 text-left text-transparent transition"
-			>
+			<h2 class="bg-gradient-to-bl from-red-700 to-yellow-500 bg-clip-text pb-2 text-left text-transparent transition">
 				Judges
 			</h2>
 		</div>
@@ -149,8 +174,8 @@
 		</div>
 	</div>
 
-	<div class="table-container mt-6 overflow-x-auto flex-grow">
-		<table class="min-w-full whitespace-nowrap text-left">
+	<div class="w-full mt-6">
+		<table class="w-full whitespace-nowrap text-left">
 			<colgroup>
 				<col class="w-16" />
 				<col />
@@ -158,58 +183,57 @@
 				<col class="hidden md:table-cell" />
 				<col class="hidden md:table-cell" />
 				<col class="hidden md:table-cell" />
-				<col class="hidden sm:table-cell" />
+				<col class="hidden md:table-cell" />
 			</colgroup>
-			<thead class="sticky top-0 bg-zinc-900 text-base leading-6 text-zinc-400">
+			<thead class="sticky bg-zinc-900 text-base text-zinc-400">
 			<tr>
-				<th scope="col" class="py-2 pl-4 pr-8 text-left font-semibold sm:pl-6 lg:pl-8">#</th>
+				<th scope="col" class="py-2 pl-4 text-left font-semibold">#</th>
 				<th
 					class:text-zinc-200={$sortTarget === SortTarget.name}
 					on:click={() => handleClick(SortTarget.name)}
 					scope="col"
-					class="cursor-pointer py-2 pl-4 pr-8 font-semibold sm:pl-6 lg:pl-8"
+					class="cursor-pointer py-2 pl-4 font-semibold pr-4"
 				>Judge
 				</th>
 				<th
 					class:text-zinc-200={$sortTarget === SortTarget.caseCount}
 					on:click={() => handleClick(SortTarget.caseCount)}
 					scope="col"
-					class="hidden cursor-pointer py-2 pl-0 pr-8 font-semibold sm:table-cell"
+					class="{$sortTarget === SortTarget.caseCount || $sortTarget === SortTarget.name ? 'table-cell' : 'hidden'} pr-4 text-right md:table-cell cursor-pointer py-2  font-semibold"
 				>Total Cases
 				</th>
 				<th
 					class:text-zinc-200={$sortTarget === SortTarget.averageBail}
 					on:click={() => handleClick(SortTarget.averageBail)}
 					scope="col"
-					class="cursor-pointer py-2 pl-0 pr-4 font-semibold sm:pr-8 lg:pr-20"
-				>
-					Average Bail
+					class="{$sortTarget === SortTarget.averageBail ? 'table-cell' : 'hidden'} pr-4 text-right md:table-cell cursor-pointer py-2 font-semibold"
+				>Average Bail
 				</th>
 				<th
 					class:text-zinc-200={$sortTarget === SortTarget.bailSet}
 					on:click={() => handleClick(SortTarget.bailSet)}
 					scope="col"
-					class="hidden cursor-pointer py-2 pl-0 pr-8 font-semibold md:table-cell lg:pr-20"
+					class="{$sortTarget === SortTarget.bailSet ? 'table-cell' : 'hidden'} pr-4 text-right md:table-cell cursor-pointer py-2 font-semibold "
 				>Bail-Set %
 				</th>
 				<th
 					class:text-zinc-200={$sortTarget === SortTarget.remandPct}
 					on:click={() => handleClick(SortTarget.remandPct)}
 					scope="col"
-					class="hidden cursor-pointer py-2 pl-0 pr-8 font-semibold md:table-cell lg:pr-20"
+					class="{$sortTarget === SortTarget.remandPct ? 'table-cell' : 'hidden'} pr-4 text-right md:table-cell cursor-pointer py-2 font-semibold"
 				>Remand %
 				</th>
 				<th
 					class:text-zinc-200={$sortTarget === SortTarget.releasePct}
 					on:click={() => handleClick(SortTarget.releasePct)}
 					scope="col"
-					class="hidden cursor-pointer py-2 pl-0 pr-4 text-right font-semibold sm:table-cell sm:pr-6 lg:pr-8"
+					class="{$sortTarget === SortTarget.releasePct ? 'table-cell' : 'hidden'} pr-4 text-right md:table-cell pr-4 cursor-pointer py-2 font-semibold"
 				>Release %
 				</th>
 			</tr>
 			</thead>
 			<tbody class="divide-y divide-white/5">
-			{#each sortedAndFilteredJudges as judge, i}
+			{#each sortedAndFilteredJudges.slice(judgeRangeStart, judgeRangeStart + visibleJudgeCount) as judge, i}
 				<tr
 					class:bg-zinc-950={i % 2 === 0}
 					class:bg-zinc-800={judge === $selectedJudgeStore}
@@ -219,25 +243,25 @@
 							judge !== $selectedJudgeStore &&
 							'blur-xs opacity-[15%] filter transition-all'}"
 					on:click={() => {
-							if ($selectedJudgeStore?.name === judge.name) {
-								selectedJudgeStore.set(null);
-							} else {
-								selectedJudgeStore.set(judge);
-							}
-						}}
+						if ($selectedJudgeStore?.name === judge.name) {
+							selectedJudgeStore.set(null);
+						} else {
+							selectedJudgeStore.set(judge);
+						}
+					}}
 				>
-					<td class="py-4 pl-4 pr-8 text-left font-mono sm:pl-6 lg:pl-8">
-						{i + 1}
+					<td class="py-4 text-left font-mono pl-4">
+						{judgeRangeStart + i + 1}
 					</td>
-					<td class="py-4 pl-4 pr-8 sm:pl-6 lg:pl-8">
+					<td class="py-4 sm:pl-6 lg:pl-8">
 						<div class="flex items-center gap-x-4">
 							<div class="truncate text-lg leading-6 hover:text-gray-50">{judge.name}</div>
 						</div>
 					</td>
-					<td class="hidden py-4 pl-0 pr-4 sm:table-cell sm:pr-8">
-						<div class="flex gap-x-3">
-							<div
-								class="caseCount-color font-mono text-lg leading-6 {$sortTarget ===
+					<td
+						class="{$sortTarget === SortTarget.caseCount || $sortTarget === SortTarget.name ? 'table-cell' : 'hidden'} text-right pr-4 py-4 md:table-cell ">
+						<div class="flex gap-x-3 justify-end">
+							<div class="caseCount-color font-mono text-lg leading-6 {$sortTarget ===
 									SortTarget.caseCount
 										? 'font-bold'
 										: ''}"
@@ -246,20 +270,18 @@
 							</div>
 						</div>
 					</td>
-					<td class="py-4 pl-0 pr-4 text-sm leading-6 sm:pr-8 lg:pr-20">
-						<div class="flex items-center justify-end gap-x-2 sm:justify-start">
-							<div
-								class="averageBail-color hidden text-right font-mono text-lg sm:block {$sortTarget ===
-									SortTarget.averageBail
-										? 'font-bold'
-										: ''}"
-							>
-								<Money value={judge.stats.averageBailSet} />
-							</div>
+					<td
+						class="{$sortTarget === SortTarget.averageBail ? 'table-cell' : 'hidden'} justify-end pr-4 md:table-cell py-4 text-right text-sm leading-6 ">
+						<div class="averageBail-color hidden text-right font-mono text-lg sm:block {$sortTarget ===
+								SortTarget.averageBail
+									? 'font-bold'
+									: ''}"
+						>
+							<Money value={judge.stats.averageBailSet} />
 						</div>
 					</td>
 					<td
-						class="bailSet-color hidden py-4 pl-0 pr-8 text-right font-mono text-lg leading-6 md:table-cell lg:pr-20 {$sortTarget ===
+						class="{$sortTarget === SortTarget.bailSet ? 'table-cell' : 'hidden'} bailSet-color py-4 pr-4 text-right font-mono text-lg leading-6 md:table-cell  {$sortTarget ===
 							SortTarget.bailSet
 								? 'font-bold'
 								: ''}"
@@ -267,7 +289,7 @@
 						<Percent value={judge.stats.pct.bailSet} />
 					</td>
 					<td
-						class="remand-color hidden py-4 pl-0 pr-8 text-right font-mono text-lg leading-6 md:table-cell lg:pr-20 {$sortTarget ===
+						class="{$sortTarget === SortTarget.remandPct ? 'table-cell' : 'hidden'} remand-color py-4 pr-4 text-right font-mono text-lg leading-6 md:table-cell  {$sortTarget ===
 							SortTarget.remandPct
 								? 'font-bold'
 								: ''}"
@@ -275,7 +297,7 @@
 						<Percent value={judge.stats.pct.remand} />
 					</td>
 					<td
-						class="release-color hidden py-4 pl-0 pr-4 text-right font-mono text-lg leading-6 sm:table-cell sm:pr-6 lg:pr-8 {$sortTarget ===
+						class="{$sortTarget === SortTarget.releasePct ? 'table-cell' : 'hidden'} release-color pr-4 py-4 text-right font-mono text-lg leading-6 md:table-cell {$sortTarget ===
 							SortTarget.releasePct
 								? 'font-bold'
 								: ''}"
@@ -293,5 +315,31 @@
 			{/each}
 			</tbody>
 		</table>
+		<nav class="flex items-center justify-between border-t border-gray-700 bg-zinc-900 px-4 py-3 sm:px-6"
+				 aria-label="Pagination">
+			<div class="hidden sm:block">
+				<p class="text-sm text-gray-400">
+					Showing
+					<span class="font-medium">{judgeRangeStart + 1}</span>
+					to
+					<span class="font-medium">{judgeRangeStart + visibleJudgeCount}</span>
+					of
+					<span class="font-medium">{sortedAndFilteredJudges?.length}</span>
+					results
+				</p>
+			</div>
+			<div class="flex flex-1 justify-between sm:justify-end">
+				<Button
+					on:click={handlePrevious}
+					class="transition relative inline-flex items-center rounded-md bg-white/10 px-3 py-2 text-sm font-semibold text-gray-200 ring-1 ring-inset ring-gray-300/30 hover:bg-gray-50/50 focus-visible:outline-offset-0">
+					Previous
+				</Button>
+				<Button
+					on:click={handleNext}
+					class="transition relative ml-3 inline-flex items-center rounded-md bg-white/10 px-3 py-2 text-sm font-semibold text-gray-200 ring-1 ring-inset ring-gray-300/30 hover:bg-gray-50/50 focus-visible:outline-offset-0">
+					Next
+				</Button>
+			</div>
+		</nav>
 	</div>
 </div>
