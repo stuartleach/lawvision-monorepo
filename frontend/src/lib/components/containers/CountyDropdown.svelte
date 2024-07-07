@@ -6,6 +6,7 @@
 	import { onMount } from 'svelte';
 
 	export let counties: County[];
+	export let county: County | null;
 	export let judges: Judge[];
 	let isOpen = false;
 	let selectedCountyName = $selectedCountyStore ?? 'Select a county';
@@ -16,9 +17,15 @@
 		isOpen = !isOpen;
 	}
 
-	function selectCounty(county: County) {
-		selectedCountyName = county.name;
+	function selectCounty(countyObj: County) {
+		selectedCountyName = countyObj.name;
+		if (selectedCountyName === $selectedCountyStore?.name) {
+			selectedCountyName = 'Select a county';
+			selectedCountyStore.set(null)
+		}
 		selectedCountyStore.set(county);
+		county = countyObj
+
 		judges = judges.filter((judge) => judge.counties?.includes(county.name));
 		isOpen = false;
 	}

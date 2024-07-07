@@ -14,6 +14,7 @@
 	import { Button, Input } from 'flowbite-svelte';
 	import { onMount } from 'svelte';
 	import { get, writable } from 'svelte/store';
+	import { slide } from 'svelte/transition';
 
 	let judges: Judge[] | never = [];
 
@@ -136,17 +137,14 @@
 			class="flex flex-row px-4 text-2xl grid-rows-1 h-fit sm:text-4xl w-3/5 sm:w-full font-bold items-baseline tracking-tight text-zinc-400 sm:px-6 lg:px-8">
 
 			<h4 class="text-4xl text-zinc-500 w-full text-left sm:text-center">
-				<span class="text-zinc-400"> New York State</span>
-
-				<!--			</h4>-->
-				<!--			<h2 class="bg-gradient-to-bl from-red-700 to-yellow-500 bg-clip-text pb-2 text-left text-transparent transition">-->
+				<span class="text-zinc-400"> {selectedCountyName || "New York State"}</span>
 				Judges
 			</h4>
 		</div>
 
 		<div class="flex flex-col sm:flex-row sm:space-x-4 space-y-4 sm:space-y-0 sm:w-full ">
 			<div class="w-full">
-				<CountyDropdown {counties} judges={sortedAndFilteredJudges} />
+				<CountyDropdown county={$selectedCountyStore} {counties} judges={sortedAndFilteredJudges} />
 			</div>
 			<div class="w-full">
 				<Input
@@ -326,7 +324,8 @@
 					Showing
 					<span class="font-medium">{judgeRangeStart + 1}</span>
 					to
-					<span class="font-medium">{judgeRangeStart + visibleJudgeCount}</span>
+					<span
+						class="font-medium">{Math.min(judgeRangeStart + visibleJudgeCount, sortedAndFilteredJudges?.length)}</span>
 					of
 					<span class="font-medium">{sortedAndFilteredJudges?.length}</span>
 					results
