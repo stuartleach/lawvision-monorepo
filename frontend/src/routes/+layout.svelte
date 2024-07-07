@@ -6,7 +6,7 @@
 </script>
 
 <div class="">
-	<nav class="sticky w-full bg-zinc-950 w-full shadow-md">
+	<nav class="sticky bg-zinc-950 w-full shadow-md">
 
 		<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 			<div class="flex h-[4rem] items-center justify-between">
@@ -38,6 +38,8 @@
 	</nav>
 	<div>
 		<InfoBanner />
+
 		<slot />
+
 	</div>
 </div>

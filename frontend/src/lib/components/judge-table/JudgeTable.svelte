@@ -131,7 +131,7 @@
 	});
 </script>
 
-<div class=" grid grid-flow-row-dense bg-zinc-900 pb-1 pt-4">
+<div class=" grid grid-flow-row-dense bg-zinc-900 pb-1 pt-4 ">
 	<div class="px-8 space-y-4 sm:space-y-4">
 		<div
 			class="flex flex-row px-4 text-2xl grid-rows-1 h-fit sm:text-4xl w-3/5 sm:w-full font-bold items-baseline tracking-tight text-zinc-400 sm:px-6 lg:px-8">
@@ -145,7 +145,7 @@
 			</h4>
 		</div>
 
-		<div class="flex flex-col sm:flex-row sm:space-x-4 space-y-4 sm:space-y-0 sm:w-full">
+		<div class="flex flex-col sm:flex-row sm:space-x-4 space-y-4 sm:space-y-0 sm:w-full ">
 			<div class="w-full">
 				<CountyDropdown {counties} judges={sortedAndFilteredJudges} />
 			</div>
@@ -180,7 +180,7 @@
 	</div>
 
 	<div class="w-full mt-6">
-		<table class="w-full whitespace-nowrap text-left">
+		<table class="w-full whitespace-nowrap text-left ">
 			<colgroup>
 				<col class="w-16" />
 				<col />
@@ -190,14 +190,14 @@
 				<col class="hidden md:table-cell" />
 				<col class="hidden md:table-cell" />
 			</colgroup>
-			<thead class="sticky bg-zinc-900 text-base text-zinc-400">
-			<tr>
+			<thead class="sticky bg-zinc-900 text-base text-zinc-400 ">
+			<tr class="">
 				<th scope="col" class="py-2 pl-4 text-left font-semibold">#</th>
 				<th
 					class:text-zinc-200={$sortTarget === SortTarget.name}
 					on:click={() => handleClick(SortTarget.name)}
 					scope="col"
-					class="cursor-pointer py-2 pl-4 font-semibold pr-4"
+					class="cursor-pointer py-2 pl-8 font-semibold pr-4"
 				>Judge
 				</th>
 				<th
@@ -237,7 +237,7 @@
 				</th>
 			</tr>
 			</thead>
-			<tbody class="divide-y divide-white/5">
+			<tbody class="divide-y divide-white/5 ">
 			{#each sortedAndFilteredJudges.slice(judgeRangeStart, judgeRangeStart + visibleJudgeCount) as judge, i}
 				<tr
 					class:bg-zinc-950={i % 2 === 0}
