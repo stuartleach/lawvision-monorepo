@@ -63,7 +63,6 @@ const initializeRaceCount = (): RaceCount => ({
 });
 
 const getNumberOfCasesOfEachRace = async (query: QueryOptions): Promise<RaceResult> => {
-	console.log('query:', query);
 
 	const cases = await getCases(query);
 
@@ -76,7 +75,6 @@ const getNumberOfCasesOfEachRace = async (query: QueryOptions): Promise<RaceResu
 
 	const raceNames = new Array(...new Set(racePromises));
 
-	console.log('raceNames:', raceNames);
 
 	raceNames.forEach((raceName) => {
 		switch (raceName) {

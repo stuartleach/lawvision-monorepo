@@ -123,7 +123,6 @@
 	};
 
 	$: selectedCountyName = $selectedCountyStore?.name;
-	$: console.log('selectedCountyName', selectedCountyName);
 
 	onMount(() => {
 		window.addEventListener('resize', updateVisibleJudges);
