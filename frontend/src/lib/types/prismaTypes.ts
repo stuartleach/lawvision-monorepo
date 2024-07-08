@@ -28,6 +28,24 @@ export type CountyModel = {
 	percentile_state_unknown?: number;
 };
 
+export type BailStatisticsModel = {
+	'bail_stat_id': string;
+	'judge_id': string;
+	'total_bail_set': number;
+	'average_bail_set': number;
+	'severity': string
+};
+
+export type ArraignmentStatisticsModel = {
+	'stat_id': string;
+	'judge_id': string;
+	'stat_type': string;
+	'severity': string;
+	'count': number;
+	'percentage': number;
+}
+
+
 export type JudgeModel = {
 	primary_county: string;
 	judge_name: string;

@@ -101,6 +101,7 @@ const getJudges = async (countyId: string = '', numJudges: number = 100) => {
 		const countyName = await getCountyNameByCountyId(countyId);
 		if (!countyName) return [];
 
+
 		return await prisma.judges.findMany({
 			where: {
 				...baseWhereClause,
@@ -115,6 +116,43 @@ const getJudges = async (countyId: string = '', numJudges: number = 100) => {
 		return [];
 	}
 };
+
+
+const getArraignmentStatistics = async (judgeId: string) => {
+	let results: any;
+	try {
+		results = prisma.arraignment_statistics.findMany({
+			where: {
+				judge_id: judgeId
+			}
+		});
+	} catch (error) {
+		console.error('Error fetching arraignment statistics:', error);
+		return [];
+	}
+
+	return results;
+};
+
+
+
+const getBailStatistics = async (judgeId: string) => {
+	let results: any;
+	try {
+		results = prisma.bail_statistics.findMany({
+			where: {
+				judge_id: judgeId
+			}
+		});
+	} catch (error) {
+		console.error('Error fetching bail statistics:', error);
+		return [];
+	}
+
+	return results;
+
+}
+
 
 const getCounties = async () => {
 	try {
@@ -197,7 +235,11 @@ const getPretrialOutcome = async (caseId: string): Promise<'bail' | 'release' | 
 	}
 };
 
+
+
 export {
+	getArraignmentStatistics,
+	getBailStatistics,
 	getCases,
 	getCounties,
 	getCaseByCaseId,

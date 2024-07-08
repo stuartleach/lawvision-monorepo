@@ -1,12 +1,18 @@
-import { countyJudgesStore, selectedJudgeOutcomesStore } from '$lib/stores/data';
+import {
+	countyJudgesStore,
+	selectedJudgeArraignmentStatisticsStore, selectedJudgeBailStatisticsStore,
+	selectedJudgeOutcomesStore
+} from '$lib/stores/data';
 import type {
+	ArraignmentStatisticsModel,
+	BailStatisticsModel,
 	County,
 	CountyModel,
 	CountyQuery,
 	FetchFunction,
 	GeoJSONData,
 	GeoJSONQuery,
-	Judge,
+	Judge, JudgeDetailsQuery,
 	JudgeModel,
 	JudgeOutcomes,
 	JudgeOutcomesQuery,
@@ -42,8 +48,8 @@ const getGeoJson = async (query: GeoJSONQuery): Promise<GeoJSONData> => {
 
 const getJudges = async (query: JudgeQuery): Promise<Judge[]> => {
 	const { fetch, countyId, limit } = query;
-	// let url = `/api/judges`;
-	let url = `/judges.json`;
+	let url = `/api/judges`;
+	// let url = `/judges.json`;
 	const params: string[] = [];
 	if (countyId) {
 		params.push(`county=${encodeURIComponent(countyId)}`);
@@ -62,6 +68,26 @@ const getJudges = async (query: JudgeQuery): Promise<Judge[]> => {
 	);
 	return judges.map(mutateJudge);
 };
+
+
+
+const getJudgeBailStatistics = async (query: JudgeDetailsQuery): Promise<void> => {
+	const { fetch, judgeId } = query;
+
+	const result = await fetchData<BailStatisticsModel[]>(fetch, `/api/judges/${judgeId}/bail_statistics`);
+
+	selectedJudgeBailStatisticsStore.set(result);
+
+}
+
+const getJudgeArraignmentStatistics = async (query: JudgeDetailsQuery): Promise<void> => {
+	const { fetch, judgeId } = query;
+
+	const result = await fetchData<ArraignmentStatisticsModel[]>(fetch, `/api/judges/${judgeId}/arraignment_statistics`);
+
+	selectedJudgeArraignmentStatisticsStore.set(result);
+
+}
 
 const getJudgeOutcomes = async (query: JudgeOutcomesQuery): Promise<void> => {
 	const { fetch, judgeId } = query;
@@ -93,4 +119,4 @@ const setTopJudges = async (countyName: string) => {
 	}
 };
 
-export { getGeoJson, setTopJudges, getCounties, getJudges, getJudgeOutcomes };
+export { getGeoJson, setTopJudges, getCounties, getJudges, getJudgeOutcomes, getJudgeBailStatistics, getJudgeArraignmentStatistics };

@@ -19,7 +19,6 @@
 						class="mx-2 text-zinc-200 bg-zinc-950/50 rounded-t-3xl text-left pl-10 py-2 pt-6 w-full text-2xl mt-6 mb-0.5 tracking-tighter">
 						Pretrial Statistics</h3>
 						<div class="grid grid-cols-2 w-full rounded-md gap-x-0.5 gap-y-0.5 sm:grid-cols-2 lg:grid-cols-4">
-
 							<JudgeStatItem
 								label="Average Bail Amount"
 								metric="averageBail"

@@ -1,6 +1,6 @@
 generator client {
   provider        = "prisma-client-js"
-  previewFeatures = ["relationJoins", "multiSchema"]
+  previewFeatures = ["multiSchema", "relationJoins"]
 }
 
 datasource db {
@@ -122,11 +122,11 @@ model cases {
   rearrest_firearm                            String?
   rearrest_date_firearm                       String?
   arr_cycle_id                                String?
-  case_id                                     String    @id(map: "cases_pk") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  judge_id                                    String?   @db.Uuid
-  county_id                                   String?   @db.Uuid
-  counties                                    counties? @relation(fields: [county_id], references: [county_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_county")
-  judges                                      judges?   @relation(fields: [judge_id], references: [judge_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_judge")
+  case_id                                     String      @id(map: "cases_pk") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  judge_id                                    String?     @db.Uuid
+  county_id                                   String?     @db.Uuid
+  counties                                    counties?   @relation(fields: [county_id], references: [county_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_county")
+  judges                                      judges_old? @relation(fields: [judge_id], references: [judge_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_judge")
 
   @@schema("pretrial_slim")
 }
@@ -165,8 +165,44 @@ model counties {
 }
 
 model judges {
-  judge_id                      String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  judge_name                    String   @unique
+  judge_id               String                   @id(map: "judges_pkey1") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  judge_name             String                   @unique(map: "judges_judge_name_key1")
+  case_count             Int?                     @default(0)
+  counties               String[]
+  primary_county         String?
+  arraignment_statistics arraignment_statistics[]
+  bail_statistics        bail_statistics[]
+  percentiles            percentiles[]
+
+  @@schema("pretrial_slim")
+}
+
+model arraignment_statistics {
+  stat_id    String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  judge_id   String   @db.Uuid
+  stat_type  String
+  severity   String
+  count      Int?     @default(0)
+  percentage Decimal? @default(0) @db.Decimal
+  judges     judges   @relation(fields: [judge_id], references: [judge_id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@schema("pretrial_slim")
+}
+
+model bail_statistics {
+  bail_stat_id     String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  judge_id         String   @db.Uuid
+  total_bail_set   Decimal? @default(0) @db.Decimal
+  average_bail_set Decimal? @default(0) @db.Decimal
+  severity         String?
+  judges           judges   @relation(fields: [judge_id], references: [judge_id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@schema("pretrial_slim")
+}
+
+model judges_old {
+  judge_id                      String   @id(map: "judges_pkey") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  judge_name                    String   @unique(map: "judges_judge_name_key")
   case_count                    Int?     @default(0)
   remand_at_arraign             Int?     @default(0)
   ror_at_arraign                Int?     @default(0)
@@ -201,6 +237,16 @@ model judges {
   percentile_county_case_count  Decimal? @db.Decimal
   percentile_state_case_count   Decimal? @db.Decimal
   cases                         cases[]
+
+  @@schema("pretrial_slim")
+}
+
+model percentiles {
+  percentile_id    String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  judge_id         String   @db.Uuid
+  percentile_type  String
+  percentile_value Decimal? @db.Decimal
+  judges           judges   @relation(fields: [judge_id], references: [judge_id], onDelete: NoAction, onUpdate: NoAction)
 
   @@schema("pretrial_slim")
 }

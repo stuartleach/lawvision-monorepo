@@ -109,6 +109,11 @@ export type JudgeQuery = {
 	limit: number;
 };
 
+export type JudgeDetailsQuery = {
+	fetch: FetchFunction;
+	judgeId: string;
+}
+
 export type JudgeOutcomesQuery = {
 	fetch: FetchFunction;
 	judgeId: string;
