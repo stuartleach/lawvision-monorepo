@@ -1,7 +1,8 @@
 import { Request, Response, Router } from 'express';
-import { getJudges } from '../queries';
-import { getArraignmentStatistics, getBailStatistics } from '../queries/baseQueries';
-import { getCombinedPreTrialOutcomes, getPretrialOutcomesForJudge } from '../queries/complexQueries';
+// // import { getJudges } from '../queries';
+// import { getCombinedPreTrialOutcomes, getPretrialOutcomesForJudge } from '../queries/complexQueries';
+// import { getArraignmentStatistics, getBailStatistics } from '../queries/baseQueries';
+import { getJudges } from '../queries/slimQueries';
 
 const judgesRouter = Router();
 
@@ -11,6 +12,7 @@ judgesRouter.get('/', async (req: Request, res: Response) => {
 
 	const judges = await getJudges(countyId, numJudges);
 
+
 	if (!judges) {
 		res.status(500).json({ error: 'Internal Server Error' });
 		return;
@@ -18,54 +20,54 @@ judgesRouter.get('/', async (req: Request, res: Response) => {
 
 	res.json(judges);
 });
-
-judgesRouter.get('/:judge_id/race_outcomes', async (req, res) => {
-	const judgeId = req.params.judge_id;
-	try {
-		// const raceOutcomes = await getNumberOfCasesOfEachRace({ judgeName: countyName });
-		const raceOutcomes = await getCombinedPreTrialOutcomes({ judgeId: judgeId });
-		return res.json(raceOutcomes);
-	} catch (error) {
-		console.error;
-		return res.status(500).json({ error: 'Internal Server Error' });
-	}
-});
-
-judgesRouter.get('/:judge_id/arraignment_statistics', async (req, res) => {
-	const judgeId = req.params.judge_id;
-	try {
-		const chargeOutcomes = await getArraignmentStatistics(judgeId);
-		return res.json(chargeOutcomes);
-	} catch (error) {
-		console.error;
-		return res.status(500).json({ error: 'Internal Server Error' });
-	}
-})
-
-
-judgesRouter.get('/:judge_id/bail_statistics', async (req, res) => {
-	const judgeId = req.params.judge_id;
-	try {
-		const chargeOutcomes = await getBailStatistics(judgeId);
-		return res.json(chargeOutcomes);
-	} catch (error) {
-		console.error;
-		return res.status(500).json({ error: 'Internal Server Error' });
-	}
-})
-
-judgesRouter.get('/:judge_id/outcomes', async (req, res) => {
-	const judgeId = req.params.judge_id;
-	try {
-		// const raceOutcomes = await getNumberOfCasesOfEachRace({ judgeName: countyName });
-		const pretrialOutcomes = await getPretrialOutcomesForJudge({ judgeId: judgeId });
-		console.log('pretrialOutcomes', pretrialOutcomes);
-		return res.json(pretrialOutcomes);
-	} catch (error) {
-		console.error;
-		return res.status(500).json({ error: 'Internal Server Error' });
-	}
-});
+//
+// judgesRouter.get('/:judge_id/race_outcomes', async (req, res) => {
+// 	const judgeId = req.params.judge_id;
+// 	try {
+// 		// const raceOutcomes = await getNumberOfCasesOfEachRace({ judgeName: countyName });
+// 		const raceOutcomes = await getCombinedPreTrialOutcomes({ judgeId: judgeId });
+// 		return res.json(raceOutcomes);
+// 	} catch (error) {
+// 		console.error;
+// 		return res.status(500).json({ error: 'Internal Server Error' });
+// 	}
+// });
+//
+// judgesRouter.get('/:judge_id/arraignment_statistics', async (req, res) => {
+// 	const judgeId = req.params.judge_id;
+// 	try {
+// 		const chargeOutcomes = await getArraignmentStatistics(judgeId);
+// 		return res.json(chargeOutcomes);
+// 	} catch (error) {
+// 		console.error;
+// 		return res.status(500).json({ error: 'Internal Server Error' });
+// 	}
+// })
+//
+//
+// judgesRouter.get('/:judge_id/bail_statistics', async (req, res) => {
+// 	const judgeId = req.params.judge_id;
+// 	try {
+// 		const chargeOutcomes = await getBailStatistics(judgeId);
+// 		return res.json(chargeOutcomes);
+// 	} catch (error) {
+// 		console.error;
+// 		return res.status(500).json({ error: 'Internal Server Error' });
+// 	}
+// })
+//
+// judgesRouter.get('/:judge_id/outcomes', async (req, res) => {
+// 	const judgeId = req.params.judge_id;
+// 	try {
+// 		// const raceOutcomes = await getNumberOfCasesOfEachRace({ judgeName: countyName });
+// 		const pretrialOutcomes = await getPretrialOutcomesForJudge({ judgeId: judgeId });
+// 		console.log('pretrialOutcomes', pretrialOutcomes);
+// 		return res.json(pretrialOutcomes);
+// 	} catch (error) {
+// 		console.error;
+// 		return res.status(500).json({ error: 'Internal Server Error' });
+// 	}
+// });
 
 
 export default judgesRouter;

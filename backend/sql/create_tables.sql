@@ -123,52 +123,27 @@ create table pretrial_slim.cases
             references pretrial_slim.counties
 );
 
-alter table pretrial_slim.cases
-    owner to postgres;
-
 create table pretrial_slim.counties
 (
-    county_id                    uuid    default gen_random_uuid() not null
+    county_id                   uuid    default gen_random_uuid() not null
         constraint county_pkey
             primary key,
-    county_name                  text                              not null
+    county_name                 text                              not null
         constraint county_county_name_key
             unique,
-    case_count                   integer default 0,
-    remand_at_arraign            integer default 0,
-    ror_at_arraign               integer default 0,
-    nmr_at_arraign               integer default 0,
-    release_at_arraign           integer default 0,
-    bail_set_at_arraign          integer default 0,
-    total_bail_set               numeric default 0,
-    average_bail_set             numeric default 0,
-    percent_ror                  numeric default 0,
-    percent_nmr                  numeric default 0,
-    percent_release              numeric default 0,
-    percent_remand               numeric default 0,
-    percent_bail_set             numeric default 0,
-    unknown_at_arraign           integer default 0,
-    percent_unknown              numeric default 0,
-    judges                       text[],
-    percentile_state_bail_set    numeric,
-    percentile_state_bail_amount numeric,
-    percentile_state_remand      numeric,
-    percentile_state_ror         numeric,
-    percentile_state_nmr         numeric,
-    percentile_state_release     numeric,
-    percentile_state_unknown     numeric,
-    median_income                integer,
-    percentile_state_case_count  numeric
+    case_count                  integer default 0,
+    judges                      text[],
+    median_income               integer,
+    percentile_state_case_count numeric
 );
 
-alter table pretrial_slim.counties
-    owner to postgres;
 
 
 CREATE TABLE pretrial_slim.judges
 (
     judge_id       UUID    DEFAULT gen_random_uuid() NOT NULL PRIMARY KEY,
-    judge_name     TEXT                              NOT NULL UNIQUE,
+    judge_name     TEXT                              NOT NULL
+        constraint judge_judge_name_key UNIQUE,
     case_count     INTEGER DEFAULT 0,
     counties       TEXT[],
     primary_county TEXT
@@ -180,6 +155,7 @@ CREATE TABLE pretrial_slim.arraignment_statistics
     judge_id   UUID                              NOT NULL REFERENCES pretrial_slim.judges (judge_id),
     stat_type  TEXT                              NOT NULL, -- e.g., 'remand_at_arraign', 'ror_at_arraign', etc.
     severity   TEXT                              NOT NULL, -- e.g., 'AF', 'BF', 'CF', etc.
+    race       TEXT,
     count      INTEGER DEFAULT 0,
     percentage NUMERIC DEFAULT 0
 );
@@ -198,7 +174,24 @@ CREATE TABLE pretrial_slim.bail_statistics
     judge_id         UUID                              NOT NULL REFERENCES pretrial_slim.judges (judge_id),
     total_bail_set   NUMERIC DEFAULT 0,
     average_bail_set NUMERIC DEFAULT 0,
+    race             TEXT,
     severity         TEXT
+);
+
+
+CREATE TABLE pretrial_slim.counties
+(
+    county_id   UUID    DEFAULT gen_random_uuid() NOT NULL PRIMARY KEY,
+    county_name TEXT                              NOT NULL UNIQUE,
+    judges      TEXT[],
+    case_count  INTEGER DEFAULT 0
+);
+
+CREATE TABLE pretrial_slim.races
+(
+    race_id    UUID    DEFAULT gen_random_uuid() NOT NULL PRIMARY KEY,
+    race_name  TEXT,
+    case_count INTEGER DEFAULT 0
 );
 
 

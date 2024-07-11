@@ -1,11 +1,16 @@
 <script lang="ts">
-	import { getJudgeArraignmentStatistics } from '$lib/api';
+	import { getJudgeArraignmentStatistics, getJudgeBailStatistics } from '$lib/api';
 	import DownChevron from '$lib/components/assets/DownChevron.svelte';
 	import UpChevron from '$lib/components/assets/UpChevron.svelte';
 	import JudgeInfo from '$lib/components/judge-focus/JudgeInfo.svelte';
 	import JudgeInfoHeader from '$lib/components/judge-focus/JudgeInfoHeader.svelte';
 	import JudgeStatsGrid from '$lib/components/judge-focus/JudgeStatsGrid.svelte';
-	import { allCountiesStore, selectedJudgeArraignmentStatisticsStore, selectedJudgeStore } from '$lib/stores/data';
+	import {
+		allCountiesStore,
+		selectedJudgeArraignmentStatisticsStore,
+		selectedJudgeBailStatisticsStore,
+		selectedJudgeStore
+	} from '$lib/stores/data';
 	import type { ArraignmentStatisticsModel } from '$lib/types';
 	import { type County } from '$lib/types/frontendTypes';
 	import { Button } from 'flowbite-svelte';
@@ -17,15 +22,17 @@
 
 	$: selectedJudgeInfo = $selectedJudgeStore;
 
-
 	onMount(async () => {
 			try {
 				if (selectedJudgeInfo) {
 					await getJudgeArraignmentStatistics({
 						fetch: fetch, judgeId: selectedJudgeInfo?.judgeUUID
 					});
+					await getJudgeBailStatistics({
+						fetch: fetch, judgeId: selectedJudgeInfo?.judgeUUID
+					});
+					
 				}
-				console.log('selectedArraignmentStatisticsStore', $selectedJudgeArraignmentStatisticsStore);
 			} catch (e) {
 				console.error(e);
 			}
