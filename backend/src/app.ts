@@ -1,7 +1,7 @@
 import express, { Express, Request, Response } from 'express';
 import { migrateData } from '../prisma/migrateData';
 import { PORT } from './config';
-import { countiesRouter, casesRouter, judgesRouter } from './routes';
+import { /*countiesRouter, casesRouter, */judgesRouter } from './routes';
 import { hydrateArraignmentStatistics } from './utils';
 
 
@@ -30,7 +30,7 @@ app.get('/migrate', async (req: Request, res: Response) => {
 	await migrateData();
 	console.log('Migrated data.');
 	res.send('Migrated data.');
-})
+});
 
 app.listen(PORT, () => {
 	console.log(`⚡️[server]: Server is running at http://localhost:${PORT}`);

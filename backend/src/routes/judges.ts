@@ -1,8 +1,9 @@
 import { Request, Response, Router } from 'express';
+import { getAllJudgeRacialScores } from '../queries/slimQueries';
 // // import { getJudges } from '../queries';
 // import { getCombinedPreTrialOutcomes, getPretrialOutcomesForJudge } from '../queries/complexQueries';
 // import { getArraignmentStatistics, getBailStatistics } from '../queries/baseQueries';
-import { getJudges } from '../queries/slimQueries';
+// import { getJudges } from '../queries/slimQueries';
 
 const judgesRouter = Router();
 
@@ -10,7 +11,7 @@ judgesRouter.get('/', async (req: Request, res: Response) => {
 	const numJudges = parseInt(req.query.limit as string) || 100; // Default to 100 judges
 	const countyId = req.query.county_id as string || '';
 
-	const judges = await getJudges(countyId, numJudges);
+	const judges = await getAllJudgeRacialScores()
 
 
 	if (!judges) {

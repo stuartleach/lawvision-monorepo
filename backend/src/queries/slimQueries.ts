@@ -1,135 +1,156 @@
 import { prisma } from '../prisma_client';
+import { bailEligibleCases, races } from './constants';
 
-const capitalize = (str: string) => str.slice(0, 1).toUpperCase() + str.slice(1).toLowerCase();
+const bailEligibleWhereClause = bailEligibleCases.felonies.map(article => ({
+    ArraignCharge: {
+        top_charge_at_arraign: {
+            contains: article
+        }
+    }
+}));
 
-export const getJudges = async (countyId?: string, numJudges: number = 100) => {
-	return getTop10JudgesWithHighestRemandPercentage();
+const raceFilter = (listOfCases: any[], raceName: string) => {
+    return listOfCases.filter(c => c.Defendant?.race === raceName);
 };
 
-interface CaseWithOutcome {
-	judge_id: string;
-	ArraignmentOutcome?: {
-		remanded_to_jail_at_arraign?: string;
-	};
-}
-
-interface JudgeStats {
-	totalCases: number;
-	remandedCases: number;
-}
-
-let whereClause = {
-
-	ArraignCharge: {
-		top_charge_weight_at_arraign: {
-			in: ['AF', 'BF']
-		},
-		top_charge_at_arraign_violent_felony_ind: 'N',
-		// hate_crime_ind: 'N',
-		// arraign_charge_category: {
-		// 	not: 'Rape'
-		// }
-	},
-	Prior: {
-		prior_vfo_cnt: '0',
-		prior_nonvfo_cnt: '0',
-		pend_vfo: '0'
-	},
-	// County: {
-	// 	county_name: {
-	// 		contains: 'Kings'
-	// 	}
-	// },
-	Defendant: {
-		race: 'Black'
-	},
-	Judge: {
-		case_count: {
-			gte: 1000
-		}
-	}
-
+const raceNotFilter = (listOfCases: any[], raceName: string) => {
+    return listOfCases.filter(c => c.Defendant?.race !== raceName);
 };
 
+const getBailSetCases = (cs: any[]) => {
+    return cs.filter(c => c.Bail && Number(c.Bail?.first_bail_set_cash) > 1);
+};
 
-async function getTop10JudgesWithHighestRemandPercentage() {
-	const cases: any[] = await prisma.case.findMany({
-		where: whereClause,
-		select: {
-			judge_id: true,
-			ArraignmentOutcome: {
-				select: {
-					remanded_to_jail_at_arraign: true
-				}
-			}
-		}
-	});
+const getRemandedCases = (cs: any[]) => {
+    return cs.filter(c => c.ArraignmentOutcome?.remanded_to_jail_at_arraign === 'Y');
+};
 
-	// console.log(cases.slice(0,10))
+const getReleasedCases = (cs: any[]) => {
+    return cs.filter(c => (c.ArraignmentOutcome?.ror_at_arraign === 'Y' || c.ArraignmentOutcome?.nmr_at_arraign === 'Y'));
+};
 
-	const judgeStats: Record<string, JudgeStats> = cases.reduce((acc, curr) => {
-		const judgeId = curr.judge_id;
-		if (!acc[judgeId]) {
-			acc[judgeId] = {
-				totalCases: 0,
-				remandedCases: 0
-			};
-		}
-		acc[judgeId].totalCases++;
-		if (curr.ArraignmentOutcome?.remanded_to_jail_at_arraign === 'Y') {
-			acc[judgeId].remandedCases++;
-		}
-		return acc;
-	}, {} as Record<string, JudgeStats>);
+const getJudgeRacialScore = async (judgeId: string, judgeName: string) => {
+    const judgesCasesWhereBailIsEligible = await prisma.case.findMany({
+        where: {
+            OR: bailEligibleWhereClause,
+            Judge: {
+                judge_id: judgeId
+            }
+        },
+        select: {
+            Bail: {
+                select: {
+                    first_bail_set_cash: true
+                }
+            },
+            ArraignmentOutcome: {
+                select: {
+                    remanded_to_jail_at_arraign: true,
+                    ror_at_arraign: true,
+                    nmr_at_arraign: true
+                }
+            },
+            Defendant: {
+                select: {
+                    race: true
+                }
+            },
+            ArraignCharge: {
+                select: {
+                    top_charge_at_arraign: true
+                }
+            }
+        }
+    });
 
-	const judgeRemandPercentages = Object.entries(judgeStats).map(([judgeId, stats]) => ({
-		judgeId,
-		remandPercentage: stats.totalCases > 0 ? (stats.remandedCases / stats.totalCases) * 100 : 0
-	}));
+    const percentify = (num: number) => Math.round(num * 100);
 
-	const top10JudgesWithHighestRemandPercentage = judgeRemandPercentages
-		.sort((a, b) => b.remandPercentage - a.remandPercentage)
-		.slice(0, 100);
+    const calculatePercentages = (cases: any[], race: string) => {
+        const filteredCases = raceFilter(cases, race);
+        const notFilteredCases = raceNotFilter(cases, race);
 
-	const judgeDetails = await prisma.judge.findMany({
-		where: {
-			judge_id: {
-				in: top10JudgesWithHighestRemandPercentage.map(judge => judge.judgeId)
-			}
-		},
-		select: {
-			judge_id: true,
-			judge_name: true,
-			_count: {
-				select: {
-					cases: {
-						where: {
-							ArraignmentOutcome: {
-								remanded_to_jail_at_arraign: 'Y'
-							}
-						}
-					}
-				}
-			}
-		}
-	});
+        const percentBailSet = percentify(getBailSetCases(filteredCases).length / filteredCases.length);
+        const percentBailSetNot = percentify(getBailSetCases(notFilteredCases).length / notFilteredCases.length);
 
-	const result = top10JudgesWithHighestRemandPercentage.map(judge => {
-			const judgeDetail = judgeDetails.find(detail => detail.judge_id === judge.judgeId);
-			return {
-				judge_name: judgeDetail?.judge_name || 'Unknown',
-				remandPercentage: judge.remandPercentage,
-				count: judgeDetail?._count.cases || 0
-			};
-		}).filter(judge => judge?.count > 10)
-	;
+        const percentRemanded = percentify(getRemandedCases(filteredCases).length / filteredCases.length);
+        const percentRemandedNot = percentify(getRemandedCases(notFilteredCases).length / notFilteredCases.length);
 
-	console.log('Top 10 Judges with the highest remand percentage:', result);
-	return result;
-}
+        const percentReleased = percentify(getReleasedCases(filteredCases).length / filteredCases.length);
+        const percentReleasedNot = percentify(getReleasedCases(notFilteredCases).length / notFilteredCases.length);
 
-getJudges().catch(e => {
-	throw e;
+        return {
+            message: `Racial scores for ${judgeName}:`,
+            totalBailEligibleCases: cases.length,
+            bailSet: percentBailSet - percentBailSetNot,
+            remanded: percentRemanded - percentRemandedNot,
+            released: percentReleased - percentReleasedNot
+        };
+    };
+
+    return races.reduce((acc, race) => {
+        acc[race] = calculatePercentages(judgesCasesWhereBailIsEligible, race);
+        return acc;
+    }, {} as Record<string, any>);
+};
+
+const getJudgeRacialScoresBatch = async (judgesBatch: any[]) => {
+    return await Promise.all(judgesBatch.map(async (judge) => {
+        return {
+            judgeName: judge.judge_name,
+            scores: await getJudgeRacialScore(judge.judge_id, judge.judge_name),
+            totalCases: judge.case_count
+        };
+    }));
+};
+
+export const getAllJudgeRacialScores = async () => {
+    const batchSize = 30;  // Adjust batch size as needed
+    let offset = 0;
+    let allJudgeScores: any[] = [];
+
+    while (true) {
+        const judgesBatch = await prisma.judge.findMany({
+            select: {
+                judge_id: true,
+                judge_name: true,
+                case_count: true
+            },
+            where: {
+                case_count: {
+                    gte: 100
+                },
+                judge_name: {
+                    notIn: ["Office, Clerk's", 'Judge/JHO/Hearing Examiner, Visiting', 'Judge, TBD']
+                }
+            },
+            take: batchSize,
+            skip: offset
+        });
+
+        if (judgesBatch.length === 0) break;
+
+        const batchScores = await getJudgeRacialScoresBatch(judgesBatch);
+        allJudgeScores = allJudgeScores.concat(batchScores);
+
+        offset += batchSize;
+    }
+
+    const sortedJudgeScores = allJudgeScores.sort((a, b) => {
+        return b.scores.Black.bailSet - a.scores.Black.bailSet;
+    }).slice(0, 10);
+
+    sortedJudgeScores.forEach(judge => {
+        console.log(`Out of ${judge.scores.Black.totalBailEligibleCases} bail eligible cases:`);
+        console.log(`Judge ${judge.judgeName} sets bail on average ${judge.scores.Black.bailSet}% more often for Black defendants than for non-Black defendants.`);
+        console.log(`Judge ${judge.judgeName} remands Black defendants to jail on average ${judge.scores.Black.remanded}% more often than non-Black defendants.`);
+        console.log(`Judge ${judge.judgeName} releases Black defendants on average ${judge.scores.Black.released}% more often than non-Black defendants.\n`);
+    });
+
+    return sortedJudgeScores;
+};
+
+getAllJudgeRacialScores().catch(e => {
+    throw e;
 }).finally(async () => {
-	await prisma.$disconnect();
+    await prisma.$disconnect();
 });
