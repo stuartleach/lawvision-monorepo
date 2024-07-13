@@ -1,5 +1,5 @@
-import { PrismaClient } from '@prisma/client';
-import type CaseRawType from './types';
+import { Case, PrismaClient } from '@prisma/client';
+import type { CaseRawType } from './types';
 
 const prisma = new PrismaClient();
 
@@ -555,6 +555,17 @@ export async function findOrCreateCounty(raw: CaseRawType) {
 		county = await prisma.county.create({
 			data: {
 				county_name: raw.county_name
+			}
+		});
+	} else {
+		await prisma.county.update({
+			where: {
+				county_id: county.county_id
+			},
+			data: {
+				case_count: {
+					increment: 1
+				}
 			}
 		});
 	}

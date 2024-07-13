@@ -274,11 +274,11 @@ const At = async (e, t, n) => {
 	},
 	jn = async (e) => {
 		const { fetch: t } = e;
-		return At(t, '/ny-counties-geojson.json');
+		return At(t, '/ny_counties_geojson.json');
 	},
 	Ln = async (e) => {
 		const { fetch: t, countyId: n, limit: r } = e;
-		let o = '/judges.json';
+		let o = '/judges_basic.json';
 		const s = [];
 		n && s.push(`county=${encodeURIComponent(n)}`),
 			r !== void 0 && s.push(`limit=${encodeURIComponent(r)}`),
@@ -295,7 +295,7 @@ const At = async (e, t, n) => {
 	},
 	Bn = async (e) => {
 		const { fetch: t } = e;
-		return (await At(t, '/counties.json')).map(Mn);
+		return (await At(t, '/counties_basic.json')).map(Mn);
 	},
 	Nn = async ({ fetch: e, params: t }) => {
 		wt.set(!0);

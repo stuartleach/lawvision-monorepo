@@ -49,7 +49,7 @@ const getGeoJson = async (query: GeoJSONQuery): Promise<GeoJSONData> => {
 const getJudges = async (query: JudgeQuery): Promise<Judge[]> => {
 	const { fetch, countyId, limit } = query;
 	let url = `/api/judges`;
-	// let url = `/judges.json`;
+	// let url = `/judges_basic.json`;
 	const params: string[] = [];
 	if (countyId) {
 		params.push(`county=${encodeURIComponent(countyId)}`);
@@ -101,7 +101,7 @@ const getCounties = async (query: CountyQuery): Promise<County[]> => {
 	const { fetch } = query;
 
 	// let url = '/api/counties';
-	const url = '/counties.json';
+	const url = '/counties_basic.json';
 	const counties: CountyModel[] = await fetchData<CountyModel[]>(fetch, url);
 	return counties.map(mutateCounty);
 };

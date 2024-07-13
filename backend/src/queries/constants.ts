@@ -26,6 +26,8 @@ export const bailEligibleCases = {
 	]
 };
 
+export const severities = ['AF', 'BF', 'CF', 'DF', 'EF', 'AM', 'BM'];
+
 export const races = [
 	'White',
 	'Black',
@@ -34,3 +36,11 @@ export const races = [
 	'Other',
 	'Unknown'
 ];
+
+export const bailEligibleWhereClause = bailEligibleCases.felonies.map(article => ({
+	ArraignCharge: {
+		top_charge_at_arraign: {
+			contains: article
+		}
+	}
+}));

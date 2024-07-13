@@ -19,14 +19,14 @@ import {
 	createCaseDetails,
 	findOrCreateArraignmentOutcome,
 	findOrCreateRepresentation, RAW_CASE_BATCH_SIZE
-} from './hydrateTables/migrateEach';
+} from './migrateTables/migrateEachTable';
 
 const prisma = new PrismaClient();
 
 
 export async function migrateData() {
 	try {
-		await clearTables();
+		// await clearTables();
 		let offset = 0;
 		let rawCases = [];
 

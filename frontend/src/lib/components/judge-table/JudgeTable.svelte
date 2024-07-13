@@ -14,7 +14,6 @@
 	import { Button, Input } from 'flowbite-svelte';
 	import { onMount } from 'svelte';
 	import { get, writable } from 'svelte/store';
-	import { slide } from 'svelte/transition';
 
 	let judges: Judge[] | never = [];
 
@@ -229,7 +228,7 @@
 					class:text-zinc-200={$sortTarget === SortTarget.releasePct}
 					on:click={() => handleClick(SortTarget.releasePct)}
 					scope="col"
-					class="{$sortTarget === SortTarget.releasePct ? 'table-cell' : 'hidden'} pr-4 text-right md:table-cell pr-4 cursor-pointer py-2 font-semibold"
+					class="{$sortTarget === SortTarget.releasePct ? 'table-cell' : 'hidden'} pr-4 text-right md:table-cell cursor-pointer py-2 font-semibold"
 				>Release %
 				</th>
 			</tr>

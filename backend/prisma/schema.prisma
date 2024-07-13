@@ -443,8 +443,8 @@ model Judge {
   judge_id               String                  @id(map: "judges_pkey1") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   judge_name             String                  @unique(map: "judges_judge_name_key1")
   case_count             Int                     @default(1)
-  counties               String[]
   primary_county         String?
+  counties               Json[]
   arraignment_statistics ArraignmentStatistics[]
   bail_statistics        BailStatistics[]
   cases                  Case[]

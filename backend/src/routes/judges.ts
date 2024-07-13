@@ -1,26 +1,44 @@
 import { Request, Response, Router } from 'express';
-import { getAllJudgeRacialScores } from '../queries/slimQueries';
-// // import { getJudges } from '../queries';
-// import { getCombinedPreTrialOutcomes, getPretrialOutcomesForJudge } from '../queries/complexQueries';
-// import { getArraignmentStatistics, getBailStatistics } from '../queries/baseQueries';
-// import { getJudges } from '../queries/slimQueries';
+import { fetchAllCounties, getAllJudgeRacialScores, fetchCountyThings } from '../judge';
 
 const judgesRouter = Router();
+
+
+type BasicJudgeInfo = {
+	judge_id: string;
+	judge_name: string;
+	county_id: string;
+	county_name: string;
+
+}
+
 
 judgesRouter.get('/', async (req: Request, res: Response) => {
 	const numJudges = parseInt(req.query.limit as string) || 100; // Default to 100 judges
 	const countyId = req.query.county_id as string || '';
 
-	const judges = await getAllJudgeRacialScores()
+	// const judges = await getAllJudgeRacialScores();
+	// const judges = await fetchAllCounties()
+	const result = await fetchCountyThings()
+	return res.json(result)
+});
 
 
-	if (!judges) {
+judgesRouter.get('/:judge_id', async (req, res) => {
+	const judgeId = req.params.judge_id;
+	const judge = await getAllJudgeRacialScores(judgeId);
+
+	if (!judge) {
 		res.status(500).json({ error: 'Internal Server Error' });
 		return;
 	}
 
-	res.json(judges);
-});
+	return res.json(judge);
+})
+
+
+
+
 //
 // judgesRouter.get('/:judge_id/race_outcomes', async (req, res) => {
 // 	const judgeId = req.params.judge_id;
