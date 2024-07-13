@@ -6,8 +6,6 @@
 	export let hoveredStat: string | null;
 	export let handleMouseEnter: (stat: string) => void;
 	export let handleMouseLeave: () => void;
-
-	$: stats = selectedJudgeInfo?.stats;
 </script>
 
 <div class="flex flex-col">
@@ -22,10 +20,8 @@
 							<JudgeStatItem
 								label="Average Bail Amount"
 								metric="averageBail"
-								value={hoveredStat === 'amount' ? stats?.totalBailSet : stats?.averageBailSet}
+								value={selectedJudgeInfo.allCaseResults.total.averageBailAmount || 0}
 								isMoney={true}
-								percentileCounty={stats?.pctileCounty?.bailAmount || 0}
-								percentileState={stats?.pctileState?.bailAmount || 0}
 								{hoveredStat}
 								{handleMouseEnter}
 								{handleMouseLeave}
@@ -33,10 +29,8 @@
 							<JudgeStatItem
 								label="Bail Set Frequency"
 								metric="bailSet"
-								value={stats?.pct?.bailSet || 0}
+								value={selectedJudgeInfo.allCaseResults.total.bailSet.percent || 0}
 								isHoverable={true}
-								percentileCounty={stats?.pctileCounty?.bailSet || 0}
-								percentileState={stats?.pctileState?.bailSet || 0}
 								{hoveredStat}
 								{handleMouseEnter}
 								{handleMouseLeave}
@@ -44,10 +38,8 @@
 							<JudgeStatItem
 								label="Remand Frequency"
 								metric="remand"
-								value={stats?.pct?.remand || 0}
+								value={selectedJudgeInfo.allCaseResults.total.remanded.percent || 0}
 								isHoverable={true}
-								percentileCounty={stats?.pctileCounty?.remand || 0}
-								percentileState={stats?.pctileState?.remand || 0}
 								{hoveredStat}
 								{handleMouseEnter}
 								{handleMouseLeave}
@@ -56,10 +48,8 @@
 							<JudgeStatItem
 								label="Release Frequency"
 								metric="release"
-								value={stats?.pct?.release || 0}
+								value={selectedJudgeInfo.allCaseResults.total.released.percent || 0}
 								isHoverable={true}
-								percentileCounty={stats?.pctileCounty?.release || 0}
-								percentileState={stats?.pctileState?.release || 0}
 								{hoveredStat}
 								{handleMouseEnter}
 								{handleMouseLeave}

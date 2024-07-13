@@ -17,8 +17,10 @@
 
 	let judges: Judge[] | never = [];
 
+	$: console.log(judges.map(judge=>judge.name));
+
 	onMount(() => {
-		judges = get(allJudgesStore).filter(judge => judge.stats.caseCount > 9);
+		judges = $allJudgesStore.filter(judge => judge.allCaseResults?.total.totalCases > 9);
 		updateVisibleJudges();
 	});
 
@@ -36,7 +38,7 @@
 	): Judge[] => {
 		let resultJudges: Judge[] = inputJudges;
 		if (county) {
-			resultJudges = inputJudges.filter((judge) => judge.counties?.includes(county));
+			resultJudges = inputJudges.filter((judge) => judge.county_name === county);
 		}
 		resultJudges = sortListByTarget(resultJudges, sortTargetValue, sortOrder) as Judge[];
 		return resultJudges;
@@ -256,7 +258,7 @@
 					</td>
 					<td class="py-4 sm:pl-6 lg:pl-8">
 						<div class="flex items-center gap-x-4">
-							<div class="truncate text-lg leading-6 hover:text-gray-50">{judge.name}</div>
+							<div class="truncate text-lg leading-6 hover:text-gray-50">{judge?.name}</div>
 						</div>
 					</td>
 					<td
@@ -267,7 +269,7 @@
 										? 'font-bold'
 										: ''}"
 							>
-								{formatNumber(judge.stats.caseCount)}
+								{formatNumber(judge.allCaseResults.total.totalCases)}
 							</div>
 						</div>
 					</td>
@@ -278,7 +280,7 @@
 									? 'font-bold'
 									: ''}"
 						>
-							<Money value={judge.stats.averageBailSet} />
+							<Money value={judge.allCaseResults.total.averageBailAmount} />
 						</div>
 					</td>
 					<td
@@ -287,7 +289,7 @@
 								? 'font-bold'
 								: ''}"
 					>
-						<Percent value={judge.stats.pct.bailSet} />
+						<Percent value={judge.allCaseResults.total.bailSet.percent} />
 					</td>
 					<td
 						class="{$sortTarget === SortTarget.remandPct ? 'table-cell' : 'hidden'} remand-color py-4 pr-4 text-right font-mono text-lg leading-6 md:table-cell  {$sortTarget ===
@@ -295,7 +297,7 @@
 								? 'font-bold'
 								: ''}"
 					>
-						<Percent value={judge.stats.pct.remand} />
+						<Percent value={judge.allCaseResults.total.remanded.percent} />
 					</td>
 					<td
 						class="{$sortTarget === SortTarget.releasePct ? 'table-cell' : 'hidden'} release-color pr-4 py-4 text-right font-mono text-lg leading-6 md:table-cell {$sortTarget ===
@@ -303,7 +305,7 @@
 								? 'font-bold'
 								: ''}"
 					>
-						<Percent value={judge.stats.pct.release} />
+						<Percent value={judge.allCaseResults.total.released.percent} />
 					</td>
 				</tr>
 				{#if judge === $selectedJudgeStore}

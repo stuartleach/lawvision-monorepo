@@ -17,7 +17,7 @@
 		Trial Judge in <span
 			class="bg-gradient-to-tr from-red-500 to-yellow-300 bg-clip-text font-bold text-transparent"
 		>
-			{selectedJudgeInfo?.counties?.[0] || 'County'}
+			{selectedJudgeInfo?.county_name}
 			County</span
 		>
 	</h2>

@@ -1,12 +1,8 @@
 import express, { Express, Request, Response } from 'express';
-import { fetchAllCounties } from './judge';
-import { migrateData } from './migrateData';
 import { PORT } from './config';
-import { prisma } from './prisma_client';
 import { casesRouter, judgesRouter } from './routes';
 import countiesRouter from './routes/counties';
 import loadRouter from './routes/load';
-import { hydrateArraignmentStatistics } from './utils';
 
 
 const app: Express = express();

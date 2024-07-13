@@ -6,8 +6,8 @@
 
 	export let label: string;
 	export let value: number = 0;
-	export let percentileCounty: number;
-	export let percentileState: number;
+	// export let percentileCounty: number;
+	// export let percentileState: number;
 	export let isHoverable = false;
 	export let isMoney = false;
 	export let hoveredStat: string | null = null;
@@ -40,27 +40,27 @@
 		</p>
 	</div>
 
-	<div class="rank font-sans text-sm tracking-tight text-zinc-400 px-4">
-		<div class="mt-2 flex-col border-zinc-700 pt-2">
-			<h6 class="border-zinc-700 pb-1 text-left font-semibold tracking-normal underline-offset-4">
-				Percentile
-			</h6>
-			<div>
-				<span class="flex flex-row justify-between text-gray-300">
-					<span class="text-left text-gray-500">County:</span>
-					<span class="text-right">
-						<Percentile value={percentileCounty} />
-					</span>
-				</span>
-			</div>
-			<div>
-				<span class="flex flex-row justify-between text-gray-300">
-					<span class="text-left text-gray-500">State:</span>
-					<span class="text-right">
-						<Percentile value={percentileState} />
-					</span>
-				</span>
-			</div>
-		</div>
-	</div>
+<!--	<div class="rank font-sans text-sm tracking-tight text-zinc-400 px-4">-->
+<!--		<div class="mt-2 flex-col border-zinc-700 pt-2">-->
+<!--			<h6 class="border-zinc-700 pb-1 text-left font-semibold tracking-normal underline-offset-4">-->
+<!--				Percentile-->
+<!--			</h6>-->
+<!--			<div>-->
+<!--				<span class="flex flex-row justify-between text-gray-300">-->
+<!--					<span class="text-left text-gray-500">County:</span>-->
+<!--					<span class="text-right">-->
+<!--						<Percentile value={percentileCounty} />-->
+<!--					</span>-->
+<!--				</span>-->
+<!--			</div>-->
+<!--			<div>-->
+<!--				<span class="flex flex-row justify-between text-gray-300">-->
+<!--					<span class="text-left text-gray-500">State:</span>-->
+<!--					<span class="text-right">-->
+<!--						<Percentile value={percentileState} />-->
+<!--					</span>-->
+<!--				</span>-->
+<!--			</div>-->
+<!--		</div>-->
+<!--	</div>-->
 </div>

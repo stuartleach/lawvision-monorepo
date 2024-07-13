@@ -1,17 +1,14 @@
 import { selectedCountyStore, selectedJudgeStore } from '$lib/stores/data';
 import {
-	type CaseStats,
 	type County,
 	type CountyWithGeoJSON,
 	type GeoJSONData,
 	type GeoJSONFeature,
 	type Judge,
-	type JudgeOrCounty,
 	type MinMax,
 	SortOrder,
 	SortTarget
 } from '$lib/types/frontendTypes';
-import type { CountyModel, JudgeModel } from '$lib/types/prismaTypes';
 
 const formatMoney = (amount: number) => {
 	amount = parseFloat(String(amount));
@@ -42,92 +39,6 @@ function formatMoneyValue(value: number): [string, string] {
 	return formatMoney(value).split('.') as [string, string];
 }
 
-const mutateCounty = (county: CountyModel): County => {
-	return {
-		medianIncome: county.median_income ?? 0,
-		countyUUID: county.county_id,
-		name: county.county_name,
-		stats: mutateCountyStats(county)
-	};
-};
-
-const mutateCountyStats = (item: CountyModel): CaseStats => {
-	return {
-		averageBailSet: item.average_bail_set ?? 0,
-		caseCount: item.case_count ?? 0,
-		totalBailSet: (item.average_bail_set ?? 0) * (item?.case_count ?? 0),
-		raw: {
-			ror: item.ror_at_arraign ?? 0,
-			remand: item.remand_at_arraign ?? 0,
-			bailSet: item.bail_set_at_arraign ?? 0,
-			unknown: item.unknown_at_arraign ?? 0,
-			nmr: item.nmr_at_arraign ?? 0,
-			release: (item.nmr_at_arraign ?? 0) + (item.ror_at_arraign ?? 0)
-		},
-		pct: {
-			ror: item.percent_ror ?? 0,
-			nmr: item.percent_nmr ?? 0,
-			remand: item.percent_remand ?? 0,
-			bailSet: item.percent_bail_set ?? 0,
-			unknown: item.percent_unknown ?? 0,
-			release: item.percent_release ?? 0
-		},
-		pctileState: {
-			caseCount: item.percentile_state_case_count ?? 0,
-			ror: item.percentile_state_ror ?? 0,
-			nmr: item.percentile_state_nmr ?? 0,
-			remand: item.percentile_state_remand ?? 0,
-			bailSet: item.percentile_state_bail_set ?? 0,
-			bailAmount: item.percentile_state_bail_amount ?? 0,
-			unknown: item.percentile_state_unknown ?? 0,
-			release: item.percentile_state_release ?? 0
-		}
-	};
-};
-
-const mutateJudgeStats = (item: JudgeModel): CaseStats => {
-	return {
-		averageBailSet: item.average_bail_set ?? 0,
-		caseCount: item.case_count ?? 0,
-		totalBailSet: (item.average_bail_set ?? 0) * (item?.case_count ?? 0),
-		raw: {
-			ror: item.ror_at_arraign ?? 0,
-			remand: item.remand_at_arraign ?? 0,
-			bailSet: item.bail_set_at_arraign ?? 0,
-			unknown: item.unknown_at_arraign ?? 0,
-			nmr: item.nmr_at_arraign ?? 0,
-			release: (item.nmr_at_arraign ?? 0) + (item.ror_at_arraign ?? 0)
-		},
-		pct: {
-			ror: item.percent_ror ?? 0,
-			nmr: item.percent_nmr ?? 0,
-			remand: item.percent_remand ?? 0,
-			bailSet: item.percent_bail_set ?? 0,
-			unknown: item.percent_unknown ?? 0,
-			release: item.percent_release ?? 0
-		},
-		pctileState: {
-			caseCount: item.percentile_state_case_count ?? 0,
-			ror: item.percentile_state_ror ?? 0,
-			nmr: item.percentile_state_nmr ?? 0,
-			remand: item.percentile_state_remand ?? 0,
-			bailSet: item.percentile_state_bail_set ?? 0,
-			bailAmount: item.percentile_state_bail_amount ?? 0,
-			unknown: item.percentile_state_unknown ?? 0,
-			release: item.percentile_state_release ?? 0
-		},
-		pctileCounty: {
-			caseCount: item.percentile_county_case_count ?? 0,
-			ror: item.percentile_county_ror ?? 0,
-			nmr: item.percentile_county_nmr ?? 0,
-			remand: item.percentile_county_remand ?? 0,
-			bailSet: item.percentile_county_bail_set ?? 0,
-			bailAmount: item.percentile_county_bail_amount ?? 0,
-			unknown: item.percentile_county_unknown ?? 0,
-			release: item.percentile_county_release ?? 0
-		}
-	};
-};
 
 export const sortListByTarget = (
 	list: Judge[] | County[],
@@ -136,24 +47,26 @@ export const sortListByTarget = (
 ) => {
 	selectedJudgeStore.set(null);
 	selectedCountyStore.set(null);
-	const compareValues = (a: JudgeOrCounty, b: JudgeOrCounty) => {
+	const compareValues = (a: Judge | County, b: Judge | County) => {
 		switch (target) {
 			case SortTarget.remandPct:
-				return a.stats.pct.remand - b.stats.pct.remand;
+				return a.allCaseResults.total.remanded.percent - b.allCaseResults.total.remanded.percent;
 			case SortTarget.releasePct:
-				return a.stats.pct.release - b.stats.pct.release;
+				return a.allCaseResults.total.released.percent - b.allCaseResults.total.released.percent;
 			case SortTarget.averageBail:
-				return a.stats.averageBailSet - b.stats.averageBailSet;
+				return a.allCaseResults.total.averageBailAmount - b.allCaseResults.total.averageBailAmount;
 			case SortTarget.caseCount:
-				return a.stats.caseCount - b.stats.caseCount;
+				return a.allCaseResults.total.totalCases - b.allCaseResults.total.totalCases;
 			case SortTarget.remandRaw:
-				return a.stats.raw.remand - b.stats.raw.remand;
+				return a.allCaseResults.total.remanded.raw - b.allCaseResults.total.remanded.raw;
 			case SortTarget.releaseRaw:
-				return a.stats.raw.release - b.stats.raw.release;
+				return a.allCaseResults.total.released.raw - b.allCaseResults.total.released.raw;
 			case SortTarget.bailSet:
-				return a.stats.raw.bailSet - b.stats.raw.bailSet;
+				return a.allCaseResults.total.bailSet.raw - b.allCaseResults.total.bailSet.raw;
 			case SortTarget.name:
-				return a.name.localeCompare(b.name);
+
+				return a?.name.localeCompare(b.name);
+
 			default:
 				return 0;
 		}
@@ -162,18 +75,10 @@ export const sortListByTarget = (
 	return list.sort((a, b) => (order === SortOrder.asc ? compareValues(a, b) : compareValues(b, a)));
 };
 
-const mutateJudge = (judge: JudgeModel): Judge => {
-	return {
-		name: judge.judge_name,
-		judgeUUID: judge.judge_id,
-		stats: mutateJudgeStats(judge),
-		primaryCounty: judge.primary_county,
-		counties: judge.counties
-	};
-};
 
-const getMinMax = (targets: JudgeOrCounty[]): MinMax => {
-	const stats = targets.map((t) => t.stats);
+/*
+const getMinMax = (targets: Judge[] | County[]): MinMax => {
+	const stats = targets.map((t) => t.all);
 
 	const initialMinMax: MinMax = {
 		bailAmount: [Infinity, -Infinity],
@@ -210,7 +115,7 @@ const getMinMax = (targets: JudgeOrCounty[]): MinMax => {
 		];
 		return acc;
 	}, initialMinMax);
-};
+};*/
 
 export function combineCountiesWithGeoJSON(
 	counties: County[],
@@ -237,8 +142,5 @@ export {
 	formatMoney,
 	formatNumber,
 	formatMoneyValue,
-	getMinMax,
-	mutateJudge,
-	mutateCounty,
 	formatPercent
 };

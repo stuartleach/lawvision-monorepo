@@ -11,22 +11,22 @@
 	let isOpen = false;
 	let selectedCountyName = $selectedCountyStore ?? 'Select a county';
 
-	$: sortedCounties = [...counties].sort((a, b) => a.name.localeCompare(b.name));
+	$: sortedCounties = [...counties].sort((a, b) => a.name?.localeCompare(b.name));
 
 	function toggleDropdown() {
 		isOpen = !isOpen;
 	}
 
-	function selectCounty(countyObj: County) {
-		selectedCountyName = countyObj.name;
+	function selectCounty(county: County) {
+		selectedCountyName = county.name;
 		if (selectedCountyName === $selectedCountyStore?.name) {
 			selectedCountyName = 'Select a county';
-			selectedCountyStore.set(null)
+			selectedCountyStore.set(null);
 		}
 		selectedCountyStore.set(county);
-		county = countyObj
+		county = county;
 
-		judges = judges.filter((judge) => judge.counties?.includes(county.name));
+		judges = judges.filter((judge) => judge.county_name === county.name);
 		isOpen = false;
 	}
 

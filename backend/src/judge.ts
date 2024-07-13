@@ -4,110 +4,130 @@ import { prisma } from './prisma_client';
 import { bailEligibleWhereClause, races, severities } from './queries/constants';
 
 export interface CaseSelection {
-  Bail: { first_bail_set_cash: number | null };
-  ArraignmentOutcome: {
-    remanded_to_jail_at_arraign: string | null;
-    ror_at_arraign: string | null;
-    nmr_at_arraign: string | null;
-  };
-  Defendant: { race: string | null };
-  ArraignCharge: { top_charge_weight_at_arraign: string | null };
+	Bail: { first_bail_set_cash: number | null };
+	ArraignmentOutcome: {
+		remanded_to_jail_at_arraign: string | null;
+		ror_at_arraign: string | null;
+		nmr_at_arraign: string | null;
+	};
+	Defendant: { race: string | null };
+	ArraignCharge: { top_charge_weight_at_arraign: string | null };
 }
 
 // Judge Data Fetching (Optimized)
 export const fetchJudgeCases = async (judgeId: string, whereClause?: any): Promise<CaseSelection[]> => {
-  return prisma.case.findMany({
-    where: { Judge: { judge_id: judgeId }, ...(whereClause || {}) },
-    select: {
-      Bail: { select: { first_bail_set_cash: true } },
-      ArraignmentOutcome: { select: { remanded_to_jail_at_arraign: true, ror_at_arraign: true, nmr_at_arraign: true } },
-      Defendant: { select: { race: true } },
-      ArraignCharge: { select: { top_charge_weight_at_arraign: true } } // For severity calculation
-    }
-  }) as unknown as CaseSelection[];
+	return prisma.case.findMany({
+		where: { Judge: { judge_id: judgeId }, ...(whereClause || {}) },
+		select: {
+			Bail: { select: { first_bail_set_cash: true } },
+			ArraignmentOutcome: { select: { remanded_to_jail_at_arraign: true, ror_at_arraign: true, nmr_at_arraign: true } },
+			Defendant: { select: { race: true } },
+			ArraignCharge: { select: { top_charge_weight_at_arraign: true } } // For severity calculation
+		}
+	}) as unknown as CaseSelection[];
 };
 
 export const fetchCountyCases = async (countyId: string, whereClause?: any): Promise<CaseSelection[]> => {
-  return prisma.case.findMany({
-    where: { County: { county_id: countyId }, ...(whereClause || {}) },
-    select: {
-      Bail: { select: { first_bail_set_cash: true } },
-      ArraignmentOutcome: { select: { remanded_to_jail_at_arraign: true, ror_at_arraign: true, nmr_at_arraign: true } },
-      Defendant: { select: { race: true } },
-      ArraignCharge: { select: { top_charge_weight_at_arraign: true } } // For severity calculation
-    }
-  }) as unknown as CaseSelection[];
+	return prisma.case.findMany({
+		where: { County: { county_id: countyId }, ...(whereClause || {}) },
+		select: {
+			Bail: { select: { first_bail_set_cash: true } },
+			ArraignmentOutcome: { select: { remanded_to_jail_at_arraign: true, ror_at_arraign: true, nmr_at_arraign: true } },
+			Defendant: { select: { race: true } },
+			ArraignCharge: { select: { top_charge_weight_at_arraign: true } } // For severity calculation
+		}
+	}) as unknown as CaseSelection[];
 };
 
 type ArraignmentResult = {
-  raw: number;
-  percent: number;
+	raw: number;
+	percent: number;
 };
 
 type ArraignmentResults = {
-  bailSet: ArraignmentResult;
-  remanded: ArraignmentResult;
-  released: ArraignmentResult;
-  totalCases: number;
+	averageBailAmount: number;
+	bailSet: ArraignmentResult;
+	remanded: ArraignmentResult;
+	released: ArraignmentResult;
+	totalCases: number;
 };
 
 type CalcResults = {
-  byRace: Record<string, ArraignmentResults>;
-  total: ArraignmentResults;
+	byRace: Record<string, ArraignmentResults>;
+	total: ArraignmentResults;
 };
 
 type ResultsBySeverity = {
-  [severity: string]: CalcResults;
+	[severity: string]: CalcResults;
 };
 
 export type JudgeOrCountyStats = {
-  resultsBySeverity: ResultsBySeverity;
-  allCaseResults: ArraignmentResults;
+	resultsBySeverity: ResultsBySeverity;
+	allCaseResults: CalcResults;
 };
 
 const calcPercent = (raw: number, total: number): number => (total > 0 ? (raw / total) * 100 : 0);
 
 const calcArraignmentResults = (cases: CaseSelection[]): ArraignmentResults => {
-  const bailSet = filterBailSetCases(cases).length;
-  const remanded = filterRemandedCases(cases).length;
-  const released = filterReleasedCases(cases).length;
-  const totalCases = cases.length;
+	const bailSet = filterBailSetCases(cases).length;
+	const remanded = filterRemandedCases(cases).length;
+	const released = filterReleasedCases(cases).length;
+	const totalCases = cases.length;
 
-  return {
-    bailSet: { raw: bailSet, percent: calcPercent(bailSet, totalCases) },
-    remanded: { raw: remanded, percent: calcPercent(remanded, totalCases) },
-    released: { raw: released, percent: calcPercent(released, totalCases) },
-    totalCases
-  };
+	const casesWithBail = cases.filter(c => c.Bail?.first_bail_set_cash !== null && c.Bail.first_bail_set_cash > 0);
+	const totalBailAmount = casesWithBail.reduce((acc, c) => acc + Number(c.Bail?.first_bail_set_cash ?? 0), 0);
+	const averageBailAmount = casesWithBail.length > 0 ? totalBailAmount / casesWithBail.length : 0;
+
+	console.log('TOTAL BAIL AMOUNT:', totalBailAmount);
+	console.log('AVERAGE BAIL AMOUNT:', averageBailAmount);
+	console.log('TOTAL CASES:', totalCases);
+
+	return {
+		averageBailAmount,
+		bailSet: { raw: bailSet, percent: calcPercent(bailSet, totalCases) },
+		remanded: { raw: remanded, percent: calcPercent(remanded, totalCases) },
+		released: { raw: released, percent: calcPercent(released, totalCases) },
+		totalCases
+	};
 };
 
 export const calculateStats = async (cases: CaseSelection[]): Promise<JudgeOrCountyStats> => {
-  const resultsBySeverity: ResultsBySeverity = {};
+	const resultsBySeverity: ResultsBySeverity = {};
 
-  for (let severity of severities) {
-    const casesBySeverity = cases.filter(c => c.ArraignCharge?.top_charge_weight_at_arraign === severity);
-    const totalResults = calcArraignmentResults(casesBySeverity);
+	for (let severity of severities) {
+		const casesBySeverity = cases.filter(c => c.ArraignCharge?.top_charge_weight_at_arraign === severity);
+		const totalResults = calcArraignmentResults(casesBySeverity);
 
-    const resultsByRace = races.reduce((acc, race) => {
-      const casesByRace = casesBySeverity.filter(c => c.Defendant?.race === race);
-      acc[race] = calcArraignmentResults(casesByRace);
-      return acc;
-    }, {} as Record<string, ArraignmentResults>);
+		const resultsByRace = races.reduce((acc, race) => {
+			const casesByRace = casesBySeverity.filter(c => c.Defendant?.race === race);
+			acc[race] = calcArraignmentResults(casesByRace);
+			return acc;
+		}, {} as Record<string, ArraignmentResults>);
 
-    resultsBySeverity[severity] = {
-      byRace: resultsByRace,
-      total: totalResults
-    };
-  }
+		resultsBySeverity[severity] = {
+			byRace: resultsByRace,
+			total: totalResults
+		};
+	}
 
-  const allCaseResults = calcArraignmentResults(cases);
+	const allCasesTotalResults = calcArraignmentResults(cases);
+	const allCasesResultsByRace = races.reduce((acc, race) => {
+		const casesByRace = cases.filter(c => c.Defendant?.race === race);
+		acc[race] = calcArraignmentResults(casesByRace);
+		return acc;
+	}, {} as Record<string, ArraignmentResults>);
 
-  return {
-    resultsBySeverity,
-    allCaseResults
-  };
+	const allCaseResults: CalcResults = {
+		byRace: allCasesResultsByRace,
+		total: allCasesTotalResults
+	};
+
+	return {
+		resultsBySeverity,
+		allCaseResults
+	};
 };
 
 export const fetchAllCounties = async () => {
-  return prisma.county.findMany();
+	return prisma.county.findMany();
 };

@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { getJudgeArraignmentStatistics, getJudgeBailStatistics } from '$lib/api';
 	import DownChevron from '$lib/components/assets/DownChevron.svelte';
 	import UpChevron from '$lib/components/assets/UpChevron.svelte';
 	import JudgeInfo from '$lib/components/judge-focus/JudgeInfo.svelte';
@@ -7,37 +6,17 @@
 	import JudgeStatsGrid from '$lib/components/judge-focus/JudgeStatsGrid.svelte';
 	import {
 		allCountiesStore,
-		selectedJudgeArraignmentStatisticsStore,
-		selectedJudgeBailStatisticsStore,
 		selectedJudgeStore
 	} from '$lib/stores/data';
-	import type { ArraignmentStatisticsModel } from '$lib/types';
+
 	import { type County } from '$lib/types/frontendTypes';
 	import { Button } from 'flowbite-svelte';
-	import { onMount } from 'svelte';
 	import { writable } from 'svelte/store';
 
 	let county: County | undefined;
 	let hoveredStat: string | null = null;
 
 	$: selectedJudgeInfo = $selectedJudgeStore;
-
-	onMount(async () => {
-			try {
-				if (selectedJudgeInfo) {
-					await getJudgeArraignmentStatistics({
-						fetch: fetch, judgeId: selectedJudgeInfo?.judgeUUID
-					});
-					await getJudgeBailStatistics({
-						fetch: fetch, judgeId: selectedJudgeInfo?.judgeUUID
-					});
-					
-				}
-			} catch (e) {
-				console.error(e);
-			}
-		}
-	);
 
 	$: countyName = selectedJudgeInfo?.primaryCounty;
 	$: county = $allCountiesStore.find((c) => c.name === countyName);

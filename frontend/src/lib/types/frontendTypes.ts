@@ -1,9 +1,78 @@
 export interface County {
+	county_id: string;
 	name: string;
-	countyUUID: string;
-	medianIncome: number;
-	stats: CaseStats;
+	resultsBySeverity: ResultsBySeverity;
+	allCaseResults: AllCaseResults;
 }
+
+export interface Judge {
+	judgeId: string;
+	name: string;
+	county_name: string;
+	resultsBySeverity: ResultsBySeverity;
+	allCaseResults: AllCaseResults;
+}
+
+interface BailSet {
+	raw: number;
+	percent: number;
+}
+
+interface ArraignmentResults {
+	averageBailAmount: number;
+	bailSet: BailSet;
+	remanded: BailSet;
+	released: BailSet;
+	totalCases: number;
+}
+
+interface ByRace {
+	White: ArraignmentResults;
+	Black: ArraignmentResults;
+	'American Indian/Alaska Native': ArraignmentResults;
+	'Asian/Pacific Islander': ArraignmentResults;
+	Other: ArraignmentResults;
+	Unknown: ArraignmentResults;
+}
+
+export const severityLevels = ['AF', 'BF', 'CF', 'DF', 'EF', 'AM', 'BM'];
+
+interface ResultsBySeverity {
+	AF: {
+		byRace: ByRace;
+		total: ArraignmentResults;
+	};
+	BF: {
+		byRace: ByRace;
+		total: ArraignmentResults;
+	};
+	CF: {
+		byRace: ByRace;
+		total: ArraignmentResults;
+	};
+	DF: {
+		byRace: ByRace;
+		total: ArraignmentResults;
+	};
+	EF: {
+		byRace: ByRace;
+		total: ArraignmentResults;
+	};
+	AM: {
+		byRace: ByRace;
+		total: ArraignmentResults;
+	};
+	BM: {
+		byRace: ByRace;
+		total: ArraignmentResults;
+	};
+}
+
+interface AllCaseResults {
+	byRace: ByRace;
+	total: ArraignmentResults;
+}
+
 
 type Coordinates = number[][][][];
 
@@ -43,70 +112,63 @@ export interface MinMax {
 	release: [number, number];
 }
 
-export interface Judge {
-	judgeUUID: string;
+
+
+export interface County {
+	countyId: string;
 	name: string;
-	stats: CaseStats;
-	primaryCounty: string;
-	counties?: string[];
+	resultsBySeverity: ResultsBySeverity;
+	allCaseResults: AllCaseResults;
 }
 
-export type JudgeOrCounty = {
-	stats: CaseStats;
-	judgeUUID?: string;
-	countyUUID?: string;
-	name: string;
-};
+interface BailSet {
+	raw: number;
+	percent: number;
+}
 
-export interface CaseStats {
-	averageBailSet: number;
-	totalBailSet: number;
-	caseCount: number;
-	raw: {
-		ror: number;
-		remand: number;
-		bailSet: number;
-		unknown: number;
-		nmr: number;
-		release: number;
-	};
-	pct: {
-		ror: number;
-		nmr: number;
-		remand: number;
-		bailSet: number;
-		unknown: number;
-		release: number;
-	};
-	pctileState: {
-		bailAmount: number;
-		caseCount: number;
-		ror: number;
-		remand: number;
-		bailSet: number;
-		unknown: number;
-		nmr: number;
-		release: number;
-	};
-	pctileCounty?: {
-		// not present in county stats
-		bailAmount: number;
-		caseCount: number;
-		ror: number;
-		remand: number;
-		bailSet: number;
-		unknown: number;
-		nmr: number;
-		release: number;
+interface ArraignmentResults {
+	averageBailAmount: number;
+	bailSet: BailSet;
+	remanded: BailSet;
+	released: BailSet;
+	totalCases: number;
+}
+
+interface ByRace {
+	White: ArraignmentResults;
+	Black: ArraignmentResults;
+	'American Indian/Alaska Native': ArraignmentResults;
+	'Asian/Pacific Islander': ArraignmentResults;
+	Other: ArraignmentResults;
+	Unknown: ArraignmentResults;
+}
+
+interface ResultsBySeverity {
+	[severity: string]: {
+		byRace: ByRace;
+		total: ArraignmentResults;
 	};
 }
+
+interface AllCaseResults {
+	byRace: ByRace;
+	total: ArraignmentResults;
+}
+
+interface CountyResults {
+	county_id: string;
+	county_name: string;
+	resultsBySeverity: ResultsBySeverity;
+	allCaseResults: AllCaseResults;
+}
+
 
 export type FetchFunction = (input: RequestInfo, init?: RequestInit) => Promise<Response>;
 
 export type JudgeQuery = {
 	fetch: FetchFunction;
-	countyId: string;
-	limit: number;
+	// countyId: string;
+	// limit: number;
 };
 
 export type JudgeDetailsQuery = {
@@ -117,23 +179,6 @@ export type JudgeDetailsQuery = {
 export type JudgeOutcomesQuery = {
 	fetch: FetchFunction;
 	judgeId: string;
-};
-
-export type CombinedPreTrialOutcomes = {
-	[chargeWeight: string]: RaceOutcomesMap;
-};
-
-export type ChargeSeverityOutcomesMap = {
-	AF: PretrialOutcomes;
-	BF: PretrialOutcomes;
-	CF: PretrialOutcomes;
-	DF: PretrialOutcomes;
-	EF: PretrialOutcomes;
-	AM: PretrialOutcomes;
-	BM: PretrialOutcomes;
-	I: PretrialOutcomes;
-	UM: PretrialOutcomes;
-	unknown: PretrialOutcomes;
 };
 
 // Define the enum without quotes around the keys
@@ -153,31 +198,7 @@ export enum SortOrder {
 	desc = 'desc'
 }
 
-export type RaceOutcomesMap = {
-	White: PretrialOutcomes;
-	Black: PretrialOutcomes;
-	'American Indian/Alaska Native': PretrialOutcomes;
-	'Asian/Pacific Islander': PretrialOutcomes;
-	Other: PretrialOutcomes;
-	Unknown: PretrialOutcomes;
-};
 
-export type JudgeOutcomes = {
-	charges: ChargeSeverityOutcomesMap;
-	races: RaceOutcomesMap;
-};
-
-export type PretrialOutcomeTypes = {
-	bail: number;
-	release: number;
-	unknown: number;
-	remand: number;
-};
-
-export type PretrialOutcomes = {
-	raw: PretrialOutcomeTypes;
-	pct: PretrialOutcomeTypes;
-};
 
 export type CountyQuery = {
 	fetch: FetchFunction;

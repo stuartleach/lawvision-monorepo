@@ -1,4 +1,5 @@
-import { Case, PrismaClient } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
+// @ts-ignore
 import type { CaseRawType } from './types';
 
 const prisma = new PrismaClient();
