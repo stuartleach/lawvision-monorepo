@@ -1,5 +1,9 @@
 import { Request, Response, Router } from 'express';
-import { fetchAllCounties, getAllJudgeRacialScores, fetchCountyThings } from '../judge';
+import {
+	fetchJudgeCases,
+	calculateStats, JudgeOrCountyStats
+} from '../judge';
+import { prisma } from '../prisma_client';
 
 const judgesRouter = Router();
 
@@ -19,24 +23,51 @@ judgesRouter.get('/', async (req: Request, res: Response) => {
 
 	// const judges = await getAllJudgeRacialScores();
 	// const judges = await fetchAllCounties()
-	const result = await fetchCountyThings()
-	return res.json(result)
+	// const result = await fetchCountyThings();
+	// return res.json(result);
 });
 
 
-judgesRouter.get('/:judge_id', async (req, res) => {
-	const judgeId = req.params.judge_id;
-	const judge = await getAllJudgeRacialScores(judgeId);
+// judgesRouter.get('/:judge_id', async (req, res) => {
+// 	const judgeId = req.params.judge_id;
+// 	const judge = await getAllJudgeRacialScores(judgeId);
+//
+// 	if (!judge) {
+// 		res.status(500).json({ error: 'Internal Server Error' });
+// 		return;
+// 	}
+//
+// 	return res.json(judge);
+// });
 
-	if (!judge) {
-		res.status(500).json({ error: 'Internal Server Error' });
-		return;
+
+judgesRouter.get('/judges_stats', async (req, res) => {
+
+	const judges = await prisma.judge.findMany({
+		select: {
+			judge_id: true,
+			judge_name: true,
+			primary_county: true,
+		}
+	});
+
+	let stats: any[] = [];
+
+	for (let judge of judges) {
+		const cases = await fetchJudgeCases(judge.judge_id);
+		let judgeStats = await calculateStats(cases);
+		stats.push({
+			judge_id: judge.judge_id,
+			judge_name: judge.judge_name,
+			county_name: judge.primary_county,
+			...judgeStats
+		});
 	}
 
-	return res.json(judge);
-})
 
+	return res.json(stats);
 
+});
 
 
 //

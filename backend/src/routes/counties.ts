@@ -1,6 +1,9 @@
 import { Router } from 'express';
+import { calculateStats, fetchCountyCases, fetchJudgeCases } from '../judge';
+import { prisma } from '../prisma_client';
 import { getCounties, getPreTrialOutcomesForEachChargeWeight } from '../queries';
 import { getCombinedPreTrialOutcomes } from '../queries/complexQueries';
+import judgesRouter from './judges';
 
 const countiesRouter = Router();
 
@@ -36,6 +39,29 @@ countiesRouter.get('/:county_name/charges', async (req, res) => {
 		console.error;
 		return res.status(500).json({ error: 'Internal Server Error' });
 	}
+});
+
+countiesRouter.get('/counties_stats', async (req, res) => {
+
+	const counties = await prisma.county.findMany({
+		select: {
+			county_id: true,
+			county_name: true
+		}
+	});
+
+	let stats: any[] = [];
+
+	for (let county of counties) {
+		const cases = await fetchCountyCases(county.county_id);
+		let countyStats = await calculateStats(cases);
+		stats.push({
+			county_id: county.county_id,
+			county_name: county.county_name,
+			...countyStats
+		});
+	}
+	return res.json(stats);
 });
 
 
