@@ -46,7 +46,7 @@
 <div
 	class="mx-2 grid grid-rows-2 sm:rounded-none sm:first:rounded-bl-2xl last:rounded-br-2xl [&:nth-last-child(2)]:rounded-bl-2xl sm:[&:nth-last-child(2)]:rounded-none bg-zinc-950/50 w-full justify-center px-6 py-6 sm:px-6 lg:px-8">
 	<!--JudgeStatItem-->
-	<div class="border-b border-dotted border-zinc-700 w-full text-center text-white/50">
+	<div class="border-b border-dotted border-zinc-700 h-full w-full text-center text-white/50">
 		<p class="text-sm font-medium leading-6">{metricLabels[metric]}</p>
 		<p class="w-full rounded px-4 py-3">
 			<span class="text-4xl font-semibold tracking-tight -mx-4 px-4 {metric}-color">
@@ -67,20 +67,22 @@
 		</p>
 	</div>
 
-	<div class="rank font-sans text-sm tracking-tight text-zinc-400 px-4">
-		<div class="flex-col border-zinc-700 pt-2">
+	<div class="text-sm tracking-tight text-zinc-400 px-4">
+		<div class="flex-col pt-2">
 			<div class="text-right flex flex-col">
-
-				{#each races.slice(1, races.length-1) as race}
+				{#each races.slice(1, races.length) as race}
 					<div class="flex flex-row justify-between w-48 px-2">
 						<span class="flex text-sm text-zinc-400 tracking-tighter">{raceLabels[race]}</span>
 						<div class="flex font-mono text-zinc-300">
-							{#if isMoney}
-								<span class="text-green-600">
+							{#if metric==='averageBailAmount'}
+								<span class="{metric}-color">
 									<Money value={$selectedJudgeStore ? getValue($selectedJudgeStore, metric, severity, race): 0} />
 								</span>
+							{:else if metric === 'totalCases'}
+								<span class="text-blue-500">
+									{formatNumber($selectedJudgeStore ? getValue($selectedJudgeStore, metric, severity, race) : 0)}</span>
 							{:else}
-								<span>
+								<span class="{metric}-color">
 									<Percent value={$selectedJudgeStore ? getValue($selectedJudgeStore, metric, severity, race): 0} />
 								</span>
 							{/if}
