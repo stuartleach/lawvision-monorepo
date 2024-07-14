@@ -57,9 +57,9 @@ judgesRouter.get('/judges_stats', async (req, res) => {
 		const cases = await fetchJudgeCases(judge.judge_id);
 		let judgeStats = await calculateStats(cases);
 		stats.push({
-			judge_id: judge.judge_id,
-			judge_name: judge.judge_name,
-			county_name: judge.primary_county,
+			judgeId: judge.judge_id,
+			name: judge.judge_name,
+			primaryCounty: judge.primary_county,
 			...judgeStats
 		});
 	}

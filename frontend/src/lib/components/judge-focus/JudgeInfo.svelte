@@ -1,6 +1,8 @@
 <script lang="ts">
 	import JudgeStatItem from '$lib/components/judge-focus/JudgeStatItem.svelte';
+	import { severityLevels } from '$lib/stores/data';
 	import type { Judge, SeverityLevel, ResultsBySeverity } from '$lib/types/frontendTypes';
+
 
 	export let selectedJudgeInfo: Judge | null;
 
@@ -13,7 +15,6 @@
 	$: charges = selectedJudgeInfo?.resultsBySeverity;
 	$: console.log(charges);
 
-	const severityLevels: SeverityLevel[] = ['AF', 'BF', 'CF', 'DF', 'EF', 'AM', 'BM'];
 </script>
 
 <div class="flex flex-col">
@@ -25,8 +26,10 @@
 				{#if selectedJudgeInfo}
 					{#each severityLevels as severity}
 						<div class="grid w-full">
-							<h3 class="mx-2 text-zinc-200 bg-zinc-950/50 rounded-t-3xl text-left pl-10 py-2 pt-6 w-full text-2xl mt-6 mb-0.5 tracking-tighter">{severity}</h3>
-							<div class="grid grid-cols-2 w-full rounded-none gap-x-0.5 sm:gap-x-0.5 gap-y-0.5 sm:grid-cols-2 lg:grid-cols-4">
+							<h3
+								class="mx-2 text-zinc-200 bg-zinc-950/50 rounded-t-3xl text-left pl-10 py-2 pt-6 w-full text-2xl mt-6 mb-0.5 tracking-tighter">{severity}</h3>
+							<div
+								class="grid grid-cols-2 w-full rounded-none gap-x-0.5 sm:gap-x-0.5 gap-y-0.5 sm:grid-cols-2 lg:grid-cols-4">
 								<JudgeStatItem
 									label="Average Bail Amount"
 									metric="averageBailAmount"

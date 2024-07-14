@@ -44,7 +44,7 @@ export type ResultsBySeverity = {
 	[severity in SeverityLevel]: SeverityResult;
 }
 
-interface AllCaseResults {
+export interface AllCaseResults {
 	byRace: ArraignmentResultsByRace;
 	total: ArraignmentResults;
 }

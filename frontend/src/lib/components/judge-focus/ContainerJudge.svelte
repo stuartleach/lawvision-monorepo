@@ -1,16 +1,12 @@
 <script lang="ts">
-	import DownChevron from '$lib/components/assets/DownChevron.svelte';
-	import UpChevron from '$lib/components/assets/UpChevron.svelte';
-	import JudgeInfo from '$lib/components/judge-focus/JudgeInfo.svelte';
 	import JudgeInfoHeader from '$lib/components/judge-focus/JudgeInfoHeader.svelte';
 	import JudgeStatsGrid from '$lib/components/judge-focus/JudgeStatsGrid.svelte';
 	import {
 		allCountiesStore,
-		selectedJudgeStore
+		selectedJudgeStore, severityLevels
 	} from '$lib/stores/data';
 
 	import { type County } from '$lib/types/frontendTypes';
-	import { Button } from 'flowbite-svelte';
 	import { writable } from 'svelte/store';
 
 	let county: County | undefined;
@@ -36,33 +32,38 @@
 		expanded.set(!$expanded);
 	}
 
+	const severityLabels = {
+		'AF': 'A Felony',
+		'BF': 'B Felony',
+		'CF': 'C Felony',
+		'DF': 'D Felony',
+		'EF': 'E Felony',
+		'AM': 'A Misdemeanor',
+		'BM': 'B Misdemeanor'
+	}
+
 </script>
 
 <div>
-	<!--ContainerJudge-->
 	<JudgeInfoHeader {selectedJudgeInfo} />
 	<div class="justify-center">
 		<JudgeStatsGrid
-			{selectedJudgeInfo}
+			caseResults={selectedJudgeInfo?.allCaseResults}
 			{hoveredStat}
 			{handleMouseEnter}
 			{handleMouseLeave}
+			severity=""
 		/>
 
-		<div class="grid justify-center">
-			{#if $expanded}
-				<JudgeInfo {selectedJudgeInfo}
-									 {hoveredStat}
-									 {handleMouseEnter}
-									 {handleMouseLeave} />
-				<Button class="scale-[300%] p-20" on:click={toggleExpanded}>
-					<UpChevron />
-				</Button>
-			{:else}
-				<Button class="bg-red-500" on:click={toggleExpanded}>
-					<DownChevron />
-				</Button>
-			{/if}
-		</div>
+		{#each severityLevels as severity}
+			<JudgeStatsGrid
+				label={severityLabels[severity]}
+				caseResults={selectedJudgeInfo?.resultsBySeverity}
+				{hoveredStat}
+				{handleMouseEnter}
+				{handleMouseLeave}
+				severity={severity}
+			/>
+		{/each}
 	</div>
 </div>

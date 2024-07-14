@@ -5,7 +5,7 @@ import type {
 	CountyWithGeoJSON,
 	GeoJSONData,
 	Judge,
-	MinMax
+	MinMax, SeverityLevel
 } from '$lib/types';
 
 // Styling //
@@ -39,6 +39,7 @@ export const selectedCountyStore = writable<County | null>(null);
 export const selectedJudgeStore = writable<Judge | null>(null);
 
 export const races = ['White', 'Black', 'American Indian/Alaska Native', 'Asian/Pacific Islander', 'Other', 'Unknown'];
+export const severityLevels: SeverityLevel[] = ['AF', 'BF', 'CF', 'DF', 'EF', 'AM', 'BM'];
 
 
 export const stateBailCases = {

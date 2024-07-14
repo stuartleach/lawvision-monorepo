@@ -69,15 +69,18 @@ export type JudgeOrCountyStats = {
 const calcPercent = (raw: number, total: number): number => (total > 0 ? (raw / total) * 100 : 0);
 
 const calcArraignmentResults = (cases: CaseSelection[]): ArraignmentResults => {
-	const bailSet = filterBailSetCases(cases).length;
-	const remanded = filterRemandedCases(cases).length;
-	const released = filterReleasedCases(cases).length;
+	const bailSetCases = filterBailSetCases(cases);
+	const remandedCases = filterRemandedCases(cases);
+	const releasedCases = filterReleasedCases(cases);
 	const totalCases = cases.length;
 
-	const casesWithBail = cases.filter(c => c.Bail?.first_bail_set_cash !== null && c.Bail.first_bail_set_cash > 0);
+	const bailSet = bailSetCases.length;
+	const remanded = remandedCases.length;
+	const released = releasedCases.length;
+
+	const casesWithBail = bailSetCases.filter(c => c.Bail?.first_bail_set_cash !== null && c.Bail.first_bail_set_cash > 0);
 	const totalBailAmount = casesWithBail.reduce((acc, c) => acc + Number(c.Bail?.first_bail_set_cash ?? 0), 0);
 	const averageBailAmount = casesWithBail.length > 0 ? totalBailAmount / casesWithBail.length : 0;
-	
 
 	return {
 		averageBailAmount,
