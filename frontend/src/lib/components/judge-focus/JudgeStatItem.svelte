@@ -44,7 +44,7 @@
 </script>
 
 <div
-	class="mx-2 grid grid-rows-2 sm:rounded-none sm:first:rounded-bl-2xl last:rounded-br-2xl [&:nth-last-child(2)]:rounded-bl-2xl sm:[&:nth-last-child(2)]:rounded-none bg-zinc-950/50 w-full justify-center px-6 py-6 sm:px-6 lg:px-8">
+	class="mx-2 grid grid-rows-1 sm:rounded-none sm:first:rounded-bl-2xl last:rounded-br-2xl [&:nth-last-child(2)]:rounded-bl-2xl sm:[&:nth-last-child(2)]:rounded-none bg-zinc-950/50 w-full justify-center px-6 py-6 sm:px-6 lg:px-8">
 	<!--JudgeStatItem-->
 	<div class="border-b border-dotted border-zinc-700 h-full w-full text-center text-white/50">
 		<p class="text-sm font-medium leading-6">{metricLabels[metric]}</p>
