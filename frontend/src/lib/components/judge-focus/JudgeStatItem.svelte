@@ -1,16 +1,10 @@
 <script lang="ts">
-	import HoverableItem from '$lib/components/shared/HoverableItem.svelte';
 	import Money from '$lib/components/shared/Money.svelte';
 	import Percent from '$lib/components/shared/Percent.svelte';
 	import { selectedJudgeStore, severityLabels } from '$lib/stores/data';
-	import type {
-		ArraignmentResults,
-		BailSet, Race,
-		SeverityLevel
-	} from '$lib/types/frontendTypes';
-	import { formatNumber, formatPercent, getValue } from '$lib/utils';
+	import type { ArraignmentResults, Race, SeverityLevel } from '$lib/types/frontendTypes';
+	import { formatNumber, getValue } from '$lib/utils';
 
-	export let isMoney = false;
 	export let metric: keyof ArraignmentResults | 'averageBailAmount' = 'bailSet';
 
 	export let severity: SeverityLevel = 'Any';
@@ -74,7 +68,7 @@
 					<div class="flex flex-row justify-between w-48 px-2">
 						<span class="flex text-sm text-zinc-400 tracking-tighter">{raceLabels[race]}</span>
 						<div class="flex font-mono text-zinc-300">
-							{#if metric==='averageBailAmount'}
+							{#if metric === 'averageBailAmount'}
 								<span class="{metric}-color">
 									<Money value={$selectedJudgeStore ? getValue($selectedJudgeStore, metric, severity, race): 0} />
 								</span>

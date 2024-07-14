@@ -1,11 +1,12 @@
 <script lang="ts">
-	import ContainerJudge from '$lib/components/judge-focus/ContainerJudge.svelte';
 	import CountyDropdown from '$lib/components/containers/CountyDropdown.svelte';
+	import ContainerJudge from '$lib/components/judge-focus/ContainerJudge.svelte';
 	import Money from '$lib/components/shared/Money.svelte';
 	import Percent from '$lib/components/shared/Percent.svelte';
 	import {
 		allCountiesStore,
-		allJudgesStore,
+		allJudgesStore, countyNameFilterStore,
+		judgeNameFilterStore,
 		selectedCountyStore,
 		selectedJudgeStore
 	} from '$lib/stores/data';
@@ -13,49 +14,49 @@
 	import { formatNumber, sortListByTarget } from '$lib/utils';
 	import { Button, Input } from 'flowbite-svelte';
 	import { onMount } from 'svelte';
-	import { get, writable } from 'svelte/store';
+	import { writable } from 'svelte/store';
 
-	let judges: Judge[] | never = [];
-
-	$: g = judges.find(judge => judge.name === 'Gershuny, Jeffrey A.')
-	$: console.log(g?.arraignmentResults.Any.Any.remanded.percent);
-	$: console.log(g?.arraignmentResults.Any.Any.released.percent);
-
-	onMount(() => {
-		judges = $allJudgesStore.filter(judge => judge.arraignmentResults.Any.Any.totalCases > 9);
-		updateVisibleJudges();
-	});
+	let judges: Judge[] = [];
 
 	const sortTarget = writable<SortTarget>(SortTarget.caseCount);
 	let sortTargetValue: SortTarget;
 	$: sortTargetValue = $sortTarget;
 
 	const sortOrder = writable<SortOrder>(SortOrder.desc);
+	let sortedJudges: Judge[] = [];
+	let counties: string[] = [];
 
-	const sortAndFilterJudges = (
+	const updateVisibleJudges = () => {
+		const windowInnerHeight = window.innerHeight;
+		const clientHeight = document.querySelector('.sticky')?.clientHeight || 0;
+		const availableHeight = windowInnerHeight - clientHeight - (clientHeight * 2.7);
+		visibleJudgeCount = Math.floor(availableHeight / rowHeight);
+	};
+
+	const sortJudges = (
 		inputJudges: Judge[],
 		sortTargetValue: SortTarget,
 		sortOrder: SortOrder,
 		county: string
 	): Judge[] => {
-		let resultJudges: Judge[] = inputJudges;
+		let resultJudges = inputJudges;
 		if (county) {
-			resultJudges = inputJudges.filter((judge) => judge.primaryCounty === county);
+			resultJudges = resultJudges.filter(judge => judge.primaryCounty === county);
 		}
 		resultJudges = sortListByTarget(resultJudges, sortTargetValue, sortOrder) as Judge[];
 		return resultJudges;
 	};
 
-	$: sortedAndFilteredJudges = sortAndFilterJudges(
+	$: sortedJudges = sortJudges(
 		judges,
 		sortTargetValue,
 		$sortOrder,
-		$selectedCountyStore?.name as string
+		$selectedCountyStore?.name || ''
 	);
 	$: counties = $allCountiesStore;
 
 	const toggleSort = () => {
-		sortOrder.update((order) => (order === SortOrder.asc ? SortOrder.desc : SortOrder.asc));
+		sortOrder.update(order => order === SortOrder.asc ? SortOrder.desc : SortOrder.asc);
 	};
 
 	const handleClick = (target: SortTarget) => {
@@ -85,34 +86,30 @@
 		}
 	};
 
-	const search = (query: string) => {
-		const lowerQuery = query.toLowerCase();
-		return judges.filter((judge) => judge.name.toLowerCase().includes(lowerQuery));
+	const filterJudges = (judges: Judge[], query: string, county: string) => {
+		if (!query && !county) return judges;
+		return judges.filter(judge =>
+			(!query || judge.name.toLowerCase().includes(query.toLowerCase())) &&
+			(!county || judge.primaryCounty === county)
+		);
 	};
 
 	let searchTimeout: ReturnType<typeof setTimeout>;
 	let query: string = '';
+	$: judgeNameFilterStore.set(query);
+	$: judges = filterJudges($allJudgesStore, $judgeNameFilterStore, $countyNameFilterStore || '');
+	// $: countyNameFilterStore.set($selectedCountyStore?.name || '');
+
 	const handleSearch = () => {
 		clearTimeout(searchTimeout);
 		searchTimeout = setTimeout(() => {
-			if (query === '') {
-				judges = sortedAndFilteredJudges;
-			} else {
-				judges = search(query);
-			}
+			judges = filterJudges($allJudgesStore, $judgeNameFilterStore, $countyNameFilterStore || '');
 		}, 150);
 	};
 
 	let judgeRangeStart: number = 0;
 	let visibleJudgeCount: number = 10; // Default number of judges to display
 	const rowHeight = 50; // Estimate the height of each row
-
-	const updateVisibleJudges = () => {
-		const windowInnerHeight = window.innerHeight;
-		const clientHeight = document.querySelector('.sticky').clientHeight;
-		const availableHeight = windowInnerHeight - clientHeight - (clientHeight * 2.7);
-		visibleJudgeCount = Math.floor(availableHeight / rowHeight);
-	};
 
 	const handlePrevious = () => {
 		if (judgeRangeStart > 0) {
@@ -121,7 +118,7 @@
 	};
 
 	const handleNext = () => {
-		if (judgeRangeStart + visibleJudgeCount < sortedAndFilteredJudges.length) {
+		if (judgeRangeStart + visibleJudgeCount < sortedJudges.length) {
 			judgeRangeStart += visibleJudgeCount;
 		}
 	};
@@ -129,17 +126,23 @@
 	$: selectedCountyName = $selectedCountyStore?.name;
 
 	onMount(() => {
-		window.addEventListener('resize', updateVisibleJudges);
+		judges = $allJudgesStore.filter(judge => judge.arraignmentResults.Any.Any.totalCases > 9);
 		updateVisibleJudges();
+		window.addEventListener('resize', updateVisibleJudges);
 	});
+
+	$: sortedJudges = sortJudges(
+		judges,
+		sortTargetValue,
+		$sortOrder,
+		$selectedCountyStore?.name || ''
+	);
 </script>
 
 <div class=" grid grid-flow-row-dense bg-zinc-900 pb-1 pt-4 ">
 	<!--JudgeTable-->
 	<div class="px-8 space-y-4 sm:space-y-4">
-		<div
-			class="flex flex-row px-4 text-2xl grid-rows-1 h-fit sm:text-4xl w-3/5 sm:w-full font-bold items-baseline tracking-tight text-zinc-400 sm:px-6 lg:px-8">
-
+		<div class="flex flex-row px-4 text-2xl grid-rows-1 h-fit sm:text-4xl w-3/5 sm:w-full font-bold items-baseline tracking-tight text-zinc-400 sm:px-6 lg:px-8">
 			<h4 class="text-4xl text-zinc-500 w-full text-left sm:text-center">
 				<span class="text-zinc-400"> {selectedCountyName || "New York State"}</span>
 				Judges
@@ -148,7 +151,7 @@
 
 		<div class="flex flex-col sm:flex-row sm:space-x-4 space-y-4 sm:space-y-0 sm:w-full ">
 			<div class="w-full">
-				<CountyDropdown county={$selectedCountyStore} {counties} judges={sortedAndFilteredJudges} />
+				<CountyDropdown />
 			</div>
 			<div class="w-full">
 				<Input
@@ -239,7 +242,7 @@
 			</tr>
 			</thead>
 			<tbody class="divide-y divide-white/5 ">
-			{#each sortedAndFilteredJudges.slice(judgeRangeStart, judgeRangeStart + visibleJudgeCount) as judge, i}
+			{#each sortedJudges.slice(judgeRangeStart, judgeRangeStart + visibleJudgeCount) as judge, i}
 				<tr
 					class:bg-zinc-950={i % 2 === 0}
 					class:bg-zinc-800={judge === $selectedJudgeStore}
@@ -328,28 +331,27 @@
 					Showing
 					<span class="font-medium">{judgeRangeStart + 1}</span>
 					to
-					<span
-						class="font-medium">{Math.min(judgeRangeStart + visibleJudgeCount, sortedAndFilteredJudges?.length)}</span>
+					<span class="font-medium">{Math.min(judgeRangeStart + visibleJudgeCount, sortedJudges?.length)}</span>
 					of
-					<span class="font-medium">{sortedAndFilteredJudges?.length}</span>
+					<span class="font-medium">{sortedJudges?.length}</span>
 					results
 				</p>
 			</div>
 			<div class="flex flex-1 justify-between sm:justify-end">
-				<div class:hidden={!(judgeRangeStart > 0)}>
+				{#if judgeRangeStart > 0}
 					<Button
 						on:click={handlePrevious}
 						class="transition relative inline-flex items-center rounded-md bg-white/10 px-3 py-2 text-sm font-semibold text-gray-200 ring-1 ring-inset ring-gray-300/30 hover:bg-gray-50/50 focus-visible:outline-offset-0">
 						Previous
 					</Button>
-				</div>
-				<div class:hidden={!(judgeRangeStart + visibleJudgeCount < sortedAndFilteredJudges.length)}>
+				{/if}
+				{#if judgeRangeStart + visibleJudgeCount < sortedJudges.length}
 					<Button
 						on:click={handleNext}
 						class="transition relative ml-3 inline-flex items-center rounded-md bg-white/10 px-3 py-2 text-sm font-semibold text-gray-200 ring-1 ring-inset ring-gray-300/30 hover:bg-gray-50/50 focus-visible:outline-offset-0">
 						Next
 					</Button>
-				</div>
+				{/if}
 			</div>
 		</nav>
 	</div>

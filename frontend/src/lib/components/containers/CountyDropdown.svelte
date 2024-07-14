@@ -1,15 +1,14 @@
 <script lang="ts">
-	import CloseButton from '$lib/components/shared/CloseButton.svelte';
-	import { selectedCountyStore } from '$lib/stores/data';
+	import { allCountiesStore, countyNameFilterStore, selectedCountyStore } from '$lib/stores/data';
 	import type { County, Judge } from '$lib/types';
-	import { Button, Label } from 'flowbite-svelte';
+	import { Button } from 'flowbite-svelte';
 	import { onMount } from 'svelte';
 
-	export let counties: County[];
-	export let county: County | null;
-	export let judges: Judge[];
+	let counties: County[];
+
+	$: counties = $allCountiesStore;
 	let isOpen = false;
-	let selectedCountyName = $selectedCountyStore ?? 'Select a county';
+	let selectedCountyName = $selectedCountyStore ?? 'All Counties';
 
 	$: sortedCounties = [...counties].sort((a, b) => a.name?.localeCompare(b.name));
 
@@ -19,14 +18,7 @@
 
 	function selectCounty(county: County) {
 		selectedCountyName = county.name;
-		if (selectedCountyName === $selectedCountyStore?.name) {
-			selectedCountyName = 'Select a county';
-			selectedCountyStore.set(null);
-		}
-		selectedCountyStore.set(county);
-		county = county;
-
-		judges = judges.filter((judge) => judge.primaryCounty === county.name);
+		countyNameFilterStore.set(county.name);
 		isOpen = false;
 	}
 
@@ -44,8 +36,22 @@
 	});
 </script>
 
+
 <div>
 	<div class="relative flex flex-row align-middle h-12">
+		{#if selectedCountyName !== 'All Counties'}
+			<Button
+				type="button"
+				class="text-zinc-300 hover:text-gray-50 shadow  outline outline-neutral-700 outline-[0.5px] bg-zinc-400/10 hover:bg-zinc-600/10 transition mr-4 px-4"
+				on:click={() => {
+					selectedCountyName = 'All Counties';
+					countyNameFilterStore.set('');
+					selectedCountyStore.set(null)
+				}}
+			>
+				Clear
+			</Button>
+		{/if}
 		<Button
 			type="button"
 			id="dropdown-button"
@@ -72,6 +78,7 @@
 			</span>
 		</Button>
 
+
 		{#if isOpen}
 			<ul
 				class="absolute z-[1000000] max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm"
@@ -80,6 +87,7 @@
 				aria-labelledby="listbox-label"
 				aria-activedescendant="listbox-option-3"
 			>
+
 				{#each sortedCounties as county}
 					<li
 						class="relative z-[100000] cursor-default select-none py-2 pl-3 pr-9 text-gray-900"
