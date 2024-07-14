@@ -71,7 +71,7 @@
 		<div class="flex-col border-zinc-700 pt-2">
 			<div class="text-right flex flex-col">
 
-				{#each races as race}
+				{#each races.slice(1, races.length-1) as race}
 					<div class="flex flex-row justify-between w-48 px-2">
 						<span class="flex text-sm text-zinc-400 tracking-tighter">{raceLabels[race]}</span>
 						<div class="flex font-mono text-zinc-300">
