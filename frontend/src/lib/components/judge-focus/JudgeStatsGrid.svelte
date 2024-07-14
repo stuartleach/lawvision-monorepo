@@ -123,6 +123,15 @@
 								isHoverable={true}
 								{hoveredStat}
 							/>
+							<JudgeStatItem
+								{severity}
+								label="Average Bail Amount"
+								metric="totalCases"
+								value={getValue('totalCases', false, severity)}
+								raceValues={caseResults}
+								isMoney={true}
+								{hoveredStat}
+							/>
 						</div>
 					</div>
 				{/if}
