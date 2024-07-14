@@ -9,6 +9,7 @@
 </script>
 
 <div class="flex flex-col">
+	<!--JudgeStatsGrid-->
 	<div class="flex flex-row justify-center">
 		<div class="bg-zinc-900">
 			<div class="mx-auto max-w-7xl">
@@ -19,7 +20,7 @@
 						<div class="grid grid-cols-2 w-full rounded-md gap-x-0.5 gap-y-0.5 sm:grid-cols-2 lg:grid-cols-4">
 							<JudgeStatItem
 								label="Average Bail Amount"
-								metric="averageBail"
+								metric="averageBailAmount"
 								value={selectedJudgeInfo.allCaseResults.total.averageBailAmount || 0}
 								isMoney={true}
 								{hoveredStat}
@@ -37,7 +38,7 @@
 							/>
 							<JudgeStatItem
 								label="Remand Frequency"
-								metric="remand"
+								metric="remanded"
 								value={selectedJudgeInfo.allCaseResults.total.remanded.percent || 0}
 								isHoverable={true}
 								{hoveredStat}
@@ -47,7 +48,7 @@
 
 							<JudgeStatItem
 								label="Release Frequency"
-								metric="release"
+								metric="released"
 								value={selectedJudgeInfo.allCaseResults.total.released.percent || 0}
 								isHoverable={true}
 								{hoveredStat}

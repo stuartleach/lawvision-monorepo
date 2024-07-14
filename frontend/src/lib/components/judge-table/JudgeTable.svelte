@@ -17,7 +17,7 @@
 
 	let judges: Judge[] | never = [];
 
-	$: console.log(judges.map(judge=>judge.name));
+	$: console.log(judges.map(judge => judge.name));
 
 	onMount(() => {
 		judges = $allJudgesStore.filter(judge => judge.allCaseResults?.total.totalCases > 9);
@@ -38,7 +38,7 @@
 	): Judge[] => {
 		let resultJudges: Judge[] = inputJudges;
 		if (county) {
-			resultJudges = inputJudges.filter((judge) => judge.county_name === county);
+			resultJudges = inputJudges.filter((judge) => judge.primaryCounty === county);
 		}
 		resultJudges = sortListByTarget(resultJudges, sortTargetValue, sortOrder) as Judge[];
 		return resultJudges;
@@ -133,6 +133,7 @@
 </script>
 
 <div class=" grid grid-flow-row-dense bg-zinc-900 pb-1 pt-4 ">
+	<!--JudgeTable-->
 	<div class="px-8 space-y-4 sm:space-y-4">
 		<div
 			class="flex flex-row px-4 text-2xl grid-rows-1 h-fit sm:text-4xl w-3/5 sm:w-full font-bold items-baseline tracking-tight text-zinc-400 sm:px-6 lg:px-8">
@@ -165,11 +166,11 @@
 			<button
 				class="flex cursor-pointer flex-row justify-end text-right font-semibold transition hover:opacity-75"
 				on:click={() => handleClick(nextSortMetric())}
-				class:remand-color={sortTargetValue === SortTarget.remandPct}
-				class:release-color={sortTargetValue === SortTarget.releasePct}
+				class:remanded-color={sortTargetValue === SortTarget.remandPct}
+				class:released-color={sortTargetValue === SortTarget.releasePct}
 				class:bailSet-color={sortTargetValue === SortTarget.bailSet}
-				class:averageBail-color={sortTargetValue === SortTarget.averageBail}
-				class:caseCount-color={sortTargetValue === SortTarget.caseCount ||
+				class:averageBailAmount-color={sortTargetValue === SortTarget.averageBail}
+				class:totalCases-color={sortTargetValue === SortTarget.caseCount ||
 					sortTargetValue === SortTarget.name}
 			>
 				{$sortTarget}
@@ -264,7 +265,7 @@
 					<td
 						class="{$sortTarget === SortTarget.caseCount || $sortTarget === SortTarget.name ? 'table-cell' : 'hidden'} text-right pr-4 py-4 md:table-cell ">
 						<div class="flex gap-x-3 justify-end">
-							<div class="caseCount-color font-mono text-lg leading-6 {$sortTarget ===
+							<div class="totalCases-color font-mono text-lg leading-6 {$sortTarget ===
 									SortTarget.caseCount
 										? 'font-bold'
 										: ''}"
@@ -275,7 +276,7 @@
 					</td>
 					<td
 						class="{$sortTarget === SortTarget.averageBail ? 'table-cell' : 'hidden'} justify-end pr-4 md:table-cell py-4 text-right text-sm leading-6 ">
-						<div class="averageBail-color hidden text-right font-mono text-lg sm:block {$sortTarget ===
+						<div class="averageBailAmount-color hidden text-right font-mono text-lg sm:block {$sortTarget ===
 								SortTarget.averageBail
 									? 'font-bold'
 									: ''}"
@@ -292,7 +293,7 @@
 						<Percent value={judge.allCaseResults.total.bailSet.percent} />
 					</td>
 					<td
-						class="{$sortTarget === SortTarget.remandPct ? 'table-cell' : 'hidden'} remand-color py-4 pr-4 text-right font-mono text-lg leading-6 md:table-cell  {$sortTarget ===
+						class="{$sortTarget === SortTarget.remandPct ? 'table-cell' : 'hidden'} remanded-color py-4 pr-4 text-right font-mono text-lg leading-6 md:table-cell  {$sortTarget ===
 							SortTarget.remandPct
 								? 'font-bold'
 								: ''}"
@@ -300,7 +301,7 @@
 						<Percent value={judge.allCaseResults.total.remanded.percent} />
 					</td>
 					<td
-						class="{$sortTarget === SortTarget.releasePct ? 'table-cell' : 'hidden'} release-color pr-4 py-4 text-right font-mono text-lg leading-6 md:table-cell {$sortTarget ===
+						class="{$sortTarget === SortTarget.releasePct ? 'table-cell' : 'hidden'} released-color pr-4 py-4 text-right font-mono text-lg leading-6 md:table-cell {$sortTarget ===
 							SortTarget.releasePct
 								? 'font-bold'
 								: ''}"

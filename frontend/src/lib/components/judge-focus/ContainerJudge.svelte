@@ -39,6 +39,7 @@
 </script>
 
 <div>
+	<!--ContainerJudge-->
 	<JudgeInfoHeader {selectedJudgeInfo} />
 	<div class="justify-center">
 		<JudgeStatsGrid

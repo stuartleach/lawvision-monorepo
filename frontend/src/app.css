@@ -61,11 +61,11 @@ body {
 /* COLORS */
 /*****************/
 
-.caseCount-color {
+.totalCases-color {
 	@apply text-blue-500;
 }
 
-.averageBail-color {
+.averageBailAmount-color {
 	@apply text-orange-500;
 }
 
@@ -73,10 +73,10 @@ body {
 	@apply text-yellow-500;
 }
 
-.remand-color {
+.remanded-color {
 	@apply text-red-500;
 }
 
-.release-color {
+.released-color {
 	@apply text-green-500;
 }

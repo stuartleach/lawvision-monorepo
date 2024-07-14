@@ -29,7 +29,7 @@ export const bailMinMaxStore = writable<[number, number]>([0, 0]);
 
 // Stateful //
 export const loadingStore = writable<boolean>(true);
-export const selectedMetricStore = writable<'bail' | 'remand' | 'release'>('bail');
+export const selectedMetricStore = writable<'averageBailSet' | 'bailSet' | 'remanded' | 'released'>('averageBailSet');
 export const mapDimensionsStore = writable<{ width: number; height: number }>({
 	width: 1000,
 	height: 1000
@@ -37,6 +37,9 @@ export const mapDimensionsStore = writable<{ width: number; height: number }>({
 
 export const selectedCountyStore = writable<County | null>(null);
 export const selectedJudgeStore = writable<Judge | null>(null);
+
+export const races = ['White', 'Black', 'American Indian/Alaska Native', 'Asian/Pacific Islander', 'Other', 'Unknown'];
+
 
 export const stateBailCases = {
 	totalBailSet: 4309524656,

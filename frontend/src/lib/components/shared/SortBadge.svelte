@@ -2,9 +2,10 @@
 	import { selectedMetricStore } from '$lib/stores/data';
 
 	const handleClick = () => {
-		if ($selectedMetricStore === 'bail') selectedMetricStore.set('release');
-		else if ($selectedMetricStore === 'release') selectedMetricStore.set('remand');
-		else selectedMetricStore.set('bail');
+		if ($selectedMetricStore === 'averageBailSet') selectedMetricStore.set('bailSet');
+		else if ($selectedMetricStore === 'bailSet') selectedMetricStore.set('remanded');
+		else if ($selectedMetricStore === 'remanded') selectedMetricStore.set('released');
+		else selectedMetricStore.set('averageBailSet');
 	};
 
 	export let text = 'sorted by';
@@ -14,6 +15,6 @@
 	{text} <br />
 	<button class={`${$selectedMetricStore}-color cursor-pointer`} on:click={handleClick}>
 		{$selectedMetricStore}
-		{$selectedMetricStore === 'bail' ? 'amount' : 'rate'}
+		{$selectedMetricStore === 'averageBailSet' ? 'amount' : 'rate'}
 	</button>
 </div>

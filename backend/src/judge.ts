@@ -77,10 +77,7 @@ const calcArraignmentResults = (cases: CaseSelection[]): ArraignmentResults => {
 	const casesWithBail = cases.filter(c => c.Bail?.first_bail_set_cash !== null && c.Bail.first_bail_set_cash > 0);
 	const totalBailAmount = casesWithBail.reduce((acc, c) => acc + Number(c.Bail?.first_bail_set_cash ?? 0), 0);
 	const averageBailAmount = casesWithBail.length > 0 ? totalBailAmount / casesWithBail.length : 0;
-
-	console.log('TOTAL BAIL AMOUNT:', totalBailAmount);
-	console.log('AVERAGE BAIL AMOUNT:', averageBailAmount);
-	console.log('TOTAL CASES:', totalCases);
+	
 
 	return {
 		averageBailAmount,

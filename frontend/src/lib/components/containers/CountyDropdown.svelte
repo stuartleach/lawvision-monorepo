@@ -26,7 +26,7 @@
 		selectedCountyStore.set(county);
 		county = county;
 
-		judges = judges.filter((judge) => judge.county_name === county.name);
+		judges = judges.filter((judge) => judge.primaryCounty === county.name);
 		isOpen = false;
 	}
 

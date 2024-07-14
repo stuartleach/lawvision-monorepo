@@ -8,17 +8,17 @@ export interface County {
 export interface Judge {
 	judgeId: string;
 	name: string;
-	county_name: string;
+	primaryCounty: string;
 	resultsBySeverity: ResultsBySeverity;
 	allCaseResults: AllCaseResults;
 }
 
-interface BailSet {
+export interface BailSet {
 	raw: number;
 	percent: number;
 }
 
-interface ArraignmentResults {
+export interface ArraignmentResults {
 	averageBailAmount: number;
 	bailSet: BailSet;
 	remanded: BailSet;
@@ -26,50 +26,26 @@ interface ArraignmentResults {
 	totalCases: number;
 }
 
-interface ByRace {
-	White: ArraignmentResults;
-	Black: ArraignmentResults;
-	'American Indian/Alaska Native': ArraignmentResults;
-	'Asian/Pacific Islander': ArraignmentResults;
-	Other: ArraignmentResults;
-	Unknown: ArraignmentResults;
+
+export type Race = 'White' | 'Black' | 'American Indian/Alaska Native' | 'Asian/Pacific Islander' | 'Other' | 'Unknown';
+export type SeverityLevel = 'AF' | 'BF' | 'CF' | 'DF' | 'EF' | 'AM' | 'BM'
+
+export type ArraignmentResultsByRace = {
+	[race in Race]: ArraignmentResults;
+};
+
+
+export interface SeverityResult {
+	byRace: ArraignmentResultsByRace;
+	total: ArraignmentResults;
 }
 
-export const severityLevels = ['AF', 'BF', 'CF', 'DF', 'EF', 'AM', 'BM'];
-
-interface ResultsBySeverity {
-	AF: {
-		byRace: ByRace;
-		total: ArraignmentResults;
-	};
-	BF: {
-		byRace: ByRace;
-		total: ArraignmentResults;
-	};
-	CF: {
-		byRace: ByRace;
-		total: ArraignmentResults;
-	};
-	DF: {
-		byRace: ByRace;
-		total: ArraignmentResults;
-	};
-	EF: {
-		byRace: ByRace;
-		total: ArraignmentResults;
-	};
-	AM: {
-		byRace: ByRace;
-		total: ArraignmentResults;
-	};
-	BM: {
-		byRace: ByRace;
-		total: ArraignmentResults;
-	};
+export type ResultsBySeverity = {
+	[severity in SeverityLevel]: SeverityResult;
 }
 
 interface AllCaseResults {
-	byRace: ByRace;
+	byRace: ArraignmentResultsByRace;
 	total: ArraignmentResults;
 }
 
@@ -113,56 +89,6 @@ export interface MinMax {
 }
 
 
-
-export interface County {
-	countyId: string;
-	name: string;
-	resultsBySeverity: ResultsBySeverity;
-	allCaseResults: AllCaseResults;
-}
-
-interface BailSet {
-	raw: number;
-	percent: number;
-}
-
-interface ArraignmentResults {
-	averageBailAmount: number;
-	bailSet: BailSet;
-	remanded: BailSet;
-	released: BailSet;
-	totalCases: number;
-}
-
-interface ByRace {
-	White: ArraignmentResults;
-	Black: ArraignmentResults;
-	'American Indian/Alaska Native': ArraignmentResults;
-	'Asian/Pacific Islander': ArraignmentResults;
-	Other: ArraignmentResults;
-	Unknown: ArraignmentResults;
-}
-
-interface ResultsBySeverity {
-	[severity: string]: {
-		byRace: ByRace;
-		total: ArraignmentResults;
-	};
-}
-
-interface AllCaseResults {
-	byRace: ByRace;
-	total: ArraignmentResults;
-}
-
-interface CountyResults {
-	county_id: string;
-	county_name: string;
-	resultsBySeverity: ResultsBySeverity;
-	allCaseResults: AllCaseResults;
-}
-
-
 export type FetchFunction = (input: RequestInfo, init?: RequestInit) => Promise<Response>;
 
 export type JudgeQuery = {
@@ -197,7 +123,6 @@ export enum SortOrder {
 	asc = 'asc',
 	desc = 'desc'
 }
-
 
 
 export type CountyQuery = {
