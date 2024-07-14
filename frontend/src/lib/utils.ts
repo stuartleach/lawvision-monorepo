@@ -1,11 +1,13 @@
 import { selectedCountyStore, selectedJudgeStore } from '$lib/stores/data';
 import {
+	type ArraignmentResults,
 	type County,
 	type CountyWithGeoJSON,
 	type GeoJSONData,
 	type GeoJSONFeature,
 	type Judge,
-	type MinMax,
+	type Race,
+	type SeverityLevel,
 	SortOrder,
 	SortTarget
 } from '$lib/types/frontendTypes';
@@ -25,13 +27,8 @@ const formatNumber = (amount: number | undefined) => {
 };
 
 const formatPercent = (amount: number) => {
-	if (amount <= 1) {
-		amount = amount * 100;
-	}
-	if (amount == 0) {
-		return '0.00';
-	}
-	amount = parseFloat(String(amount));
+
+	amount = Math.ceil(parseFloat(String(amount)));
 	return amount.toFixed(2);
 };
 
@@ -39,6 +36,19 @@ function formatMoneyValue(value: number): [string, string] {
 	return formatMoney(value).split('.') as [string, string];
 }
 
+export const getValue = (judge: Judge, metric: keyof ArraignmentResults | 'averageBailAmount', severity: SeverityLevel = 'Any', race: Race = 'Any', percent: boolean = true): number => {
+	if (metric === 'totalCases') {
+		return judge.arraignmentResults[severity][race].totalCases;
+	} else if (metric === 'averageBailAmount') {
+		return judge.arraignmentResults[severity][race].bailSet.amount;
+	} else {
+		if (percent) {
+			return judge.arraignmentResults[severity][race][metric].percent;
+		} else {
+			return judge.arraignmentResults[severity][race][metric].raw;
+		}
+	}
+};
 
 export const sortListByTarget = (
 	list: Judge[] | County[],
@@ -50,19 +60,19 @@ export const sortListByTarget = (
 	const compareValues = (a: Judge | County, b: Judge | County) => {
 		switch (target) {
 			case SortTarget.remandPct:
-				return a.allCaseResults.total.remanded.percent - b.allCaseResults.total.remanded.percent;
+				return a.arraignmentResults.Any.Any.remanded.percent - b.arraignmentResults.Any.Any.remanded.percent;
 			case SortTarget.releasePct:
-				return a.allCaseResults.total.released.percent - b.allCaseResults.total.released.percent;
+				return a.arraignmentResults.Any.Any.released.percent - b.arraignmentResults.Any.Any.released.percent;
 			case SortTarget.averageBail:
-				return a.allCaseResults.total.averageBailAmount - b.allCaseResults.total.averageBailAmount;
+				return a.arraignmentResults.Any.Any.bailSet.amount - b.arraignmentResults.Any.Any.bailSet.amount;
 			case SortTarget.caseCount:
-				return a.allCaseResults.total.totalCases - b.allCaseResults.total.totalCases;
+				return a.arraignmentResults.Any.Any.totalCases - b.arraignmentResults.Any.Any.totalCases;
 			case SortTarget.remandRaw:
-				return a.allCaseResults.total.remanded.raw - b.allCaseResults.total.remanded.raw;
+				return a.arraignmentResults.Any.Any.remanded.raw - b.arraignmentResults.Any.Any.remanded.raw;
 			case SortTarget.releaseRaw:
-				return a.allCaseResults.total.released.raw - b.allCaseResults.total.released.raw;
+				return a.arraignmentResults.Any.Any.released.raw - b.arraignmentResults.Any.Any.released.raw;
 			case SortTarget.bailSet:
-				return a.allCaseResults.total.bailSet.raw - b.allCaseResults.total.bailSet.raw;
+				return a.arraignmentResults.Any.Any.bailSet.raw - b.arraignmentResults.Any.Any.bailSet.raw;
 			case SortTarget.name:
 
 				return a?.name.localeCompare(b.name);
@@ -74,48 +84,6 @@ export const sortListByTarget = (
 
 	return list.sort((a, b) => (order === SortOrder.asc ? compareValues(a, b) : compareValues(b, a)));
 };
-
-
-/*
-const getMinMax = (targets: Judge[] | County[]): MinMax => {
-	const stats = targets.map((t) => t.all);
-
-	const initialMinMax: MinMax = {
-		bailAmount: [Infinity, -Infinity],
-		bailSet: [Infinity, -Infinity],
-		remand: [Infinity, -Infinity],
-		ror: [Infinity, -Infinity],
-		nmr: [Infinity, -Infinity],
-		release: [Infinity, -Infinity],
-		unknown: [Infinity, -Infinity]
-	};
-
-	return stats.reduce((acc: MinMax, stat) => {
-		acc.bailAmount = [
-			Math.min(acc.bailAmount[0], stat.averageBailSet),
-			Math.max(acc.bailAmount[1], stat.averageBailSet)
-		];
-		acc.bailSet = [
-			Math.min(acc.bailSet[0], stat.pct.bailSet),
-			Math.max(acc.bailSet[1], stat.pct.bailSet)
-		];
-		acc.remand = [
-			Math.min(acc.remand[0], stat.pct.remand),
-			Math.max(acc.remand[1], stat.pct.remand)
-		];
-		acc.ror = [Math.min(acc.ror[0], stat.pct.ror), Math.max(acc.ror[1], stat.pct.ror)];
-		acc.nmr = [Math.min(acc.nmr[0], stat.pct.nmr), Math.max(acc.nmr[1], stat.pct.nmr)];
-		acc.release = [
-			Math.min(acc.release[0], stat.pct.release),
-			Math.max(acc.release[1], stat.pct.release)
-		];
-		acc.unknown = [
-			Math.min(acc.unknown[0], stat.pct.unknown),
-			Math.max(acc.unknown[1], stat.pct.unknown)
-		];
-		return acc;
-	}, initialMinMax);
-};*/
 
 export function combineCountiesWithGeoJSON(
 	counties: County[],

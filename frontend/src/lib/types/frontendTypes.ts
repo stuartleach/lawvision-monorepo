@@ -1,16 +1,14 @@
 export interface County {
 	county_id: string;
 	name: string;
-	resultsBySeverity: ResultsBySeverity;
-	allCaseResults: AllCaseResults;
+	arraignmentResults: ResultsBySeverity;
 }
 
 export interface Judge {
 	judgeId: string;
 	name: string;
 	primaryCounty: string;
-	resultsBySeverity: ResultsBySeverity;
-	allCaseResults: AllCaseResults;
+	arraignmentResults: ResultsBySeverity;
 }
 
 export interface BailSet {
@@ -19,36 +17,43 @@ export interface BailSet {
 }
 
 export interface ArraignmentResults {
-	averageBailAmount: number;
-	bailSet: BailSet;
+	bailSet: {
+		raw: number;
+		percent: number;
+		amount: number;
+	};
 	remanded: BailSet;
 	released: BailSet;
 	totalCases: number;
 }
 
 
-export type Race = 'White' | 'Black' | 'American Indian/Alaska Native' | 'Asian/Pacific Islander' | 'Other' | 'Unknown';
-export type SeverityLevel = 'AF' | 'BF' | 'CF' | 'DF' | 'EF' | 'AM' | 'BM'
+export type Race =
+	'Any'
+	| 'White'
+	| 'Black'
+	| 'American Indian/Alaska Native'
+	| 'Asian/Pacific Islander'
+	| 'Other'
+	| 'Unknown';
+
+export type SeverityLevel =
+	'Any'
+	| 'AF'
+	| 'BF'
+	| 'CF'
+	| 'DF'
+	| 'EF'
+	| 'AM'
+	| 'BM'
 
 export type ArraignmentResultsByRace = {
 	[race in Race]: ArraignmentResults;
 };
 
-
-export interface SeverityResult {
-	byRace: ArraignmentResultsByRace;
-	total: ArraignmentResults;
-}
-
 export type ResultsBySeverity = {
-	[severity in SeverityLevel]: SeverityResult;
+	[severity in SeverityLevel]: ArraignmentResultsByRace;
 }
-
-export interface AllCaseResults {
-	byRace: ArraignmentResultsByRace;
-	total: ArraignmentResults;
-}
-
 
 type Coordinates = number[][][][];
 

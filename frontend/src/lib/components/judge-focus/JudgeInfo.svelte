@@ -1,19 +1,9 @@
 <script lang="ts">
 	import JudgeStatItem from '$lib/components/judge-focus/JudgeStatItem.svelte';
 	import { severityLevels } from '$lib/stores/data';
-	import type { Judge, SeverityLevel, ResultsBySeverity } from '$lib/types/frontendTypes';
-
+	import type { Judge } from '$lib/types/frontendTypes';
 
 	export let selectedJudgeInfo: Judge | null;
-
-	export let hoveredStat: string | null;
-	export let handleMouseEnter: (stat: string) => void;
-	export let handleMouseLeave: () => void;
-
-	let charges: ResultsBySeverity | undefined;
-
-	$: charges = selectedJudgeInfo?.resultsBySeverity;
-	$: console.log(charges);
 
 </script>
 
@@ -31,40 +21,20 @@
 							<div
 								class="grid grid-cols-2 w-full rounded-none gap-x-0.5 sm:gap-x-0.5 gap-y-0.5 sm:grid-cols-2 lg:grid-cols-4">
 								<JudgeStatItem
-									label="Average Bail Amount"
 									metric="averageBailAmount"
 									{severity}
-									isMoney={true}
-									{hoveredStat}
-									{handleMouseEnter}
-									{handleMouseLeave}
 								/>
 								<JudgeStatItem
-									label="Bail Set Frequency"
 									metric="bailSet"
 									{severity}
-									isHoverable={true}
-									{hoveredStat}
-									{handleMouseEnter}
-									{handleMouseLeave}
 								/>
 								<JudgeStatItem
-									label="Remand Frequency"
 									metric="remanded"
 									{severity}
-									isHoverable={true}
-									{hoveredStat}
-									{handleMouseEnter}
-									{handleMouseLeave}
 								/>
 								<JudgeStatItem
-									label="Release Frequency"
 									metric="released"
 									{severity}
-									isHoverable={true}
-									{hoveredStat}
-									{handleMouseEnter}
-									{handleMouseLeave}
 								/>
 							</div>
 						</div>

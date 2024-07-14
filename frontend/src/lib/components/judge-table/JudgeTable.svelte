@@ -17,10 +17,12 @@
 
 	let judges: Judge[] | never = [];
 
-	$: console.log(judges.map(judge => judge.name));
+	$: g = judges.find(judge => judge.name === 'Gershuny, Jeffrey A.')
+	$: console.log(g?.arraignmentResults.Any.Any.remanded.percent);
+	$: console.log(g?.arraignmentResults.Any.Any.released.percent);
 
 	onMount(() => {
-		judges = $allJudgesStore.filter(judge => judge.allCaseResults?.total.totalCases > 9);
+		judges = $allJudgesStore.filter(judge => judge.arraignmentResults.Any.Any.totalCases > 9);
 		updateVisibleJudges();
 	});
 
@@ -270,7 +272,7 @@
 										? 'font-bold'
 										: ''}"
 							>
-								{formatNumber(judge.allCaseResults.total.totalCases)}
+								{formatNumber(judge.arraignmentResults.Any.Any.totalCases)}
 							</div>
 						</div>
 					</td>
@@ -281,7 +283,7 @@
 									? 'font-bold'
 									: ''}"
 						>
-							<Money value={judge.allCaseResults.total.averageBailAmount} />
+							<Money value={judge.arraignmentResults.Any.Any.bailSet.amount} />
 						</div>
 					</td>
 					<td
@@ -290,7 +292,7 @@
 								? 'font-bold'
 								: ''}"
 					>
-						<Percent value={judge.allCaseResults.total.bailSet.percent} />
+						<Percent value={judge.arraignmentResults.Any.Any.bailSet.percent} />
 					</td>
 					<td
 						class="{$sortTarget === SortTarget.remandPct ? 'table-cell' : 'hidden'} remanded-color py-4 pr-4 text-right font-mono text-lg leading-6 md:table-cell  {$sortTarget ===
@@ -298,7 +300,7 @@
 								? 'font-bold'
 								: ''}"
 					>
-						<Percent value={judge.allCaseResults.total.remanded.percent} />
+						<Percent value={judge.arraignmentResults.Any.Any.remanded.percent} />
 					</td>
 					<td
 						class="{$sortTarget === SortTarget.releasePct ? 'table-cell' : 'hidden'} released-color pr-4 py-4 text-right font-mono text-lg leading-6 md:table-cell {$sortTarget ===
@@ -306,7 +308,7 @@
 								? 'font-bold'
 								: ''}"
 					>
-						<Percent value={judge.allCaseResults.total.released.percent} />
+						<Percent value={judge.arraignmentResults.Any.Any.released.percent} />
 					</td>
 				</tr>
 				{#if judge === $selectedJudgeStore}

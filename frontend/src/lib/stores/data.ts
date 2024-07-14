@@ -38,9 +38,18 @@ export const mapDimensionsStore = writable<{ width: number; height: number }>({
 export const selectedCountyStore = writable<County | null>(null);
 export const selectedJudgeStore = writable<Judge | null>(null);
 
-export const races = ['White', 'Black', 'American Indian/Alaska Native', 'Asian/Pacific Islander', 'Other', 'Unknown'];
-export const severityLevels: SeverityLevel[] = ['AF', 'BF', 'CF', 'DF', 'EF', 'AM', 'BM'];
-
+export const races = ['Any', 'White', 'Black', 'American Indian/Alaska Native', 'Asian/Pacific Islander', 'Other', 'Unknown'];
+export const severityLevels: SeverityLevel[] = ['Any', 'AF', 'BF', 'CF', 'DF', 'EF', 'AM', 'BM'];
+export const severityLabels: Record<string, string> = {
+	'Any': 'All Charges',
+	'AF': 'A Felony',
+	'BF': 'B Felony',
+	'CF': 'C Felony',
+	'DF': 'D Felony',
+	'EF': 'E Felony',
+	'AM': 'A Misdemeanor',
+	'BM': 'B Misdemeanor'
+};
 
 export const stateBailCases = {
 	totalBailSet: 4309524656,
