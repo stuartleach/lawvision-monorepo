@@ -213,7 +213,7 @@
 				<col class="hidden md:table-cell" />
 			</colgroup>
 			<thead class="sticky bg-zinc-900 text-base text-zinc-400 ">
-			<tr class="">
+			<tr>
 				<th scope="col" class="py-2 pl-4 text-left font-semibold">#</th>
 				<th
 					class:text-zinc-200={$sortTarget === SortTarget.name}
@@ -259,13 +259,13 @@
 				</th>
 			</tr>
 			</thead>
-			<tbody class="divide-y divide-white/5 ">
+			<tbody class="divide-y divide-white/5 bg-zinc-800">
 			{#each sortedJudges.slice(judgeRangeStart, judgeRangeStart + visibleJudgeCount) as judge, i}
 				<tr
 					class:bg-zinc-950={i % 2 === 0}
 					class:bg-zinc-800={judge === $selectedJudgeStore}
 					class="cursor-pointer font-medium text-zinc-400 transition-all hover:bg-zinc-800 hover:font-bold hover:text-white
-							{judge === $selectedJudgeStore ? 'outline outline-1 outline-zinc-500' : ''}
+							{judge === $selectedJudgeStore ? 'hidden' : ''}
 							{$selectedJudgeStore &&
 							judge !== $selectedJudgeStore &&
 							'blur-xs opacity-[15%] filter transition-all'}"
@@ -334,7 +334,7 @@
 				</tr>
 				{#if judge === $selectedJudgeStore}
 					<tr>
-						<td colspan="7" class="border-b-1 border-zinc-500 p-4">
+						<td colspan="7" class="bg-black/50">
 							<ContainerJudge />
 						</td>
 					</tr>
