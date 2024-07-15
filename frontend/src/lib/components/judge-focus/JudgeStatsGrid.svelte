@@ -10,8 +10,6 @@
 
 	$: allJudges = $allJudgesStore;
 
-	$: console.log(allJudges.find(j => j.name === 'Gershuny, Jeffrey A.'));
-
 
 </script>
 
