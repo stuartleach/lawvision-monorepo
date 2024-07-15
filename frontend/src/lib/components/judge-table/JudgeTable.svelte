@@ -5,7 +5,8 @@
 	import Percent from '$lib/components/shared/Percent.svelte';
 	import {
 		allCountiesStore,
-		allJudgesStore, countyNameFilterStore,
+		allJudgesStore,
+		countyNameFilterStore,
 		judgeNameFilterStore,
 		selectedCountyStore,
 		selectedJudgeStore
@@ -76,11 +77,14 @@
 			case SortTarget.caseCount:
 				return SortTarget.averageBail;
 			case SortTarget.averageBail:
+				return SortTarget.bailSet;
+			case SortTarget.bailSet:
 				return SortTarget.remandPct;
 			case SortTarget.remandPct:
 				return SortTarget.releasePct;
 			case SortTarget.releasePct:
 				return SortTarget.name;
+
 			default:
 				return SortTarget.caseCount;
 		}
@@ -154,7 +158,7 @@
 			<div class="w-full">
 				<CountyDropdown />
 			</div>
-			<div class="w-full">
+			<div class="w-full flex flex-row space-x-4">
 				<Input
 					type="text"
 					name="name"
@@ -164,27 +168,21 @@
 					bind:value={query}
 					on:input={handleSearch}
 				/>
+				<Button
+					type="button"
+
+					class="{$judgeNameFilterStore === '' ? 'hidden' : ''} text-zinc-300 hover:text-gray-50 shadow outline outline-neutral-700 outline-[0.5px] bg-zinc-400/10 hover:bg-zinc-600/10 transition mr-4 px-4"
+					on:click={() => {
+					query = '';
+					judgeNameFilterStore.set('');
+				}}
+				>
+					Clear
+				</Button>
 			</div>
 		</div>
 		<div
 			class="flex justify-end space-x-4 flex-row sm:items-end text-right text-zinc-500 text-2xl leading-7 tracking-tight">
-			<div class="flex flex-col sm:items-end text-right text-zinc-500 text-2xl leading-7 tracking-tight">
-				<h2 class="">defendant</h2>
-				<button
-					class="flex cursor-pointer flex-row justify-end text-right font-semibold transition hover:opacity-75"
-				>
-					Any
-				</button>
-			</div>
-			<div class="flex flex-col sm:items-end text-right text-zinc-500 text-2xl leading-7 tracking-tight">
-				<h2 class="">charge severity</h2>
-				<button
-					class="flex cursor-pointer flex-row justify-end text-right font-semibold transition hover:opacity-75"
-				>
-					Any
-				</button>
-			</div>
-
 			<div class="flex flex-col sm:items-end text-right text-zinc-500 text-2xl leading-7 tracking-tight">
 				<h2 class="">sorted by</h2>
 				<button
