@@ -142,7 +142,8 @@
 <div class=" grid grid-flow-row-dense bg-zinc-900 pb-1 pt-4 ">
 	<!--JudgeTable-->
 	<div class="px-8 space-y-4 sm:space-y-4">
-		<div class="flex flex-row px-4 text-2xl grid-rows-1 h-fit sm:text-4xl w-3/5 sm:w-full font-bold items-baseline tracking-tight text-zinc-400 sm:px-6 lg:px-8">
+		<div
+			class="flex flex-row px-4 text-2xl grid-rows-1 h-fit sm:text-4xl w-3/5 sm:w-full font-bold items-baseline tracking-tight text-zinc-400 sm:px-6 lg:px-8">
 			<h4 class="text-4xl text-zinc-500 w-full text-left sm:text-center">
 				<span class="text-zinc-400"> {selectedCountyName || "New York State"}</span>
 				Judges
@@ -165,21 +166,40 @@
 				/>
 			</div>
 		</div>
+		<div
+			class="flex justify-end space-x-4 flex-row sm:items-end text-right text-zinc-500 text-2xl leading-7 tracking-tight">
+			<div class="flex flex-col sm:items-end text-right text-zinc-500 text-2xl leading-7 tracking-tight">
+				<h2 class="">defendant</h2>
+				<button
+					class="flex cursor-pointer flex-row justify-end text-right font-semibold transition hover:opacity-75"
+				>
+					Any
+				</button>
+			</div>
+			<div class="flex flex-col sm:items-end text-right text-zinc-500 text-2xl leading-7 tracking-tight">
+				<h2 class="">charge severity</h2>
+				<button
+					class="flex cursor-pointer flex-row justify-end text-right font-semibold transition hover:opacity-75"
+				>
+					Any
+				</button>
+			</div>
 
-		<div class="flex flex-col sm:items-end text-right text-zinc-500 text-2xl leading-7 tracking-tight">
-			<h2 class="">sorted by</h2>
-			<button
-				class="flex cursor-pointer flex-row justify-end text-right font-semibold transition hover:opacity-75"
-				on:click={() => handleClick(nextSortMetric())}
-				class:remanded-color={sortTargetValue === SortTarget.remandPct}
-				class:released-color={sortTargetValue === SortTarget.releasePct}
-				class:bailSet-color={sortTargetValue === SortTarget.bailSet}
-				class:averageBailAmount-color={sortTargetValue === SortTarget.averageBail}
-				class:totalCases-color={sortTargetValue === SortTarget.caseCount ||
+			<div class="flex flex-col sm:items-end text-right text-zinc-500 text-2xl leading-7 tracking-tight">
+				<h2 class="">sorted by</h2>
+				<button
+					class="flex cursor-pointer flex-row justify-end text-right font-semibold transition hover:opacity-75"
+					on:click={() => handleClick(nextSortMetric())}
+					class:remanded-color={sortTargetValue === SortTarget.remandPct}
+					class:released-color={sortTargetValue === SortTarget.releasePct}
+					class:bailSet-color={sortTargetValue === SortTarget.bailSet}
+					class:averageBailAmount-color={sortTargetValue === SortTarget.averageBail}
+					class:totalCases-color={sortTargetValue === SortTarget.caseCount ||
 					sortTargetValue === SortTarget.name}
-			>
-				{$sortTarget}
-			</button>
+				>
+					{$sortTarget}
+				</button>
+			</div>
 		</div>
 	</div>
 
