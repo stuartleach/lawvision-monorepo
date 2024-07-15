@@ -20,6 +20,8 @@ export const countyJudgesPromiseStore = writable<Promise<Judge[]> | null>(null);
 // Filters //
 export const judgeNameFilterStore = writable<string>('');
 export const countyNameFilterStore = writable<string>('');
+export const defendantRaceFilterStore = writable<string>('Any');
+export const chargeSeverityFilterStore = writable<string>('Any');
 
 // Bail //
 export const bailAmountsStore = writable<number[]>([]);
