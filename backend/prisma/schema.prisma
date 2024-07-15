@@ -73,17 +73,17 @@ model CaseRaw {
   obey_court_conditions_family_offense        String?
   other_nmr                                   String?
   order_of_protection                         String?
-  first_bail_set_cash                         String?
-  first_bail_set_credit                       String?
-  first_insurance_company_bail_bond           String?
-  first_secured_surety_bond                   String?
-  first_secured_app_bond                      String?
-  first_unsecured_surety_bond                 String?
-  first_unsecured_app_bond                    String?
-  first_partially_secured_surety_bond         String?
-  partially_secured_surety_bond_perc          String?
-  first_partially_secured_app_bond            String?
-  partially_secured_app_bond_perc             String?
+  first_bail_set_cash                         Decimal? @db.Decimal
+  first_bail_set_credit                       Decimal? @db.Decimal
+  first_insurance_company_bail_bond           Decimal? @db.Decimal
+  first_secured_surety_bond                   Decimal? @db.Decimal
+  first_secured_app_bond                      Decimal? @db.Decimal
+  first_unsecured_surety_bond                 Decimal? @db.Decimal
+  first_unsecured_app_bond                    Decimal? @db.Decimal
+  first_partially_secured_surety_bond         Decimal? @db.Decimal
+  partially_secured_surety_bond_perc          Decimal? @db.Decimal
+  first_partially_secured_app_bond            Decimal? @db.Decimal
+  partially_secured_app_bond_perc             Decimal? @db.Decimal
   bail_made_indicator                         String?
   warrant_ordered_btw_arraign_and_dispo       String?
   dat_wo_ws_prior_to_arraign                  String?
@@ -122,34 +122,9 @@ model CaseRaw {
   rearrest_firearm                            String?
   rearrest_date_firearm                       String?
   arr_cycle_id                                String?
-  case_raw_id                                 String  @id(map: "cases_raw_pk") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  case_raw_id                                 String   @id(map: "cases_raw_pk") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
 
   @@map("cases_raw")
-  @@schema("pretrial_slim")
-}
-
-model Percentile {
-  percentile_id    String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  judge_id         String   @db.Uuid
-  percentile_type  String
-  percentile_value Decimal? @db.Decimal
-  judge            Judge    @relation(fields: [judge_id], references: [judge_id], onDelete: NoAction, onUpdate: NoAction)
-
-  @@map("percentiles")
-  @@schema("pretrial_slim")
-}
-
-model BailStatistics {
-  bail_stat_id     String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  judge_id         String   @db.Uuid
-  total_bail_set   Decimal? @default(0) @db.Decimal
-  average_bail_set Decimal? @default(0) @db.Decimal
-  median_bail_set  Decimal? @default(0) @db.Decimal
-  severity         String?
-  race             String?
-  judge            Judge    @relation(fields: [judge_id], references: [judge_id], onDelete: NoAction, onUpdate: NoAction)
-
-  @@map("bail_statistics")
   @@schema("pretrial_slim")
 }
 
@@ -168,23 +143,21 @@ model ArraignmentStatistics {
   @@schema("pretrial_slim")
 }
 
-// BASE MODELS
-
 model Bail {
-  bail_id                             String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  first_bail_set_cash                 String?
-  first_bail_set_credit               String?
-  first_insurance_company_bail_bond   String?
-  first_secured_surety_bond           String?
-  first_secured_app_bond              String?
-  first_unsecured_surety_bond         String?
-  first_unsecured_app_bond            String?
-  first_partially_secured_surety_bond String?
-  partially_secured_surety_bond_perc  String?
-  first_partially_secured_app_bond    String?
-  partially_secured_app_bond_perc     String?
+  bail_id                             String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  first_bail_set_cash                 Decimal? @db.Decimal
+  first_bail_set_credit               Decimal? @db.Decimal
+  first_insurance_company_bail_bond   Decimal? @db.Decimal
+  first_secured_surety_bond           Decimal? @db.Decimal
+  first_secured_app_bond              Decimal? @db.Decimal
+  first_unsecured_surety_bond         Decimal? @db.Decimal
+  first_unsecured_app_bond            Decimal? @db.Decimal
+  first_partially_secured_surety_bond Decimal? @db.Decimal
+  partially_secured_surety_bond_perc  Decimal? @db.Decimal
+  first_partially_secured_app_bond    Decimal? @db.Decimal
+  partially_secured_app_bond_perc     Decimal? @db.Decimal
   bail_made_indicator                 String?
-  case_count                          Int     @default(1)
+  case_count                          Int      @default(1)
   cases                               Case[]
 
   @@map("bails")
@@ -205,30 +178,30 @@ model Case {
   warrant_id             String?             @db.Uuid
   disposition_id         String?             @db.Uuid
   calculated_days_id     String?             @db.Uuid
-  prior_id               String?             @db.Uuid
   arrest_id              String?             @db.Uuid
+  prior_id               String?             @db.Uuid
+  arraign_charge_id      String?             @db.Uuid
+  arraignment_outcome_id String?             @db.Uuid
+  conviction_id          String?             @db.Uuid
+  date_id                String?             @db.Uuid
+  representation_id      String?             @db.Uuid
   Appearance             Appearance?         @relation(fields: [appearance_id], references: [appearance_id])
+  ArraignCharge          ArraignCharge?      @relation(fields: [arraign_charge_id], references: [arraign_charge_id])
+  ArraignmentOutcome     ArraignmentOutcome? @relation(fields: [arraignment_outcome_id], references: [arraignment_outcome_id])
+  Arrest                 Arrest?             @relation(fields: [arrest_id], references: [arrest_id])
   Bail                   Bail?               @relation(fields: [bail_id], references: [bail_id])
   CalculatedDays         CalculatedDays?     @relation(fields: [calculated_days_id], references: [calculated_days_id])
   Conditions             Conditions?         @relation(fields: [condition_id], references: [condition_id])
+  Conviction             Conviction?         @relation(fields: [conviction_id], references: [conviction_id])
   County                 County?             @relation(fields: [county_id], references: [county_id])
   Court                  Court?              @relation(fields: [court_id], references: [court_id])
+  Date                   CaseDetails?        @relation(fields: [date_id], references: [date_id])
   Defendant              Defendant?          @relation(fields: [defendant_id], references: [defendant_id])
   Disposition            Disposition?        @relation(fields: [disposition_id], references: [disposition_id])
   Judge                  Judge?              @relation(fields: [judge_id], references: [judge_id])
   Prior                  Prior?              @relation(fields: [prior_id], references: [prior_id])
-  Warrant                Warrant?            @relation(fields: [warrant_id], references: [warrant_id])
-  Arrest                 Arrest?             @relation(fields: [arrest_id], references: [arrest_id])
-  Conviction             Conviction?         @relation(fields: [conviction_id], references: [conviction_id])
-  conviction_id          String?             @db.Uuid
-  ArraignCharge          ArraignCharge?      @relation(fields: [arraign_charge_id], references: [arraign_charge_id])
-  arraign_charge_id      String?             @db.Uuid
-  ArraignmentOutcome     ArraignmentOutcome? @relation(fields: [arraignment_outcome_id], references: [arraignment_outcome_id])
-  arraignment_outcome_id String?             @db.Uuid
   Representation         Representation?     @relation(fields: [representation_id], references: [representation_id])
-  representation_id      String?             @db.Uuid
-  Date                   CaseDetails?        @relation(fields: [date_id], references: [date_id])
-  date_id                String?             @db.Uuid
+  Warrant                Warrant?            @relation(fields: [warrant_id], references: [warrant_id])
 
   @@map("cases")
   @@schema("pretrial_slim")
@@ -284,8 +257,7 @@ model Arrest {
   top_charge_weight_at_arrest             String?
   top_charge_at_arrest_violent_felony_ind String?
   case_count                              Int     @default(1)
-
-  cases Case[]
+  cases                                   Case[]
 
   @@map("arrests")
   @@schema("pretrial_slim")
@@ -311,7 +283,6 @@ model CaseDetails {
   @@schema("pretrial_slim")
 }
 
-// Charge at arraignment
 model ArraignCharge {
   arraign_charge_id                        String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   case_type                                String?
@@ -331,7 +302,6 @@ model ArraignCharge {
   @@schema("pretrial_slim")
 }
 
-// Day intervals
 model CalculatedDays {
   calculated_days_id                     String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   days_arraign_remand_first_released     String?
@@ -346,7 +316,6 @@ model CalculatedDays {
   @@schema("pretrial_slim")
 }
 
-// Conditions of NMR release
 model Conditions {
   condition_id                         String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   pretrial_supervision_at_arraign      String?
@@ -446,16 +415,13 @@ model Judge {
   primary_county         String?
   counties               Json[]
   arraignment_statistics ArraignmentStatistics[]
-  bail_statistics        BailStatistics[]
   cases                  Case[]
-  percentiles            Percentile[]
 
   @@map("judges")
   @@schema("pretrial_slim")
 }
 
 model Prior {
-  prior_id         String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   prior_vfo_cnt    String?
   prior_nonvfo_cnt String?
   prior_misd_cnt   String?
@@ -466,6 +432,7 @@ model Prior {
   rearrest         String?
   rearrest_firearm String?
   case_count       Int     @default(1)
+  prior_id         String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   cases            Case[]
 
   @@map("priors")

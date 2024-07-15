@@ -4,9 +4,33 @@ import type { CaseRawType } from './types';
 
 const prisma = new PrismaClient();
 
+const deleteBailOutliers = async () => {
+	try {
+		const bailOutliers = await prisma.caseRaw.findMany({
+			where: {
+				first_bail_set_cash: {
+					gt: 10000000
+				}
+			}
+		});
+		console.log('Deleting bail outliers', bailOutliers.length);
+		await prisma.caseRaw.deleteMany({
+			where: {
+				first_bail_set_cash: {
+					gt: 10000000
+				}
+			}
+		});
+	} catch (e) {
+		console.error('Failed to delete bail outliers', e);
+	}
+}
+
 export async function clearTables(): Promise<void> {
 	try {
-		// await deleteJudgelessCases();
+		// await deleteJudgelessCases(); // Uncomment if needed on next import.
+		// await deleteBailOutliers(); // Done manually already. Uncomment if needed on next import.
+
 		await prisma.judge.deleteMany({});
 		await prisma.court.deleteMany({});
 		await prisma.county.deleteMany({});
