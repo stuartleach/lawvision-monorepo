@@ -26,12 +26,12 @@ export const bailEligibleCases = {
 	]
 };
 
-export const severities = ['AF', 'BF', 'CF', 'DF', 'EF', 'AM', 'BM'];
+export const severities = ['AF', 'BF', 'CF', 'DF', 'EF', 'AM', 'BM', 'V', 'I', 'UM'];
 
 export const races = [
 	'White',
 	'Black',
-	'American Indian/Alaska Native',
+	'American Indian/Alaskan Native',
 	'Asian/Pacific Islander',
 	'Other',
 	'Unknown'

@@ -32,7 +32,7 @@ export type Race =
 	'Any'
 	| 'White'
 	| 'Black'
-	| 'American Indian/Alaska Native'
+	| 'American Indian/Alaskan Native'
 	| 'Asian/Pacific Islander'
 	| 'Other'
 	| 'Unknown';
@@ -46,6 +46,10 @@ export type SeverityLevel =
 	| 'EF'
 	| 'AM'
 	| 'BM'
+	| 'I'
+	| 'V'
+	| 'UM'
+
 
 export type ArraignmentResultsByRace = {
 	[race in Race]: ArraignmentResults;

@@ -38,6 +38,19 @@ export const fetchCountyCases = async (countyId: string, whereClause?: any): Pro
 	}) as unknown as CaseSelection[];
 };
 
+export const fetchAllCases = async (): Promise<CaseSelection[]> => {
+	const result = await prisma.case.findMany({
+		select: {
+			Bail: { select: { first_bail_set_cash: true } },
+			ArraignmentOutcome: { select: { remanded_to_jail_at_arraign: true, ror_at_arraign: true, nmr_at_arraign: true } },
+			Defendant: { select: { race: true } },
+			ArraignCharge: { select: { top_charge_weight_at_arraign: true } } // For severity calculation
+		}
+	}) as unknown as CaseSelection[];
+	console.log('Fetched all cases:', result.length);
+	return result;
+};
+
 type ArraignmentResult = {
 	raw: number;
 	percent: number;
@@ -90,12 +103,15 @@ const calcArraignmentResults = (cases: CaseSelection[]): ArraignmentResults => {
 export const calculateStats = async (cases: CaseSelection[]): Promise<JudgeOrCountyStats> => {
 	const arraignmentResults: ResultsBySeverity = {};
 
+	console.log('Calculating stats for', cases.length, 'cases');
+
 	// Calculate for each severity and overall (Any)
 	for (let severity of [...severities, 'Any']) {
 		const casesBySeverity = severity === 'Any' ? cases : cases.filter(c => c.ArraignCharge?.top_charge_weight_at_arraign === severity);
-		const totalResults = calcArraignmentResults(casesBySeverity);
-
+		// const totalResults = calcArraignmentResults(casesBySeverity);
+		console.log('Calculating stats for', casesBySeverity.length, 'cases with severity', severity);
 		arraignmentResults[severity] = [...races, 'Any'].reduce((acc, race) => {
+			console.log('Calculating stats for', casesBySeverity.length, 'cases with severity', severity, 'and race', race);
 			const casesByRace = race === 'Any' ? casesBySeverity : casesBySeverity.filter(c => c.Defendant?.race === race);
 			acc[race] = calcArraignmentResults(casesByRace);
 			return acc;

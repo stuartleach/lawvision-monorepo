@@ -15,7 +15,10 @@
 	import { formatNumber, sortListByTarget } from '$lib/utils';
 	import { Button, Input } from 'flowbite-svelte';
 	import { onMount } from 'svelte';
+	import { quintOut } from 'svelte/easing';
 	import { writable } from 'svelte/store';
+	import { slide } from 'svelte/transition';
+
 
 	let judges: Judge[] = [];
 
@@ -142,15 +145,13 @@
 		$selectedCountyStore?.name || ''
 	);
 </script>
-
-<div class=" grid grid-flow-row-dense bg-zinc-900 pb-1 pt-4 ">
+<div class="grid grid-flow-row-dense bg-zinc-900 pb-1 pt-4">
 	<!--JudgeTable-->
 	<div class="px-8 space-y-4 sm:space-y-4">
 		<div
 			class="flex flex-row px-4 text-2xl grid-rows-1 h-fit sm:text-4xl w-3/5 sm:w-full font-bold items-baseline tracking-tight text-zinc-400 sm:px-6 lg:px-8">
 			<h4 class="text-4xl text-zinc-500 w-full text-left sm:text-center">
-				<span class="text-zinc-400"> {selectedCountyName || "New York State"}</span>
-				Judges
+				<span class="text-zinc-400">{selectedCountyName || "New York State"}</span> Judges
 			</h4>
 		</div>
 
@@ -170,12 +171,11 @@
 				/>
 				<Button
 					type="button"
-
 					class="{$judgeNameFilterStore === '' ? 'hidden' : ''} text-zinc-300 hover:text-gray-50 shadow outline outline-neutral-700 outline-[0.5px] bg-zinc-400/10 hover:bg-zinc-600/10 transition mr-4 px-4"
 					on:click={() => {
-					query = '';
-					judgeNameFilterStore.set('');
-				}}
+						query = '';
+						judgeNameFilterStore.set('');
+					}}
 				>
 					Clear
 				</Button>
@@ -192,8 +192,7 @@
 					class:released-color={sortTargetValue === SortTarget.releasePct}
 					class:bailSet-color={sortTargetValue === SortTarget.bailSet}
 					class:averageBailAmount-color={sortTargetValue === SortTarget.averageBail}
-					class:totalCases-color={sortTargetValue === SortTarget.caseCount ||
-					sortTargetValue === SortTarget.name}
+					class:totalCases-color={sortTargetValue === SortTarget.caseCount || sortTargetValue === SortTarget.name}
 				>
 					{$sortTarget}
 				</button>
@@ -202,7 +201,7 @@
 	</div>
 
 	<div class="w-full mt-6">
-		<table class="w-full whitespace-nowrap text-left ">
+		<table class="w-full whitespace-nowrap text-left">
 			<colgroup>
 				<col class="w-16" />
 				<col />
@@ -212,7 +211,7 @@
 				<col class="hidden md:table-cell" />
 				<col class="hidden md:table-cell" />
 			</colgroup>
-			<thead class="sticky bg-zinc-900 text-base text-zinc-400 ">
+			<thead class="sticky bg-zinc-900 text-base text-zinc-400">
 			<tr>
 				<th scope="col" class="py-2 pl-4 text-left font-semibold">#</th>
 				<th
@@ -240,7 +239,7 @@
 					class:text-zinc-200={$sortTarget === SortTarget.bailSet}
 					on:click={() => handleClick(SortTarget.bailSet)}
 					scope="col"
-					class="{$sortTarget === SortTarget.bailSet ? 'table-cell' : 'hidden'} pr-4 text-right md:table-cell cursor-pointer py-2 font-semibold "
+					class="{$sortTarget === SortTarget.bailSet ? 'table-cell' : 'hidden'} pr-4 text-right md:table-cell cursor-pointer py-2 font-semibold"
 				>Bail-Set %
 				</th>
 				<th
@@ -261,21 +260,21 @@
 			</thead>
 			<tbody class="divide-y divide-white/5 bg-zinc-800">
 			{#each sortedJudges.slice(judgeRangeStart, judgeRangeStart + visibleJudgeCount) as judge, i}
+
 				<tr
 					class:bg-zinc-950={i % 2 === 0}
 					class:bg-zinc-800={judge === $selectedJudgeStore}
-					class="cursor-pointer font-medium text-zinc-400 transition-all hover:bg-zinc-800 hover:font-bold hover:text-white
+					transition:slide={{ delay: 250, duration: 3000, easing: quintOut, axis: 'y' }}
+					class="cursor-pointer font-medium text-zinc-400 hover:bg-zinc-800 hover:font-bold hover:text-white
 							{judge === $selectedJudgeStore ? 'hidden' : ''}
-							{$selectedJudgeStore &&
-							judge !== $selectedJudgeStore &&
-							'blur-xs opacity-[15%] filter transition-all'}"
+							{$selectedJudgeStore && judge !== $selectedJudgeStore && 'blur-xs opacity-[15%] filter transition-all'}"
 					on:click={() => {
-						if ($selectedJudgeStore?.name === judge.name) {
-							selectedJudgeStore.set(null);
-						} else {
-							selectedJudgeStore.set(judge);
-						}
-					}}
+							if ($selectedJudgeStore?.name === judge.name) {
+								selectedJudgeStore.set(null);
+							} else {
+								selectedJudgeStore.set(judge);
+							}
+						}}
 				>
 					<td class="py-4 text-left font-mono pl-4">
 						{judgeRangeStart + i + 1}
@@ -288,56 +287,40 @@
 					<td
 						class="{$sortTarget === SortTarget.caseCount || $sortTarget === SortTarget.name ? 'table-cell' : 'hidden'} text-right pr-4 py-4 md:table-cell ">
 						<div class="flex gap-x-3 justify-end">
-							<div class="totalCases-color font-mono text-lg leading-6 {$sortTarget ===
-									SortTarget.caseCount
-										? 'font-bold'
-										: ''}"
-							>
+							<div
+								class="totalCases-color font-mono text-lg leading-6 {$sortTarget === SortTarget.caseCount ? 'font-bold' : ''}">
 								{formatNumber(judge.arraignmentResults.Any.Any.totalCases)}
 							</div>
 						</div>
 					</td>
 					<td
-						class="{$sortTarget === SortTarget.averageBail ? 'table-cell' : 'hidden'} justify-end pr-4 md:table-cell py-4 text-right text-sm leading-6 ">
-						<div class="averageBailAmount-color hidden text-right font-mono text-lg sm:block {$sortTarget ===
-								SortTarget.averageBail
-									? 'font-bold'
-									: ''}"
-						>
+						class="{$sortTarget === SortTarget.averageBail ? 'table-cell' : 'hidden'} pr-4 md:table-cell py-4 text-right text-sm leading-6 ">
+						<div
+							class="averageBailAmount-color hidden text-right font-mono text-lg sm:block {$sortTarget === SortTarget.averageBail ? 'font-bold' : ''}">
 							<Money value={judge.arraignmentResults.Any.Any.bailSet.amount} />
 						</div>
 					</td>
 					<td
-						class="{$sortTarget === SortTarget.bailSet ? 'table-cell' : 'hidden'} bailSet-color py-4 pr-4 text-right font-mono text-lg leading-6 md:table-cell  {$sortTarget ===
-							SortTarget.bailSet
-								? 'font-bold'
-								: ''}"
-					>
+						class="{$sortTarget === SortTarget.bailSet ? 'table-cell' : 'hidden'} bailSet-color py-4 pr-4 text-right font-mono text-lg leading-6 md:table-cell {$sortTarget === SortTarget.bailSet ? 'font-bold' : ''}">
 						<Percent value={judge.arraignmentResults.Any.Any.bailSet.percent} />
 					</td>
 					<td
-						class="{$sortTarget === SortTarget.remandPct ? 'table-cell' : 'hidden'} remanded-color py-4 pr-4 text-right font-mono text-lg leading-6 md:table-cell  {$sortTarget ===
-							SortTarget.remandPct
-								? 'font-bold'
-								: ''}"
-					>
+						class="{$sortTarget === SortTarget.remandPct ? 'table-cell' : 'hidden'} remanded-color py-4 pr-4 text-right font-mono text-lg leading-6 md:table-cell {$sortTarget === SortTarget.remandPct ? 'font-bold' : ''}">
 						<Percent value={judge.arraignmentResults.Any.Any.remanded.percent} />
 					</td>
 					<td
-						class="{$sortTarget === SortTarget.releasePct ? 'table-cell' : 'hidden'} released-color pr-4 py-4 text-right font-mono text-lg leading-6 md:table-cell {$sortTarget ===
-							SortTarget.releasePct
-								? 'font-bold'
-								: ''}"
-					>
+						class="{$sortTarget === SortTarget.releasePct ? 'table-cell' : 'hidden'} released-color pr-4 py-4 text-right font-mono text-lg leading-6 md:table-cell {$sortTarget === SortTarget.releasePct ? 'font-bold' : ''}">
 						<Percent value={judge.arraignmentResults.Any.Any.released.percent} />
 					</td>
 				</tr>
+
 				{#if judge === $selectedJudgeStore}
 					<tr>
 						<td colspan="7" class="bg-black/50">
-							<ContainerJudge />
+							<ContainerJudge in:slide={{ duration: 300 }} out:slide={{ duration: 300 }} />
 						</td>
 					</tr>
+
 				{/if}
 			{/each}
 			</tbody>

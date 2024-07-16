@@ -13,12 +13,12 @@
 
 	let label = severityLabels[severity] || 'All Charges';
 
-	const races: Race[] = ['Any', 'White', 'Black', 'American Indian/Alaska Native', 'Asian/Pacific Islander', 'Other', 'Unknown'];
+	const races: Race[] = ['Any', 'White', 'Black', 'American Indian/Alaskan Native', 'Asian/Pacific Islander', 'Other', 'Unknown'];
 	const raceLabels: Record<Race, string> = {
 		Any: 'All',
 		White: 'White',
 		Black: 'Black',
-		'American Indian/Alaska Native': 'American Indian',
+		'American Indian/Alaskan Native': 'American Indian',
 		'Asian/Pacific Islander': 'Asian',
 		Other: 'Other',
 		Unknown: 'Unknown'
