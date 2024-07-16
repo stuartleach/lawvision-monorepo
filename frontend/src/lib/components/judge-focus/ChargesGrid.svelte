@@ -5,6 +5,7 @@
 	import { type SeverityLevel, SortTarget } from '$lib/types/frontendTypes';
 	import { formatNumber } from '$lib/utils';
 	import { writable } from 'svelte/store';
+	import { slide } from 'svelte/transition';
 
 	let judge = $selectedJudgeStore;
 
@@ -70,7 +71,8 @@
 					{#if severity === $selectedSeverity}
 						<tr class="w-full">
 							<td colspan="6" class=" bg-black/50 w-full">
-								<table class="w-full">
+								<table class="w-full"
+											 transition:slide={{ duration: 250, delay: 0 }}>
 									<colgroup>
 										<col />
 										<col />
@@ -81,6 +83,7 @@
 									</colgroup>
 									{#each races.slice(1).filter(r => judge.arraignmentResults[severity][r].totalCases > 0) as race, i}
 										<tr
+
 											class="px-10 pb-2 w-full text-zinc-300 text-right grid grid-cols-6 w-full bg-zinc-700  =*:py-4 text-zinc-900 tracking-tight   first:text-left *:md:table-cell *:cursor-pointer *:pt-4">
 											<td class="text-left ">{race}</td>
 											<td
