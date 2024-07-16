@@ -115,8 +115,8 @@
 	};
 
 	let judgeRangeStart: number = 0;
-	let visibleJudgeCount: number = 10; // Default number of judges to display
-	const rowHeight = 50; // Estimate the height of each row
+	let visibleJudgeCount: number = 10;
+	const rowHeight = 50;
 
 	const handlePrevious = () => {
 		if (judgeRangeStart > 0) {
@@ -144,6 +144,7 @@
 		$sortOrder,
 		$selectedCountyStore?.name || ''
 	);
+
 </script>
 <div class="grid grid-flow-row-dense bg-zinc-900 pb-1 pt-4">
 	<!--JudgeTable-->
@@ -264,8 +265,7 @@
 				<tr
 					class:bg-zinc-950={i % 2 === 0}
 					class:bg-zinc-800={judge === $selectedJudgeStore}
-					transition:slide={{ delay: 250, duration: 3000, easing: quintOut, axis: 'y' }}
-					class="cursor-pointer font-medium text-zinc-400 hover:bg-zinc-800 hover:font-bold hover:text-white
+					class="cursor-pointer font-medium text-zinc-400 hover:bg-gray-500/50 transition-all hover:font-bold hover:shadow-2xl  hover:text-white
 							{judge === $selectedJudgeStore ? 'hidden' : ''}
 							{$selectedJudgeStore && judge !== $selectedJudgeStore && 'blur-xs opacity-[15%] filter transition-all'}"
 					on:click={() => {
@@ -320,7 +320,6 @@
 							<ContainerJudge in:slide={{ duration: 300 }} out:slide={{ duration: 300 }} />
 						</td>
 					</tr>
-
 				{/if}
 			{/each}
 			</tbody>

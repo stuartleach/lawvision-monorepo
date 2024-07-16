@@ -5,7 +5,6 @@
 	import { type SeverityLevel, SortTarget } from '$lib/types/frontendTypes';
 	import { formatNumber } from '$lib/utils';
 	import { writable } from 'svelte/store';
-	import { slide } from 'svelte/transition';
 
 	let judge = $selectedJudgeStore;
 
@@ -44,11 +43,10 @@
 					<th scope="col" class="text-right">Release %</th>
 				</tr>
 				</thead>
-				<tbody class="bg-zinc-950" transition:slide>
+				<tbody class="bg-zinc-950">
 				{#each severityLevels.filter(s => judge.arraignmentResults[s].Any.totalCases > 0) as severity, i}
 					<tr
 						class:bg-zinc-900={i % 2 === 0 && severity !== 'Any'}
-						transition:slide
 						class="first:font-bold {$selectedSeverity &&
 							severity !== $selectedSeverity &&
 							'blur-xs opacity-[15%] filter transition-all '} {severity === $selectedSeverity ? 'z-[1000000] ': ''} cursor-pointer text-zinc-300 bg-zinc-950 text-right *:pr-10 *:py-4 first:rounded-t-20 {severity === 'Any' ? 'bg-zinc-900 border-b' : ''}"
