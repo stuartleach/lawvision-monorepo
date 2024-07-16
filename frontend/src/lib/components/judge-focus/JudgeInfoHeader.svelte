@@ -12,7 +12,7 @@
 	<div class="text-left sm:pl-5">
 		<h4 class="mb-1 text-base hidden sm:block sm:text-xl font-bold tracking-tight text-gray-500">The Honorable</h4>
 		<h2 class="mb-1 sm:text-6xl block sm:block text-xl font-semibold tracking-tight text-gray-50">
-			{selectedJudgeInfo?.name || 'Honorable Judge'}
+			<!--{selectedJudgeInfo?.name || 'Honorable Judge'}-->
 		</h2>
 	</div>
 	<h2
