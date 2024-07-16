@@ -21,7 +21,7 @@
 	}
 </script>
 
-<div class="mt-2">
+<div class="mb-8">
 	<div class="px-4">
 		<div class="mt-6 flex justify-center w-full">
 			<table class="w-full bg-white p-20 py-20">
@@ -35,7 +35,7 @@
 				</colgroup>
 				<thead class="bg-zinc-900 text-base text-zinc-400 sticky px-5">
 				<tr
-					class="text-zinc-400 tracking-tight text-xl px-5 *:px-10 *:font-semibold first:text-left *:md:table-cell *:cursor-pointer *:pt-4">
+					class="text-zinc-400 tracking-tight text-xl px-5 *:px-10 *:font-semibold first:text-left *:md:table-cell *:cursor-pointer *:py-4 ">
 					<th scope="col" class="text-left">Charge Severity</th>
 					<th scope="col" class="text-right">Total Cases</th>
 					<th scope="col" class="text-right">Average Bail</th>
@@ -70,9 +70,9 @@
 					</tr>
 					{#if severity === $selectedSeverity}
 						<tr class="w-full">
-							<td colspan="6" class=" bg-black/50 w-full">
+							<td colspan="6" class="w-full">
 								<table class="w-full"
-											 transition:slide={{ duration: 250, delay: 0 }}>
+											 transition:slide>
 									<colgroup>
 										<col />
 										<col />
@@ -83,7 +83,6 @@
 									</colgroup>
 									{#each races.slice(1).filter(r => judge.arraignmentResults[severity][r].totalCases > 0) as race, i}
 										<tr
-
 											class="px-10 pb-2 w-full text-zinc-300 text-right grid grid-cols-6 w-full bg-zinc-700  =*:py-4 text-zinc-900 tracking-tight   first:text-left *:md:table-cell *:cursor-pointer *:pt-4">
 											<td class="text-left ">{race}</td>
 											<td

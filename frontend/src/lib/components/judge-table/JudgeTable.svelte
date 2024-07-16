@@ -15,7 +15,6 @@
 	import { formatNumber, sortListByTarget } from '$lib/utils';
 	import { Button, Input } from 'flowbite-svelte';
 	import { onMount } from 'svelte';
-	import { quintOut } from 'svelte/easing';
 	import { writable } from 'svelte/store';
 	import { slide } from 'svelte/transition';
 

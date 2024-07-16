@@ -26,11 +26,6 @@
 								class="flex">
 								{label}
 							</h3>
-							<h2 class="flex flex-row justify-between align-text-bottom">
-								<!--								<span-->
-								<!--									class="totalCases-color font-mono font-bold pr-1">{formatNumber(getValue($selectedJudgeStore, 'totalCases', severity))}</span>-->
-								<!--								<span class="text-base">cases</span>-->
-							</h2>
 						</div>
 						<div class="grid grid-cols-2 w-full rounded-md gap-x-0.5 gap-y-0.5 sm:grid-cols-2 lg:grid-cols-5">
 							<JudgeStatItem

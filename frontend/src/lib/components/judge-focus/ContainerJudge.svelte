@@ -8,9 +8,11 @@
 	$: selectedJudgeInfo = $selectedJudgeStore;
 </script>
 
-<div transition:slide class="border-white/30 border-t-2 border-b-2 shadow w-full py-10">
-	<Button class="w-full *:w-full" on:click={()=>selectedJudgeStore.set(null)}>
+<div transition:slide class="border-white/30 border-t-2 border-b-2 shadow w-full ">
+	<Button  class="w-full *:w-full" on:click={()=>selectedJudgeStore.set(null)}>
+		<div class="py-10" transition:slide>
 		<JudgeInfoHeader {selectedJudgeInfo} />
+			</div>
 	</Button>
 	<ChargesGrid />
 </div>
