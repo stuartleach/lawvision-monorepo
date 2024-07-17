@@ -1,24 +1,19 @@
 <script lang="ts">
 	import Money from '$lib/components/shared/Money.svelte';
 	import Percent from '$lib/components/shared/Percent.svelte';
-	import { races, selectedJudgeStore, severityLabels, severityLevels } from '$lib/stores/data';
-	import { type SeverityLevel, SortTarget } from '$lib/types/frontendTypes';
+	import { allJudgesStore, races, selectedJudgeStore, severityLabels, severityLevels } from '$lib/stores/data';
+	import { type County, type Judge, type SeverityLevel, SortTarget } from '$lib/types/frontendTypes';
 	import { formatNumber } from '$lib/utils';
 	import { writable } from 'svelte/store';
 	import { slide } from 'svelte/transition';
 
-	let judge = $selectedJudgeStore;
+	export let entity: Judge | County
 
 	const sortTarget = writable<SortTarget>(SortTarget.caseCount);
-	let sortTargetValue: SortTarget;
 	$: sortTargetValue = $sortTarget;
 
-	// const selectedSeverity = writable<SeverityLevel>('Any');
-	const selectedSeverity = writable<SeverityLevel>(null);
+	const selectedSeverity = writable<SeverityLevel | null>(null);
 
-	$: {
-		console.log($selectedSeverity);
-	}
 </script>
 
 <div class="mb-8">
@@ -45,7 +40,7 @@
 				</tr>
 				</thead>
 				<tbody class="bg-zinc-950">
-				{#each severityLevels.filter(s => judge.arraignmentResults[s].Any.totalCases > 0) as severity, i}
+				{#each severityLevels.filter(s => entity?.arraignmentResults[s].Any.totalCases > 0) as severity, i}
 					<tr
 						class:bg-zinc-900={i % 2 === 0 && severity !== 'Any'}
 						class="first:font-bold {$selectedSeverity &&
@@ -54,18 +49,18 @@
 						on:click={()=>{$selectedSeverity === severity ? selectedSeverity.set(null) : selectedSeverity.set(severity)}}>
 						<td class=" text-left pl-8">{severityLabels[severity]}</td>
 						<td
-							class="font-mono totalCases-color">{formatNumber(judge.arraignmentResults[severity].Any.totalCases)}</td>
+							class="font-mono totalCases-color">{formatNumber(entity.arraignmentResults[severity].Any.totalCases)}</td>
 						<td class="font-mono averageBailAmount-color">
-							<Money value={judge.arraignmentResults[severity].Any.bailSet.amount} />
+							<Money value={entity.arraignmentResults[severity].Any.bailSet.amount} />
 						</td>
 						<td class="font-mono bailSet-color">
-							<Percent value={judge.arraignmentResults[severity].Any.bailSet.percent} />
+							<Percent value={entity.arraignmentResults[severity].Any.bailSet.percent} />
 						</td>
 						<td class="font-mono remanded-color">
-							<Percent value={judge.arraignmentResults[severity].Any.remanded.percent} />
+							<Percent value={entity.arraignmentResults[severity].Any.remanded.percent} />
 						</td>
 						<td class="font-mono released-color">
-							<Percent value={judge.arraignmentResults[severity].Any.released.percent} />
+							<Percent value={entity.arraignmentResults[severity].Any.released.percent} />
 						</td>
 					</tr>
 					{#if severity === $selectedSeverity}
@@ -81,23 +76,23 @@
 										<col class="hidden md:table-cell" />
 										<col class="hidden md:table-cell" />
 									</colgroup>
-									{#each races.slice(1).filter(r => judge.arraignmentResults[severity][r].totalCases > 0) as race, i}
+									{#each races.slice(1).filter(r => entity.arraignmentResults?.[severity]?.[r].totalCases > 0) as race, i}
 										<tr
-											class="px-10 pb-2 w-full text-zinc-300 text-right grid grid-cols-6 w-full bg-zinc-700  =*:py-4 text-zinc-900 tracking-tight   first:text-left *:md:table-cell *:cursor-pointer *:pt-4">
+											class="px-10 pb-2 text-right grid grid-cols-6 w-full bg-zinc-700  =*:py-4 text-zinc-900 tracking-tight   first:text-left *:md:table-cell *:cursor-pointer *:pt-4">
 											<td class="text-left ">{race}</td>
 											<td
-												class="font-mono totalCases-color">{formatNumber(judge.arraignmentResults[severity][race].totalCases)}</td>
+												class="font-mono totalCases-color">{formatNumber(entity.arraignmentResults[severity][race].totalCases)}</td>
 											<td class="font-mono averageBailAmount-color">
-												<Money value={judge.arraignmentResults[severity][race].bailSet.amount} />
+												<Money value={entity.arraignmentResults[severity][race].bailSet.amount} />
 											</td>
 											<td class="font-mono bailSet-color">
-												<Percent value={judge.arraignmentResults[severity][race].bailSet.percent} />
+												<Percent value={entity.arraignmentResults[severity][race].bailSet.percent} />
 											</td>
 											<td class="font-mono remanded-color">
-												<Percent value={judge.arraignmentResults[severity][race].remanded.percent} />
+												<Percent value={entity.arraignmentResults[severity][race].remanded.percent} />
 											</td>
 											<td class="font-mono released-color">
-												<Percent value={judge.arraignmentResults[severity][race].released.percent} />
+												<Percent value={entity.arraignmentResults[severity][race].released.percent} />
 											</td>
 										</tr>
 									{/each}

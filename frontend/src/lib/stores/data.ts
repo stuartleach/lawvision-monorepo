@@ -4,7 +4,9 @@ import { writable } from 'svelte/store';
 
 // Styling //
 export const darkMode = writable<boolean>(true);
-
+export const currentPageStore = writable<'judges' | 'counties' | 'state' | 'contact'>('judges');
+export const currentListTargetStore = writable<'judges' | 'counties'>('judges');
+export const selectedEntityStore = writable<Judge | County | null>(null);
 // Counties //
 export const allCountiesStore = writable<County[]>([]);
 export const allCountiesWithGeoJSONStore = writable<CountyWithGeoJSON[]>([]);

@@ -3,11 +3,13 @@
 	import { loadingStore } from '$lib/stores/data';
 </script>
 
-{#if $loadingStore}
-	<div class="loading">Loading...</div>
-{:else}
-	<SelectorContainer />
-{/if}
+<div>
+	{#if $loadingStore}
+		<div class="loading">Loading...</div>
+	{:else}
+		<SelectorContainer />
+	{/if}
 
+</div>
 <style>
 </style>

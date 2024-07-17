@@ -2,6 +2,7 @@
 	"name": "frontend",
 	"version": "0.0.1",
 	"private": true,
+	"type": "module",
 	"engines": {
 		"node": "20.10.0"
 	},
@@ -48,7 +49,6 @@
 		"vite-tsconfig-paths": "^4.3.2",
 		"vitest": "^1.2.0"
 	},
-	"type": "module",
 	"dependencies": {
 		"@sveltejs/adapter-static": "^3.0.2",
 		"chart.js": "^4.4.3",
