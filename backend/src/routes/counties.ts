@@ -1,6 +1,6 @@
 import { Router } from 'express';
-import { calculateStats, fetchCountyCases } from '../judge';
 import { prisma } from '../prisma_client';
+import { calculateStats, fetchCountyCases } from '../utils';
 // import getCounties from '../queries/getCounties';
 
 

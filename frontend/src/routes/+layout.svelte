@@ -1,24 +1,31 @@
 <script>
 	import '../app.css';
 	import InfoBanner from '$lib/components/containers/InfoBanner.svelte';
+
+	import { selectedCountyStore } from '$lib/stores/data';
+	import { Button } from 'flowbite-svelte';
+	// import { selectedMetricStore } from '$lib/stores/data';
+	// import {selectedSeverity} from '$lib/stores/data';
+
+	const clearSelection = () => {
+
+
+	};
 </script>
 
 <div class="">
 	<nav class="sticky bg-zinc-950 w-full shadow-md">
-
 		<div class="mx-auto mx-4 px-4 sm:px-6 lg:px-8">
 			<div class="flex h-[4rem] items-center justify-between">
 				<div class="flex items-center w-full justify-between">
 					<div class="flex-shrink-0 flex-row ">
-
 						<div class="w-full ">
-							<a href="/">
+							<Button on:click={()=>clearSelection()}>
 								<h1
 									class="font-bold t text-4xl tracking-[-.04em] bg-gradient-to-tr from-red-500 to-yellow-300 bg-clip-text font-bold text-transparent">
 									LawVision</h1>
-							</a>
+							</Button>
 						</div>
-
 					</div>
 					<div class="hidden md:block">
 						<div class="ml-10 grid grid-cols-2 space-x-4 ">

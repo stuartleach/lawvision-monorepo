@@ -1,9 +1,8 @@
 import { Router } from 'express';
-import { calculateStats, fetchJudgeCases } from '../judge';
 import { prisma } from '../prisma_client';
+import { calculateStats, fetchJudgeCases } from '../utils';
 
 const judgesRouter = Router();
-
 
 judgesRouter.get('/judges_stats', async (req, res) => {
 
@@ -27,11 +26,6 @@ judgesRouter.get('/judges_stats', async (req, res) => {
 			...judgeStats
 		});
 	}
-
-
 	return res.json(stats);
-
 });
-
-
 export default judgesRouter;

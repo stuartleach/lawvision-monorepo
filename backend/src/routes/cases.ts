@@ -1,5 +1,5 @@
 import { Request, Response, Router } from 'express';
-import { calculateStats, fetchAllCases } from '../judge';
+import { calculateStats, fetchAllCases } from '../utils';
 
 const casesRouter = Router();
 
@@ -10,7 +10,7 @@ casesRouter.get('/cases_stats', async (req: Request, res: Response) => {
 	return res.json({
 		name: 'State',
 		...stateStats
-	})
+	});
 });
 
 

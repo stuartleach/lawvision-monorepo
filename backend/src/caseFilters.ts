@@ -1,5 +1,6 @@
 import { Case } from '@prisma/client';
-import { CaseSelection } from './judge'; // Import the Case type
+
+import { CaseSelection } from './utils'; // Import the Case type
 
 export const filterByRace = (cases: CaseSelection[], raceName: string) => cases.filter(c => c.Defendant?.race === raceName);
 export const filterByNotRace = (cases: CaseSelection[], raceName: string) => cases.filter(c => c.Defendant?.race !== raceName);
