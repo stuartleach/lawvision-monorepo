@@ -393,7 +393,7 @@ function Vn(e) {
 				f(
 					_,
 					'class',
-					'bg-clip-text font-bold text-transparent bg-gradient-to-tr from-red-500 to-yellow-300'
+					'bg-clip-text font-bold text-transparent bg-gradient-to-tr from-blue-500 to-blue-300'
 				),
 				f(u, 'class', 'text-2xl tracking-tight text-gray-200 mb-4 font-sans font-semiboldbold'),
 				f(
@@ -3728,12 +3728,12 @@ function rl(e) {
 			f(
 				o,
 				'class',
-				'text-gray-500 leading-7 text-2xl bg-clip-text text-transparent bg-gradient-to-bl from-red-700 to-yellow-500'
+				'text-gray-500 leading-7 text-2xl bg-clip-text text-transparent bg-gradient-to-bl from-blue-700 to-blue-500'
 			),
 				f(
 					i,
 					'class',
-					'text-left transition bg-clip-text text-transparent bg-gradient-to-bl from-red-700 to-yellow-500 pb-2'
+					'text-left transition bg-clip-text text-transparent bg-gradient-to-bl from-blue-700 to-blue-500 pb-2'
 				),
 				f(
 					r,

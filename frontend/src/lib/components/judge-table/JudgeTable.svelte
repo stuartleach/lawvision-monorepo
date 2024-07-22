@@ -1,6 +1,6 @@
 <script lang="ts">
 	import CountyDropdown from '$lib/components/containers/CountyDropdown.svelte';
-	import ContainerJudge from '$lib/components/judge-focus/ContainerJudge.svelte';
+	import ContainerJudge from '$lib/components/entity-focus/ContainerJudge.svelte';
 	import Money from '$lib/components/shared/Money.svelte';
 	import Percent from '$lib/components/shared/Percent.svelte';
 	import {
@@ -312,11 +312,10 @@
 						<Percent value={judge.arraignmentResults.Any.Any.released.percent} />
 					</td>
 				</tr>
-
 				{#if judge === $selectedJudgeStore}
 					<tr>
 						<td colspan="7" class="bg-black/50">
-							<ContainerJudge in:slide={{ duration: 300 }} out:slide={{ duration: 300 }} />
+							<ContainerJudge />
 						</td>
 					</tr>
 				{/if}

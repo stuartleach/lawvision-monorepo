@@ -1,5 +1,5 @@
 <script lang="ts">
-	import JudgeStatItem from '$lib/components/judge-focus/JudgeStatItem.svelte';
+	import JudgeStatItem from '$lib/components/entity-focus/EntityStatItem.svelte';
 	import { severityLevels } from '$lib/stores/data';
 	import type { Judge } from '$lib/types/frontendTypes';
 

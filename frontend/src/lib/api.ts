@@ -5,7 +5,7 @@ import type {
 	GeoJSONData,
 	GeoJSONQuery,
 	Judge,
-	JudgeQuery
+	JudgeQuery, NewYorkState, NewYorkStateQuery
 } from '$lib/types';
 
 const fetchData = async <T>(
@@ -44,8 +44,8 @@ const getJudges = async (query: JudgeQuery): Promise<Judge[]> => {
 	let judges: Judge[] = await fetchData<Judge[]>(fetch, url);
 	judges = judges.filter(
 		(judge) =>
-			judge.judgeName !== 'Judge/JHO/Hearing Examiner, Visiting' &&
-			judge.judgeName !== "Office, Clerk's"
+			judge.name !== 'Judge/JHO/Hearing Examiner, Visiting' &&
+			judge.name !== 'Office, Clerk\'s'
 	);
 	return judges;
 };
@@ -56,4 +56,11 @@ const getCounties = async (query: CountyQuery): Promise<County[]> => {
 	return await fetchData<County[]>(fetch, url);
 };
 
-export { getGeoJson, getCounties, getJudges};
+const getNewYorkState = async (query: NewYorkStateQuery): Promise<NewYorkState> => {
+	const { fetch } = query;
+	const url = '/state.json';
+	return await fetchData<NewYorkState>(fetch, url);
+
+};
+
+export { getGeoJson, getCounties, getJudges, getNewYorkState };

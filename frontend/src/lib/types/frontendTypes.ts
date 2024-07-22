@@ -4,6 +4,11 @@ export interface County {
 	arraignmentResults: ResultsBySeverity;
 }
 
+export interface NewYorkState {
+	name: string;
+	arraignmentResults: ResultsBySeverity;
+}
+
 export interface Judge {
 	judgeId: string;
 	name: string;
@@ -102,9 +107,11 @@ export type FetchFunction = (input: RequestInfo, init?: RequestInit) => Promise<
 
 export type JudgeQuery = {
 	fetch: FetchFunction;
-	// countyId: string;
-	// limit: number;
 };
+
+export type NewYorkStateQuery = {
+	fetch: FetchFunction;
+}
 
 export type JudgeDetailsQuery = {
 	fetch: FetchFunction;

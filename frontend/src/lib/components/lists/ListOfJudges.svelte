@@ -44,20 +44,20 @@ $: selectedEntityStore.set($selectedJudgeStore || $selectedCountyStore);
 		<div
 			class=" top-0 z-[1000] bg-zinc-950 px-4 py-4 sm:px-6 lg:px-8 flex flex-row justify-between h-full align-bottom w-full">
 			<h1
-				class="text-2xl text-left tracking-[-.04em] bg-gradient-to-tr from-orange-500 to-orange-200 bg-clip-text font-bold text-transparent">
+				class="text-2xl text-left tracking-[-.04em] bg-gradient-to-tr from-blue-500 to-blue-200 bg-clip-text font-bold text-transparent">
 				Judges</h1>
 			<div class="flex flex-col gap-1 text-right">
 				<p class="text-zinc-500 text-sm align-bottom">showing
 					<span
-						class="text-left text-sm tracking-[-.04em] bg-gradient-to-tr from-red-500 to-yellow-300 bg-clip-text font-bold text-transparent">{$selectedCountyStore ? $selectedCountyStore.name + ' County' : 'all counties'}</span>
+						class="text-left text-sm tracking-[-.04em] bg-gradient-to-tr from-blue-500 to-blue-300 bg-clip-text font-bold text-transparent">{$selectedCountyStore ? $selectedCountyStore.name + ' County' : 'all counties'}</span>
 				</p>
 				<p class="text-zinc-500 text-sm align-bottom">sorted by
 					<span
-						class="text-left text-sm tracking-[-.04em] bg-gradient-to-tr from-red-500 to-yellow-300 bg-clip-text font-bold text-transparent">{$selectedMetricStore ? $selectedMetricStore + ' ' : ''}</span>
+						class="text-left text-sm tracking-[-.04em] bg-gradient-to-tr from-blue-500 to-blue-300 bg-clip-text font-bold text-transparent">{$selectedMetricStore ? $selectedMetricStore + ' ' : ''}</span>
 				</p></div>
 		</div>
 	</div>
-	<ul role="list" class=" divide-y divide-zinc-800">
+	<ul role="list" class=" divide-y divide-zinc-800/30">
 		{#each entityList as entity}
 			<li class="flex justify-between gap-x-4 py-5 cursor-pointer p-6 hover:bg-zinc-600"
 					on:click={()=>setStore(targetItems, entity)}>

@@ -69,7 +69,7 @@
 						<span class="flex text-sm text-zinc-400 tracking-tighter">{raceLabels[race]}</span>
 						<div class="flex font-mono text-zinc-300">
 							{#if metric === 'averageBailAmount'}
-								<span class="{metric}-color">
+								<span class="{metric}-color" on:click={()=>console.log(metric, severity, race)}>
 									<Money value={$selectedJudgeStore ? getValue($selectedJudgeStore, metric, severity, race): 0} />
 								</span>
 							{:else if metric === 'totalCases'}

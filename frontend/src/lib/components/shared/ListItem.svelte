@@ -11,7 +11,7 @@
 				border-b-2 px-4
 				py-2 text-zinc-400
         outline-none transition-all
-        last:border-b-0 hover:bg-zinc-700
+        last:border-b-0 hover:bg-zinc-200/20
 				hover:shadow-2xl"
 	on:click={onClick ? onClick : undefined}
 	on:mouseenter={onMouseEnter ? onMouseEnter : undefined}

@@ -1,10 +1,10 @@
-import { getCounties, getGeoJson, getJudges } from '$lib/api';
+import { getCounties, getGeoJson, getJudges, getNewYorkState } from '$lib/api';
 import {
 	allCountiesStore,
 	allCountiesWithGeoJSONStore,
 	allJudgesStore,
 	geoJSONStore,
-	loadingStore
+	loadingStore, newYorkStateStore
 } from '$lib/stores/data';
 import type { County, GeoJSONData } from '$lib/types/frontendTypes';
 import { combineCountiesWithGeoJSON } from '$lib/utils';
@@ -17,7 +17,9 @@ export const load: PageLoad = async ({ fetch }) => {
 		const newYorkGeoJson: GeoJSONData = await getGeoJson({ fetch });
 		const counties: County[] = await getCounties({ fetch });
 		const judges = await getJudges({ fetch });
+		const newYorkState = await getNewYorkState({ fetch });
 
+		newYorkStateStore.set(newYorkState);
 		geoJSONStore.set(newYorkGeoJson);
 		allCountiesStore.set(counties);
 		allJudgesStore.set(judges);

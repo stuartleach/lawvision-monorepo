@@ -2,7 +2,7 @@
 	import { allJudgesStore, selectedJudgeStore, severityLabels } from '$lib/stores/data';
 	import type { ResultsBySeverity } from '$lib/types/frontendTypes';
 	import { formatNumber, getValue } from '$lib/utils';
-	import JudgeStatItem from './JudgeStatItem.svelte';
+	import JudgeStatItem from './EntityStatItem.svelte';
 
 	export let severity: keyof ResultsBySeverity = 'Any';
 
@@ -37,7 +37,6 @@
 								{severity}
 								metric="bailSet"
 								value={getValue($selectedJudgeStore, 'bailSet', severity)}
-
 							/>
 							<JudgeStatItem
 								{severity}

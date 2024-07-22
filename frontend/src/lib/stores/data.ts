@@ -1,5 +1,14 @@
 // $lib/stores/data.ts
-import type { County, CountyWithGeoJSON, GeoJSONData, Judge, MinMax, SeverityLevel } from '$lib/types';
+import {
+	type County,
+	type CountyWithGeoJSON,
+	type GeoJSONData,
+	type Judge,
+	type MinMax,
+	type NewYorkState,
+	type Race,
+	type SeverityLevel
+} from '$lib/types/frontendTypes';
 import { writable } from 'svelte/store';
 
 // Styling //
@@ -7,11 +16,20 @@ export const darkMode = writable<boolean>(true);
 export const currentPageStore = writable<'judges' | 'counties' | 'state' | 'contact'>('judges');
 export const currentListTargetStore = writable<'judges' | 'counties'>('judges');
 export const selectedEntityStore = writable<Judge | County | null>(null);
+
+export const graphTargetDataStore = writable<{
+	metric: string,
+	severity: SeverityLevel,
+	race: Race,
+	val: 'percent' | 'amount' | 'raw'
+}>({ metric: 'bailSet', severity: 'Any', race: 'Any', val: 'percent' });
+
 // Counties //
 export const allCountiesStore = writable<County[]>([]);
 export const allCountiesWithGeoJSONStore = writable<CountyWithGeoJSON[]>([]);
 export const countiesMinMaxStore = writable<MinMax>();
 export const geoJSONStore = writable<GeoJSONData>();
+export const newYorkStateStore = writable<NewYorkState | null>(null);
 
 // Judges //
 export const allJudgesStore = writable<Judge[]>([]);
