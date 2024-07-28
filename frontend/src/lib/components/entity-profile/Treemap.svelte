@@ -1,6 +1,6 @@
 <script lang="ts">
   import { allCountiesStore, allJudgesStore, severityLabels } from '$lib/stores/data.js';
-  import type { County, Judge, Race, SeverityLevel } from '$lib/types/frontendTypes';
+  import type { Race, SeverityLevel } from '$lib/types/frontendTypes';
   import { metricVerbs } from '$lib/utils/misc';
   import { mutateDataForZoomableBarGraph } from '$lib/utils/mutate';
   import * as d3 from 'd3';

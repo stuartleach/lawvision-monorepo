@@ -15,15 +15,14 @@
 		sortOrderStore,
 		sortTargetStore
 	} from '$lib/stores/data';
-	import { SortOrder } from '$lib/types/frontendTypes';
-	import { SortTarget } from '$lib/types/frontendTypes';
+	import { SortOrder, SortTarget } from '$lib/types/frontendTypes';
 	import { sortListByTargetGivenRaceAndSeverity } from '$lib/utils/sort';
 
 	let judges = $allJudgesStore;
 	let counties = $allCountiesStore.sort((a, b) => a.name.localeCompare(b.name));
 	let severityOptions = ['Any', 'AF', 'BF', 'CF', 'DF', 'EF', 'AM', 'BM', 'I', 'V'];
-	let county = $selectedCountyStore;
-	let judge = $selectedJudgeStore;
+	$: county = $selectedCountyStore;
+	$: judge = $selectedJudgeStore;
 
 	const metricOptions = [...Object.values(SortTarget)];
 

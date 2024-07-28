@@ -1,9 +1,9 @@
 <script lang="ts">
 	import Money from '$lib/components/shared/Money.svelte';
 	import Percent from '$lib/components/shared/Percent.svelte';
-	import { formatNumber } from '$lib/utils/format';
-	import { graphTargetDataStore, races, severityLabels, severityLevels } from '$lib/stores/data';
+	import { graphTargetDataStore, severityLabels, severityLevels } from '$lib/stores/data';
 	import { type County, type Judge, type SeverityLevel, SortTarget } from '$lib/types/frontendTypes';
+	import { formatNumber } from '$lib/utils/format';
 	import { writable } from 'svelte/store';
 
 	export let entity: Judge | County;

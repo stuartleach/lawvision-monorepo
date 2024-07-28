@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { formatNumber } from '$lib/utils/format';
 	import {
 		allCountiesStore,
 		graphTargetDataStore,
@@ -7,8 +6,9 @@
 		selectedJudgeStore,
 		severityLabels
 	} from '$lib/stores/data';
-	import type { ArraignmentResultsByRace } from '$lib/types';
-	import { metricVerbs } from '$lib/utils/misc';
+	import type { ArraignmentResultsByRace } from '$lib/types/frontendTypes';
+	import { formatNumber } from '$lib/utils/format';
+	import { metricClasses, metricVerbs } from '$lib/utils/misc';
 	import * as d3 from 'd3';
 	import { afterUpdate, onMount } from 'svelte';
 
@@ -77,6 +77,7 @@
 	export let marginRight = 20;
 	export let marginBottom = 50;
 	export let marginLeft = 60;
+	export let entity: any;
 
 	let gx: SVGGElement | null;
 	let gy: SVGGElement | null;

@@ -181,9 +181,8 @@
 </style>
 
 
-						<Treemap />
+<!--						<Treemap />-->
 <div class="container bg-gradient-to-tr from-blue-900/20 via-zinc-950 from-0% to-zinc-900">
-<!--
 	<div class="sidebar sm:h-screen lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
 		<div class="flex grow flex-col gap-y-5 py-4 overflow-y-auto text-zinc-300 border-r border-zinc-700/50">
 			<div class="flex flex-col mt-4 justify-start">
@@ -196,7 +195,7 @@
 			<nav class="sm:text-base text-5xl flex flex-1 flex-col ">
 				<ul role="list" class="pt-6 flex flex-1 flex-col ">
 					<SidebarListItem {selectPage} itemType="judges" />
-					<SidebarListItem {selectPage} itemType="state" />
+<!--					<SidebarListItem {selectPage} itemType="state" />-->
 				</ul>
 			</nav>
 		</div>
@@ -211,12 +210,12 @@
 	<main class="">
 		<div class="">
 			<div class="px-4 py-10 sm:px-6 lg:px-8 lg:py-6 sm:h-screen">
-				&lt;!&ndash;{#if $selectedEntityStore}&ndash;&gt;
-				&lt;!&ndash;	<EntityProfile entity={$selectedEntityStore} />&ndash;&gt;
-				&lt;!&ndash;{:else}&ndash;&gt;
+				{#if $selectedEntityStore}
+					<EntityProfile entity={$selectedEntityStore} />
+				{:else}
 
-				&lt;!&ndash;{/if}&ndash;&gt;
+				{/if}
 			</div>
 		</div>
-	</main>-->
+	</main>
 </div>
