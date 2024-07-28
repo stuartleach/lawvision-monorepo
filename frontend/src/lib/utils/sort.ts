@@ -14,7 +14,7 @@ export const sortListByTargetGivenRaceAndSeverity = (
 	severity: SeverityLevel = 'Any',
 	race: Race = 'Any',
 	deviation: boolean = false,
-	minCases: number = 50
+	minCases: number = 50,
 ) => {
 	// Store Reset (unchanged)
 	// selectedJudgeStore.set(null);
@@ -27,22 +27,21 @@ export const sortListByTargetGivenRaceAndSeverity = (
 		const targetData = item.arraignmentResults?.[severity]?.[race];
 		switch (target) {
 			case SortTarget.averageBailAmount:
-				return targetData?.bailSet?.amount || null; // Default to null if not found
+				return targetData?.bailSet?.amount ?? null; // Default to null if not found
 			case SortTarget.totalCases:
-				return targetData?.totalCases || null;
+				return targetData?.totalCases ?? null;
 			case SortTarget.remanded:
-				return targetData?.remanded?.percent || null;
+				return targetData?.remanded?.percent ?? null;
 			case SortTarget.released:
-				return targetData?.released?.percent || null;
+				return targetData?.released?.percent ?? null;
 			case SortTarget.bailSet:
-				return targetData?.bailSet?.percent || null;
+				return targetData?.bailSet?.percent ?? null;
 			case SortTarget.name:
-				return item.name || '';
+				return item.name ?? '';
 			default:
 				return null;
 		}
 	};
-
 
 	const getDeviationFromAverageRace = (item: Judge | County): number | null => {
 		const targetData = item.arraignmentResults?.[severity]?.[race];
@@ -65,7 +64,7 @@ export const sortListByTargetGivenRaceAndSeverity = (
 			case SortTarget.name:
 				return 0; // No deviation for names
 			default:
-				return 0;
+				return null;
 		}
 	};
 
@@ -79,11 +78,11 @@ export const sortListByTargetGivenRaceAndSeverity = (
 		if (bVal === null) return order === SortOrder.desc ? -1 : 1;
 
 		if (typeof aVal === 'number' && typeof bVal === 'number') {
-			return order === SortOrder.asc ? bVal - aVal : aVal - bVal;
+			return order === SortOrder.asc ? aVal - bVal : bVal - aVal;
 		} else {
 			return order === SortOrder.asc
-				? String(bVal).localeCompare(String(aVal))
-				: String(aVal).localeCompare(String(bVal));
+				? String(aVal).localeCompare(String(bVal))
+				: String(bVal).localeCompare(String(aVal));
 		}
 	};
 

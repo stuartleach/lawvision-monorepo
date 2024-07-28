@@ -1,7 +1,6 @@
 <script lang="ts">
 	import '../app.css';
 	import EntityProfile from '$lib/components/entity-profile/EntityProfile.svelte';
-	import Treemap from '$lib/components/entity-profile/Treemap.svelte';
 	import SidebarListItem from '$lib/components/layout/SidebarListItem.svelte';
 	import ListOfItems from '$lib/components/lists/ListOfJudges.svelte';
 
@@ -212,8 +211,6 @@
 			<div class="px-4 py-10 sm:px-6 lg:px-8 lg:py-6 sm:h-screen">
 				{#if $selectedEntityStore}
 					<EntityProfile entity={$selectedEntityStore} />
-				{:else}
-
 				{/if}
 			</div>
 		</div>

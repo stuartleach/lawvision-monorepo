@@ -46,11 +46,23 @@ export const countyJudgesStore = writable<Judge[]>([]);
 export const judgesStateMinMax = writable<MinMax>();
 export const countyJudgesPromiseStore = writable<Promise<Judge[]> | null>(null);
 
+export type JudgeFilter = {
+	county: string;
+	severity: string;
+	race: string;
+}
+
+export type SortFilter = {
+	direction: string;
+	metric: string;
+}
+
 // Filters //
 export const judgeNameFilterStore = writable<string>('');
 export const countyNameFilterStore = writable<string>('');
 export const defendantRaceFilterStore = writable<string>('Any');
 export const chargeSeverityFilterStore = writable<string>('Any');
+export const judgeFilterStore = writable<JudgeFilter>({county: 'Any', severity: 'Any', race: 'Any'})
 
 // Bail //
 export const bailAmountsStore = writable<number[]>([]);

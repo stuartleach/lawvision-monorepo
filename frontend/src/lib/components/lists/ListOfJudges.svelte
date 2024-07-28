@@ -4,6 +4,7 @@
 	import {
 		allCountiesStore,
 		allJudgesStore,
+		countyNameFilterStore,
 		currentListTargetStore,
 		deviationStore,
 		filterRaceStore,
@@ -21,27 +22,24 @@
 	let judges = $allJudgesStore;
 	let counties = $allCountiesStore.sort((a, b) => a.name.localeCompare(b.name));
 	let severityOptions = ['Any', 'AF', 'BF', 'CF', 'DF', 'EF', 'AM', 'BM', 'I', 'V'];
-	$: county = $selectedCountyStore;
-	$: judge = $selectedJudgeStore;
-
-	const metricOptions = [...Object.values(SortTarget)];
 
 	$: selectedEntityStore.set($selectedJudgeStore || $selectedCountyStore);
 
 	$: targetItems = $currentListTargetStore;
-	let items = {
-		judges: { name: 'Judges', targets: judges },
+	$: items = {
+		judges: {
+			name: 'Judges',
+			targets: $countyNameFilterStore ? judges.filter(c => c.primaryCounty === $countyNameFilterStore) : judges
+		},
 		counties: { name: 'Counties', targets: counties }
 	};
 
 
 	$: sortTarget = $sortTargetStore;
 	$: selectedMetricStore.set(sortTarget);
-	$: sortOrder = $sortOrderStore;
 
 	$: entityList = sortListByTargetGivenRaceAndSeverity(items[targetItems].targets,
 		$sortTargetStore, $sortOrderStore, $filterSeverityStore, $filterRaceStore, $deviationStore);
-
 
 	const handleNextSort = () => {
 		if ($sortTargetStore === SortTarget.averageBailAmount) sortTargetStore.set(SortTarget.bailSet);
@@ -50,35 +48,22 @@
 		else sortTargetStore.set(SortTarget.averageBailAmount);
 	};
 
-	const raceOptions = ['Any', 'Black', 'White', 'Asian/Pacific Islander', 'American Indian/Alaskan Native', 'Other', 'Unknown'];
-
-	const nextRace = () => {
-		if ($filterRaceStore === 'Any') filterRaceStore.set('Black');
-		else if ($filterRaceStore === 'Black') filterRaceStore.set('White');
-		else if ($filterRaceStore === 'White') filterRaceStore.set('Asian/Pacific Islander');
-		else if ($filterRaceStore === 'Asian/Pacific Islander') filterRaceStore.set('American Indian/Alaskan Native');
-		else if ($filterRaceStore === 'American Indian/Alaskan Native') filterRaceStore.set('Other');
-		else if ($filterRaceStore === 'Other') filterRaceStore.set('Unknown');
-		else filterRaceStore.set('Any');
+	const handleNextSortDirection = () => {
+		if ($sortOrderStore === SortOrder.desc) sortOrderStore.set(SortOrder.asc);
+		else sortOrderStore.set(SortOrder.desc);
 	};
+
+	const raceOptions = ['Any', 'Black', 'White', 'Asian/Pacific Islander', 'American Indian/Alaskan Native', 'Other', 'Unknown'];
 
 	const nextDeviation = () => {
 		deviationStore.set(!$deviationStore);
 	};
 
-	const nextSeverity = () => {
-		if ($filterSeverityStore === 'Any') filterSeverityStore.set('AF');
-		else if ($filterSeverityStore === 'AF') filterSeverityStore.set('BF');
-		else if ($filterSeverityStore === 'BF') filterSeverityStore.set('CF');
-		else if ($filterSeverityStore === 'CF') filterSeverityStore.set('DF');
-		else if ($filterSeverityStore === 'DF') filterSeverityStore.set('EF');
-		else if ($filterSeverityStore === 'EF') filterSeverityStore.set('AM');
-		else if ($filterSeverityStore === 'AM') filterSeverityStore.set('BM');
-		else if ($filterSeverityStore === 'BM') filterSeverityStore.set('I');
-		else if ($filterSeverityStore === 'I') filterSeverityStore.set('UM');
-		else if ($filterSeverityStore === 'UM') filterSeverityStore.set('V');
-		else filterSeverityStore.set('Any');
-	};
+	const clearAllFilters = () => {
+		countyNameFilterStore.set('')
+		filterSeverityStore.set('Any')
+		filterRaceStore.set('Any')
+	}
 
 	const sortTargetColor = (target: SortTarget) => {
 		switch (target) {
@@ -118,7 +103,7 @@
 						</span>
 						</p>
 					</button>
-					<button on:click={handleNextSort}>
+					<button on:click={handleNextSortDirection}>
 						<p class="text-zinc-500 text-sm">direction
 							<span
 								class="text-left text-sm tracking-[-.04em] bg-gradient-to-tr from-blue-500 to-blue-300
@@ -132,11 +117,13 @@
 				</section>
 
 			</div>
+			<button on:click={()=>deviationStore.set(!$deviationStore)} class="text-white">
+				{$deviationStore ? 'raw value' : 'deviation from mean'}
+			</button>
 			<div class="filters flex flex-row gap-x-4 *:w-48">
-				<DropdownSelect label="County" options={['All', ...counties]} type="county" />
+				<DropdownSelect label="County" options={counties.map(c=>c.name)} type="county" />
 				<DropdownSelect label="Severity" options={severityOptions} type="severity" />
 				<DropdownSelect label="Race" options={raceOptions} type="race" />
-				<DropdownSelect label="Direction" options={['asc', 'desc']} type="direction" />
 			</div>
 		</div>
 
@@ -144,8 +131,16 @@
 	</section>
 
 	<ul role="list" class=" divide-y divide-zinc-800/30">
-		{#each entityList as entity}
-			<EntityLi {entity} {targetItems} />
-		{/each}
+		{#if (entityList.length > 0)}
+			{#each entityList as entity}
+				<EntityLi {entity} {targetItems} />
+			{/each}
+		{:else}
+			<li class="gap-x-4 py-5 cursor-pointer p-6  flex flex-row justify-start">
+				<p class="flex text-zinc-500 font-light tracking-tight">No judges found matching selected criteria.</p>
+				<button class="flex text-zinc-300 hover:text-zinc-100 transition" on:click={clearAllFilters}>Clear Filters</button>
+			</li>
+
+		{/if}
 	</ul>
 </div>
