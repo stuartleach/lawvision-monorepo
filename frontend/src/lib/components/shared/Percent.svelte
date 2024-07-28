@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { formatPercent } from '$lib/utils';
+	import { formatPercent } from '$lib/utils/format';
 
 	export let value: number = 0;
 </script>

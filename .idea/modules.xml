@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/lawvision-monorepo.iml" filepath="$PROJECT_DIR$/.idea/lawvision-monorepo.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../../personal-website/.idea/personal-website.iml" filepath="$PROJECT_DIR$/../../personal-website/.idea/personal-website.iml" />
     </modules>
   </component>
 </project>

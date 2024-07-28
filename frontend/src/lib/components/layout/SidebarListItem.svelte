@@ -32,7 +32,7 @@
 				<ShareLogo class="h-10 w-10" />
 			{/if}
 			<div class="flex flex-col justify-center ">
-				<h2 class="justify-self-end text-right w-full text-xl">
+				<h2 class="justify-self-end text-right w-full text-5xl sm:text-xl">
 					{logos[itemType].name}
 				</h2>
 			</div>

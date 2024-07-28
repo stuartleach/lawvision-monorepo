@@ -1,15 +1,16 @@
 <script lang="ts">
+	import { formatNumber } from '$lib/utils/format';
 	import {
-		selectedJudgeStore,
 		allCountiesStore,
-		newYorkStateStore,
 		graphTargetDataStore,
+		newYorkStateStore,
+		selectedJudgeStore,
 		severityLabels
 	} from '$lib/stores/data';
 	import type { ArraignmentResultsByRace } from '$lib/types';
-	import { formatNumber } from '$lib/utils';
+	import { metricVerbs } from '$lib/utils/misc';
 	import * as d3 from 'd3';
-	import { onMount, afterUpdate } from 'svelte';
+	import { afterUpdate, onMount } from 'svelte';
 
 	// Chart dimensions and margins as optional props.
 	let svgContainer: HTMLDivElement;
@@ -39,9 +40,24 @@
 	$: stateStats = getAllRaceStatsForMetric(state?.arraignmentResults?.[severity], metric, val);
 
 	$: plot = [
-		{ name: judge?.name, stats: judgeStats, totalCases: judge?.arraignmentResults?.[severity]?.Any?.totalCases },
-		{ name: county?.name, stats: countyStats, totalCases: county?.arraignmentResults?.[severity]?.Any?.totalCases },
-		{ name: 'New York State', stats: stateStats, totalCases: state?.arraignmentResults?.[severity]?.Any?.totalCases }
+		{
+			name: judge?.name,
+			stats: judgeStats,
+			rawStats: getAllRaceStatsForMetric(judge?.arraignmentResults?.[severity], metric, 'raw'),
+			totalCases: judge?.arraignmentResults?.[severity]?.Any?.totalCases
+		},
+		{
+			name: county?.name,
+			stats: countyStats,
+			rawStats: getAllRaceStatsForMetric(county?.arraignmentResults?.[severity], metric, 'raw'),
+			totalCases: county?.arraignmentResults?.[severity]?.Any?.totalCases
+		},
+		{
+			name: 'New York State',
+			stats: stateStats,
+			rawStats: getAllRaceStatsForMetric(state?.arraignmentResults?.[severity], metric, 'raw'),
+			totalCases: state?.arraignmentResults?.[severity]?.Any?.totalCases
+		}
 	];
 
 	const metricLabels: Record<string, string> = {
@@ -52,21 +68,6 @@
 		totalCases: 'Total Cases'
 	};
 
-	const metricVerbs: Record<string, string> = {
-		bailSet: 'bail was set',
-		remanded: 'remand was ordered',
-		released: 'release was ordered',
-		averageBailAmount: 'set bail',
-		totalCases: 'total cases'
-	};
-
-	const metricClasses: Record<string, string> = {
-		bailSet: 'bailSet-color',
-		remanded: 'remanded-color',
-		released: 'released-color',
-		averageBailAmount: 'averageBailAmount-color',
-		totalCases: 'totalCases-color'
-	};
 
 	$: labels = [judge?.name || 'Judge', county?.name || 'County', 'New York State'];
 
@@ -101,7 +102,7 @@
 			.padding(0.05);
 
 		y = d3.scaleLinear()
-			.domain([0, d3.max(plot, entity => d3.max(races, race => entity.stats[race])) || 0])
+			.domain([0, d3.max(plot, entity => d3.max(races, race => entity?.stats[race])) || 0])
 			.nice()
 			.range([height - marginBottom, marginTop]);
 
@@ -150,29 +151,30 @@
 			.attr('x', 0)
 			.attr('y', height - marginBottom)
 			.attr('width', x0.bandwidth())
-			.attr('height', 0);
-		// .attr('opacity', 0.5) // Set opacity here
+			.attr('height', 0)
+			.attr('opacity', 0.5) // Set opacity here
+			.attr('fill', 'currentColor');
 
 		anyBars.merge(barGroups.select('.any-bar'))
 			.transition().duration(750)
 			.attr('y', d => y(d.stats['Any']))
-			.attr('height', d => y(0) - y(d.stats['Any']))
-			.attr('class', (d) => `${metric === 'bailSet' && val === 'amount' ? 'fill-orange-100' : metric === 'bailSet' && val === 'percent' ? 'fill-yellow-100' : metric === 'remanded' ? 'fill-red-100' : 'fill-green-100'} any-bar opacity-10`);
-
+			.attr('height', d => y(0) - y(d.stats['Any']));
 
 		const bars = barGroupsEnter.merge(barGroups).selectAll('.bar-race').remove();
 
 		barGroupsEnter.merge(barGroups).selectAll('.bar-race')
 			.data(d => races.slice(1).map((race, index) => ({ race, value: d.stats[race], entity: d.name, index: index })))
 			.enter().append('rect')
-			.attr('class', (d) => `bar bar-race ${metric === 'bailSet' && val === 'amount' ? 'averageBailAmount' : metric}-color`)
+			.attr('class', (d) => `bar bar-race ${metric === 'bailSet' && val === 'amount' ? 'fill-orange-500' : metricClasses[metric]}`)
 			.attr('x', d => x1(d.race))
 			.attr('y', height - marginBottom)
 			.attr('width', x1.bandwidth())
 			.attr('height', 0)
 			.on('mouseover', function(event, d) {
 				tooltip.transition().duration(200).style('opacity', .9);
-				tooltip.html(`Race: ${d.race}<br/>Value: ${formatNumber(d.value)} ${metric === 'bailSet' && val === 'amount' ? '$' : '%'}`)
+				const entityIndex = plot.findIndex(entity => entity.name === d.entity);
+				const totalCases = plot[entityIndex].stats['raw'];
+				tooltip.html(`${d.race}<br/>${formatNumber(d.value)} ${metric === 'bailSet' && val === 'amount' ? '$' : '%'}`)
 					.style('left', (event.pageX + 5) + 'px')
 					.style('top', (event.pageY - 28) + 'px');
 			})
@@ -245,12 +247,18 @@
 
 <div class="h-20 mb-32">
 	<div bind:this={svgContainer} class="w-[40rem] h-96">
-		<div class="text-center tracking-tight justify-center text-zinc-400 mb-4">
-			Percent of <b class="text-zinc-300">{severity === 'Any' ? 'all' : severityLabels[severity]}</b> cases where
-			<b class="text-zinc-300">{race !== 'Any' ? 'defendant is ' + race + ' and ' : ''}</b>
-			<b class="text-zinc-300">{metricVerbs[metric].toLowerCase()}</b>.
-		</div>
-
+		{#if metric === 'bailSet' && val === 'amount'}
+			<div class="text-center tracking-tight justify-center text-zinc-400 text-xl mb-8">
+				<b class="text-zinc-300">Average bail set</b> in <b
+				class="text-zinc-300">{severity === 'Any' ? 'all' : severityLabels[severity]}</b> cases.
+			</div>
+		{:else}
+			<div class="text-center tracking-tight justify-center text-zinc-400 text-xl mb-8">
+				Percent of <b class="text-zinc-300">{severity === 'Any' ? 'all' : severityLabels[severity]}</b> cases where
+				<b class="text-zinc-300">{race !== 'Any' ? 'defendant is ' + race + ' and ' : ''}</b>
+				<b class="text-zinc-300">{metricVerbs[metric].toLowerCase()}</b>.
+			</div>
+		{/if}
 		<svg class="text-zinc-400">
 			<g bind:this={gx} class="x axis" transform="translate(0,{height - marginBottom})" />
 			<g bind:this={gy} class="y axis" transform="translate({marginLeft},0)" />

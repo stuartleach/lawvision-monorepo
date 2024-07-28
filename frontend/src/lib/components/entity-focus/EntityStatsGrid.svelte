@@ -1,7 +1,8 @@
 <script lang="ts">
+	import { formatNumber } from '$lib/utils/format';
 	import { allJudgesStore, selectedJudgeStore, severityLabels } from '$lib/stores/data';
 	import type { ResultsBySeverity } from '$lib/types/frontendTypes';
-	import { formatNumber, getValue } from '$lib/utils';
+	import { getValue } from '$lib/utils/misc';
 	import JudgeStatItem from './EntityStatItem.svelte';
 
 	export let severity: keyof ResultsBySeverity = 'Any';

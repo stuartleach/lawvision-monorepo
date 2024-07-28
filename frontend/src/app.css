@@ -7,26 +7,38 @@
 /********/
 
 :root {
-	--color-primary: #ff0000;
-	--color-secondary: #00ff00;
-	--color-tertiary: #0000ff;
-	--color-neutral: #f9f9f9;
-	--color-neutral-dark: #333;
-	--color-neutral-light: #f9f9f9;
-	--color-neutral-lighter: #f3f3f3;
-	--color-neutral-lightest: #f9f9f9;
-	--color-neutral-darkest: #333;
-	background-color: rgb(49, 49, 52, 1);
+    --color-primary: #ff0000;
+    --color-secondary: #00ff00;
+    --color-tertiary: #0000ff;
+    --color-neutral: #f9f9f9;
+    --color-neutral-dark: #333;
+    --color-neutral-light: #f9f9f9;
+    --color-neutral-lighter: #f3f3f3;
+    --color-neutral-lightest: #f9f9f9;
+    --color-neutral-darkest: #333;
+    background-color: rgb(49, 49, 52, 1);
 }
 
 html {
-	height: 100%;
-	width: 100%;
+    height: 100%;
+    width: 100%;
+}
+
+html, body {
+    height: 100%; /* Ensure html and body fill the viewport */
+    margin: 0; /* Remove default margins */
+}
+
+.container {
+    display: flex;
+    flex-direction: column; /* Start with vertical layout */
+    min-height: 100%; /* Make container at least the viewport height */
+	min-width: 100%;
 }
 
 body {
-	margin: 0;
-	font-family: 'Inter', sans-serif;
+    margin: 0;
+    font-family: 'Inter', sans-serif;
 }
 
 /*****************/
@@ -34,27 +46,27 @@ body {
 /*****************/
 
 @media (min-width: 2000px) {
-	.outer-container {
-		@apply w-[80vw] transition-all;
-	}
+    .outer-container {
+        @apply w-[80vw] transition-all;
+    }
 }
 
 @media (max-width: 768px) {
-	/*.details-container {*/
-	/*    flex-direction: column;*/
-	/*}*/
+    /*.details-container {*/
+    /*    flex-direction: column;*/
+    /*}*/
 }
 
 @media (min-width: 768px) {
-	/*.county-detail, .judge-detail {*/
-	/*    max-height: 45vh;*/
-	/*}*/
+    /*.county-detail, .judge-detail {*/
+    /*    max-height: 45vh;*/
+    /*}*/
 }
 
 @media (min-width: 1024px) {
-	/*.county-detail, .judge-detail {*/
-	/*    max-height: 60vh;*/
-	/*}*/
+    /*.county-detail, .judge-detail {*/
+    /*    max-height: 60vh;*/
+    /*}*/
 }
 
 /*****************/
@@ -62,21 +74,21 @@ body {
 /*****************/
 
 .totalCases-color {
-	@apply text-blue-500;
+    @apply text-blue-500 /*bg-gradient-to-bl from-blue-500 to-blue-500;*/
 }
 
 .averageBailAmount-color {
-	@apply text-orange-500;
+    @apply text-orange-500 /*bg-gradient-to-bl from-orange-500 to-orange-500;*/
 }
 
 .bailSet-color {
-	@apply text-yellow-500;
+    @apply text-yellow-500 /*bg-gradient-to-bl from-yellow-500 to-yellow-500;*/
 }
 
 .remanded-color {
-	@apply text-red-500;
+    @apply text-red-500 /*bg-gradient-to-bl from-red-500 to-red-500;*/
 }
 
 .released-color {
-	@apply text-green-500;
+    @apply text-green-500 /*bg-gradient-to-bl from-green-500 to-green-500;*/
 }

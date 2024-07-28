@@ -3,6 +3,7 @@
 	import ContainerJudge from '$lib/components/entity-focus/ContainerJudge.svelte';
 	import Money from '$lib/components/shared/Money.svelte';
 	import Percent from '$lib/components/shared/Percent.svelte';
+	import { formatNumber } from '$lib/utils/format';
 	import {
 		allCountiesStore,
 		allJudgesStore,
@@ -12,16 +13,15 @@
 		selectedJudgeStore
 	} from '$lib/stores/data';
 	import { type Judge, SortOrder, SortTarget } from '$lib/types/frontendTypes';
-	import { formatNumber, sortListByTarget } from '$lib/utils';
+	import { sortListByTargetGivenRaceAndSeverity } from '$lib/utils/sort';
 	import { Button, Input } from 'flowbite-svelte';
 	import { onMount } from 'svelte';
 	import { writable } from 'svelte/store';
-	import { slide } from 'svelte/transition';
 
 
 	let judges: Judge[] = [];
 
-	const sortTarget = writable<SortTarget>(SortTarget.caseCount);
+	const sortTarget = writable<SortTarget>(SortTarget.totalCases);
 	let sortTargetValue: SortTarget;
 	$: sortTargetValue = $sortTarget;
 
@@ -46,7 +46,7 @@
 		if (county) {
 			resultJudges = resultJudges.filter(judge => judge.primaryCounty === county);
 		}
-		resultJudges = sortListByTarget(resultJudges, sortTargetValue, sortOrder) as Judge[];
+		resultJudges = sortListByTargetGivenRaceAndSeverity(resultJudges, sortTargetValue, sortOrder) as Judge[];
 		return resultJudges;
 	};
 

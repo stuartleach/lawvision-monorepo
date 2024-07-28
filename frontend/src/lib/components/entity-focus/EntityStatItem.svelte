@@ -1,9 +1,10 @@
 <script lang="ts">
 	import Money from '$lib/components/shared/Money.svelte';
 	import Percent from '$lib/components/shared/Percent.svelte';
+	import { formatNumber } from '$lib/utils/format';
 	import { selectedJudgeStore, severityLabels } from '$lib/stores/data';
 	import type { ArraignmentResults, Race, SeverityLevel } from '$lib/types/frontendTypes';
-	import { formatNumber, getValue } from '$lib/utils';
+	import { getValue } from '$lib/utils/misc';
 
 	export let metric: keyof ArraignmentResults | 'averageBailAmount' = 'bailSet';
 

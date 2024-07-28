@@ -11,7 +11,7 @@ export default defineConfig({
 			$data: path.resolve('./src/lib/stores/data'),
 			$types: path.resolve('./src/lib/types'),
 			$api: path.resolve('./src/lib/api'),
-			$utils: path.resolve('./src/lib/utils.ts'),
+			$utils: path.resolve('./src/lib/misc.ts'),
 			$assets: path.resolve('./src/lib/assets')
 		}
 	},

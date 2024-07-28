@@ -4,14 +4,15 @@
 	import ProfileVisualizations from '$lib/components/entity-profile/ProfileVisualizations.svelte';
 	import type { County, Judge } from '$lib/types';
 
-	export let entity: Judge | County;
+	export let entity: Judge | County ;
 
 </script>
 
 <div class="flex flex-col *:h-1/3">
-<ProfileHeader {entity} />
+
+
+	<ProfileHeader {entity} />
 
 <ProfileVisualizations {entity} />
-<!--<Treemap {entity} />-->
 <ChargesGrid {entity} />
 </div>

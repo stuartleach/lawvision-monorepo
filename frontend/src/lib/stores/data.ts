@@ -7,7 +7,8 @@ import {
 	type MinMax,
 	type NewYorkState,
 	type Race,
-	type SeverityLevel
+	type SeverityLevel, SortOrder,
+	SortTarget
 } from '$lib/types/frontendTypes';
 import { writable } from 'svelte/store';
 
@@ -31,6 +32,14 @@ export const countiesMinMaxStore = writable<MinMax>();
 export const geoJSONStore = writable<GeoJSONData>();
 export const newYorkStateStore = writable<NewYorkState | null>(null);
 
+export const selectionStore = writable({
+	county: null,
+	severity: null,
+	race: null,
+	direction: null,
+	metric: null
+});
+
 // Judges //
 export const allJudgesStore = writable<Judge[]>([]);
 export const countyJudgesStore = writable<Judge[]>([]);
@@ -49,11 +58,17 @@ export const bailMinMaxStore = writable<[number, number]>([0, 0]);
 
 // Stateful //
 export const loadingStore = writable<boolean>(true);
-export const selectedMetricStore = writable<'averageBailSet' | 'bailSet' | 'remanded' | 'released'>('averageBailSet');
+export const selectedMetricStore = writable<SortTarget>(SortTarget.averageBailAmount);
 export const mapDimensionsStore = writable<{ width: number; height: number }>({
 	width: 1000,
 	height: 1000
 });
+
+export const sortTargetStore = writable<SortTarget>(SortTarget.bailSet);
+export const sortOrderStore = writable<SortOrder>(SortOrder.asc);
+export const filterSeverityStore = writable<SeverityLevel>('Any');
+export const filterRaceStore = writable<Race>('Any');
+export const deviationStore = writable<boolean>(false);
 
 export const selectedCountyStore = writable<County | null>(null);
 export const selectedJudgeStore = writable<Judge | null>(null);

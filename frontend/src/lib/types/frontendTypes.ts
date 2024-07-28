@@ -19,6 +19,7 @@ export interface Judge {
 export interface BailSet {
 	raw: number;
 	percent: number;
+	[key: string]: any
 }
 
 export interface ArraignmentResults {
@@ -30,20 +31,22 @@ export interface ArraignmentResults {
 	remanded: BailSet;
 	released: BailSet;
 	totalCases: number;
+	[key: string]: any; // Add index signature here
+
 }
 
-
 export type Race =
-	'Any'
+	| 'Any'
 	| 'White'
 	| 'Black'
 	| 'American Indian/Alaskan Native'
 	| 'Asian/Pacific Islander'
 	| 'Other'
-	| 'Unknown';
+	| 'Unknown'
+	| string;
 
 export type SeverityLevel =
-	'Any'
+	| 'Any'
 	| 'AF'
 	| 'BF'
 	| 'CF'
@@ -54,15 +57,15 @@ export type SeverityLevel =
 	| 'I'
 	| 'V'
 	| 'UM'
-
+	| string;
 
 export type ArraignmentResultsByRace = {
-	[race in Race]: ArraignmentResults;
+	[race in Race as string]: ArraignmentResults;
 };
 
 export type ResultsBySeverity = {
-	[severity in SeverityLevel]: ArraignmentResultsByRace;
-}
+	[severity in SeverityLevel as string]: ArraignmentResultsByRace;
+};
 
 type Coordinates = number[][][][];
 
@@ -102,7 +105,6 @@ export interface MinMax {
 	release: [number, number];
 }
 
-
 export type FetchFunction = (input: RequestInfo, init?: RequestInit) => Promise<Response>;
 
 export type JudgeQuery = {
@@ -111,35 +113,31 @@ export type JudgeQuery = {
 
 export type NewYorkStateQuery = {
 	fetch: FetchFunction;
-}
+};
 
 export type JudgeDetailsQuery = {
 	fetch: FetchFunction;
 	judgeId: string;
-}
+};
 
 export type JudgeOutcomesQuery = {
 	fetch: FetchFunction;
 	judgeId: string;
 };
 
-// Define the enum without quotes around the keys
 export enum SortTarget {
 	name = 'Name',
-	remandPct = 'Remand Percentage',
-	releasePct = 'Release Percentage',
-	averageBail = 'Average Bail',
-	caseCount = 'Total Cases',
-	remandRaw = 'Total Cases Remanded',
-	releaseRaw = 'Total Cases Released',
-	bailSet = 'Bail Set Frequency'
+	remanded = 'Remand Percentage',
+	released = 'Release Percentage',
+	bailSet = 'Bail Set Frequency',
+	averageBailAmount = 'Average Bail',
+	totalCases = 'Total Cases'
 }
 
 export enum SortOrder {
 	asc = 'asc',
 	desc = 'desc'
 }
-
 
 export type CountyQuery = {
 	fetch: FetchFunction;

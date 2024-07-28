@@ -7,7 +7,7 @@ import {
 	loadingStore, newYorkStateStore
 } from '$lib/stores/data';
 import type { County, GeoJSONData } from '$lib/types/frontendTypes';
-import { combineCountiesWithGeoJSON } from '$lib/utils';
+import { combineCountiesWithGeoJSON } from '$lib/utils/misc';
 import type { PageLoad } from './$types';
 
 export const load: PageLoad = async ({ fetch }) => {
